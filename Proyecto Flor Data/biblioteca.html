@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flor Data - Biblioteca Digital</title>
+    
+    <style>
+        /* Reset y Estilos Generales */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { width: 100%; height: 100%; font-family: Arial, sans-serif; background-color: #ebe8e3; }
+        
+        /* ____________________________________ */
+        /* ESTILOS DE LA BARRA DE NAVEGACIÓN (COPIADOS DE INDEX.HTML) */
+        /* ____________________________________ */
+        header {
+            background: #2c2c2c;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-bar img {
+            height: 50px; /* ✅ CRÍTICO: Limita el logo de UNACH */
+        }
+
+        .logo-bar span {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #6bbf59;
+        }
+
+        .social img {
+            height: 28px; /* ✅ CRÍTICO: Limita el icono de Facebook */
+            width: 28px; 
+        }
+
+        /* ____________________________________ */
+        /* ESTILOS ESPECÍFICOS DE LA BIBLIOTECA */
+        /* ____________________________________ */
+
+        .content-library {
+            background-color: #ebe8e3; 
+            min-height: calc(100vh - 70px); 
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 40px;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 25px;
+            background-color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            font-size: 24px;
+            color: #333;
+            margin-right: 15px;
+        }
+
+        .search-container input {
+            border: none;
+            outline: none;
+            flex-grow: 1;
+            font-size: 18px;
+            padding: 5px 0;
+        }
+
+        #plant-list {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .plant-card {
+            display: flex;
+            background-color: #d8e4d8;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .plant-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-image {
+            width: 30%;
+            min-width: 150px;
+            height: 150px;
+            background-color: #9db59d; 
+            overflow: hidden;
+            border-radius: 15px 0 0 15px; 
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-info {
+            flex-grow: 1;
+            padding: 15px 20px;
+        }
+
+        .card-info h3 {
+            font-size: 1.4em;
+            color: #2e7d32; 
+            margin-bottom: 5px;
+        }
+
+        .card-info p {
+            font-size: 1em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-bar">
+            <img src="logo-unach.png" alt="UNACH"> 
+            <span>Flor Data</span>
+        </div>
+        <nav>
+    <ul>
+        <li><a href="index.html?skip_splash=true#inicio">INICIO</a></li>
+        
+        <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
+        <li><a href="ia-chat.html#inicio">IA</a></li>
+        <li><a href="#">APLICACIÓN</a></li>
+    </ul>
+</nav>
+        <div class="social">
+            <a href="#"><img src="facebook.png" alt="Facebook"></a>
+        </div>
+    </header>
+
+    <div class="content-library">
+        <div class="search-container">
+            <span class="search-icon">&#x1F50D;</span> 
+            <input type="text" placeholder="Buscar por nombre o especie científica...">
+        </div>
+
+        <div id="plant-list">
+            <div class="plant-card">
+                <div class="card-image">
+                    <img src="palmera-ejemplo.jpg" alt="Palmera">
+                </div>
+                <div class="card-info">
+                    <h3>Nombre Común: Palmera de Jardín</h3>
+                    <p>Nombre Científico: *Chamaedorea elegans*</p>
+                    <p>Descripción: Palmera pequeña y elegante, ideal para interiores y jardines sombreados. Muy resistente.</p>
+                </div>
+            </div>
+
+            <div class="plant-card">
+                <div class="card-image">
+                    <img src="eucalipto-ejemplo.jpg" alt="Eucalipto">
+                </div>
+                <div class="card-info">
+                    <h3>Nombre Común: Eucalipto Azul</h3>
+                    <p>Nombre Científico: *Eucalyptus globulus*</p>
+                    <p>Descripción: Árbol de crecimiento rápido conocido por su aroma fuerte y sus hojas medicinales.</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>

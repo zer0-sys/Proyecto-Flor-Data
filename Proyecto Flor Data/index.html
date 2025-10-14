@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Flor Data - Inicio</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            scroll-behavior: smooth;
+            background-color: #ebe8e3;
+        }
+
+        /* Pantalla de carga */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("fondo.jpg") no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+
+        #splash.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #splash .logo {
+            width: 200px;
+            height: 200px;
+            background: url("logo.png") no-repeat center center/contain;
+            margin-bottom: 20px;
+        }
+
+        .loader {
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top: 6px solid #ffffff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Página principal */
+        #main {
+            display: none;
+        }
+
+        /* Barra de navegación */
+        header {
+            background: #2c2c2c;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-bar img {
+            height: 50px;
+        }
+
+        .logo-bar span {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #6bbf59;
+        }
+
+        .social img {
+            height: 28px;
+        }
+
+        /* Sección Inicio */
+        .content {
+            text-align: center;
+            padding: 80px 20px;
+            background: url("fondo-principal.jpg") no-repeat center center/cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content h1 {
+            font-size: 40px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .content p {
+            font-size: 18px;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Sección Acerca de */
+        .acerca {
+            background: #ebe8e3;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .acerca h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #2e7d32;
+        }
+
+        .acerca p {
+            max-width: 900px;
+            margin: 10px auto;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        /* Sección Final (Objetivos) */
+        .final {
+            background: #ebe8e3;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: stretch;
+            flex-wrap: wrap;
+            padding: 80px 20px;
+        }
+
+        .card {
+            background: #f0f0f0;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 280px;
+            text-align: center;
+            transition: transform 0.3s ease, opacity 0.6s ease;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+        }
+
+        .card img {
+            width: 90px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            font-size: 15px;
+            color: #444;
+            line-height: 1.2;
+            text-align: center;
+            max-width: 350px;
+        }
+
+        /* Animaciones de fade-in */
+        .fade-section {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        .fade-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 🤖 ESTILOS AÑADIDOS PARA LA MASCOTA IA 🤖 */
+
+        #ia-mascot {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            transition: transform 0.3s ease;
+        }
+
+        #ia-mascot:hover {
+            transform: scale(1.05);
+        }
+
+        /* Imagen de la mascota */
+        .ia-image {
+            width: 80px;
+            /* Ajusta el tamaño de la mascota */
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 4px solid #b3d1b3;
+            /* Borde verde claro */
+        }
+
+        /* Burbuja de texto */
+        .ia-bubble {
+            background-color: #ffffff;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            font-size: 14px;
+            max-width: 200px;
+            text-align: left;
+            position: relative;
+            border: 1px solid #c8d8c8;
+        }
+
+        /* Flecha de la burbuja que apunta a la mascota */
+        .bubble-arrow {
+            position: absolute;
+            bottom: -8px;
+            right: 15px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="splash">
+        <div class="logo"></div>
+        <div class="loader"></div>
+    </div>
+
+    <div id="main">
+        <header>
+            <div class="logo-bar">
+                <img src="logo-unach.png" alt="UNACH">
+                <span>Flor Data</span>
+            </div>
+            <nav>
+                <ul>
+
+                    <li><a href="index.html#inicio">INICIO</a></li>
+                    <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
+                    <li><a href="ia-chat.html#inicio">IA</a></li>
+                    <li><a href="#">APLICACIÓN</a></li>
+                </ul>
+            </nav>
+            <div class="social">
+                <a href="#"><img src="facebook.png" alt="Facebook"></a>
+            </div>
+        </header>
+
+        <section id="inicio" class="content fade-section">
+            <h1></h1>
+            <p></p>
+        </section>
+
+        <section id="acerca" class="acerca fade-section">
+            <h2>Acerca de</h2>
+            <p>
+                Flor Data es la plataforma digital oficial de catalogación y difusión de la diversidad vegetal de
+                nuestra facultad.
+                Nuestro proyecto nace de la necesidad de fusionar la botánica educativa con la tecnología de vanguardia
+                para ofrecer
+                a estudiantes, profesores y visitantes un acceso instantáneo y detallado a la flora que nos rodea.
+            </p>
+            <p>
+                Nuestra misión es transformar la experiencia de aprendizaje y exploración del campus, convirtiendo cada
+                planta, flor
+                y árbol en un punto de conocimiento accesible. Utilizamos códigos QR en sitio para enlazar la vida
+                vegetal real con
+                nuestra extensa base de datos, fomentando el estudio, la apreciación y el uso pedagógico de nuestro
+                entorno natural.
+            </p>
+            <p>
+                Como herramienta de apoyo académico, Flor Data actúa como un puente entre la naturaleza y la
+                investigación,
+                garantizando que la información botánica sea precisa, actualizada y fácil de consultar.
+            </p>
+        </section>
+
+        <section id="final" class="final">
+            <div class="card fade-section">
+                <img src="libro.png" alt="Libro">
+                <p>
+                    Crear una experiencia educativa dinámica para estudiantes y visitantes,
+                    facilitando el acceso instantáneo a información botánica detallada de
+                    cada espécimen en el campus mediante códigos QR, promoviendo la curiosidad
+                    y la exploración activa.</p>
+            </div>
+            <div class="card fade-section">
+                <img src="cerebro.png" alt="Cerebro">
+                <p>
+                    Integrar inteligencia artificial avanzada a través de nuestra mascota IA,
+                    que actúa como un guía botánico personalizado, respondiendo preguntas
+                    específicas y ofreciendo conocimientos profundos para enriquecer la comprensión
+                    de la diversidad vegetal.
+                </p>
+            </div>
+            <div class="card fade-section">
+                <img src="biblioteca.png" alt="Biblioteca">
+                <p>
+                    Integrar inteligencia artificial avanzada a través de nuestra mascota IA,
+                    que actúa como un guía botánico personalizado, respondiendo preguntas
+                    específicas y ofreciendo conocimientos profundos para enriquecer la comprensión
+                    de la diversidad vegetal.
+                </p>
+            </div>
+        </section>
+
+    </div>
+    <div id="ia-mascot" onclick="openIAChat()">
+        <div class="ia-bubble">
+            Hola, ¿qué tal? ¿Cómo<br>puedo ayudarte?
+            <span class="bubble-arrow"></span>
+        </div>
+        <img src="mascota-ia.png" alt="Asistente IA" class="ia-image">
+    </div>
+
+    <script>
+    const splash = document.getElementById("splash");
+    const mainContent = document.getElementById("main");
+    
+    const FADE_DURATION = 1000; 
+    const MIN_VISIBLE_TIME = 2000; 
+
+    // ✅ NUEVA LÓGICA: Comprobar el parámetro 'skip_splash'
+    const urlParams = new URLSearchParams(window.location.search);
+    const skipSplash = urlParams.get('skip_splash');
+
+    window.onload = function () {
+        
+        // 1. Si el parámetro skip_splash es 'true', saltamos la animación.
+        if (skipSplash === 'true') {
+            splash.style.display = 'none';
+            mainContent.style.display = 'block';
+            checkVisibility(); 
+            return; // Detiene la ejecución de la animación
+        }
+
+        // 2. Ejecutar la animación si venimos de una recarga o entrada directa
+        setTimeout(function () {
+            splash.classList.add("fade-out");
+            
+            setTimeout(function () {
+                splash.style.display = "none";
+                mainContent.style.display = "block";
+                checkVisibility();
+            }, FADE_DURATION);
+            
+        }, MIN_VISIBLE_TIME);
+    };
+
+    // Animación de secciones (código original)
+    const sections = document.querySelectorAll('.fade-section');
+    function checkVisibility() {
+        const triggerBottom = window.innerHeight * 0.85;
+        sections.forEach(sec => {
+            const boxTop = sec.getBoundingClientRect().top;
+            if (boxTop < triggerBottom) {
+                sec.classList.add('visible');
+            }
+        });
+    }
+    window.addEventListener('scroll', checkVisibility);
+    window.addEventListener('load', checkVisibility);
+</script>
+
+</body>
+
+</html>
