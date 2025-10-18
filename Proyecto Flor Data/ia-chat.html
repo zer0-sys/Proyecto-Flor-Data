@@ -204,7 +204,6 @@
         }
     </style>
 
-    <script src="https://esm.run/@google/genai"></script>
 </head>
 
 <body>
@@ -215,14 +214,14 @@
             <span>Flor Data</span>
         </div>
         <nav>
-    <ul>
-        <li><a href="index.html?skip_splash=true#inicio">INICIO</a></li>
-        
-        <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
-        <li><a href="ia-chat.html#inicio">IA</a></li>
-        <li><a href="#">APLICACIÓN</a></li>
-    </ul>
-</nav>
+            <ul>
+                <li><a href="index.html?skip_splash=true#inicio">INICIO</a></li>
+
+                <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
+                <li><a href="ia-chat.html#inicio">IA</a></li>
+                <li><a href="#">APLICACIÓN</a></li>
+            </ul>
+        </nav>
         <div class="social">
             <a href="#"><img src="facebook.png" alt="Facebook"></a>
         </div>
@@ -248,120 +247,103 @@
         </div>
     </div>
 
-    <script>
-        // Declaramos variables globales
-        let ai, chat, chatMessages, userInput, sendButton;
+    <script type="module">
+    // CAMBIO FINAL: Usamos la URL correcta y volvemos a importar con llaves {}
+    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-        // Función que inicializa Gemini
-        function initializeGemini() {
-            // ** VERIFICACIÓN FINAL: Buscamos el objeto global **
-            if (typeof GoogleGenerativeAI === 'undefined') {
-                console.error("Error: GoogleGenerativeAI no se ha cargado. Reintentando...");
-                // Si la librería no está lista, intenta de nuevo en 100ms
-                setTimeout(initializeGemini, 800);
-                return;
+    // El resto del código se queda igual
+    let chat, chatMessages, userInput, sendButton;
+
+    function initializeGemini() {
+        console.log("Inicializando Gemini...");
+
+        const GEMINI_API_KEY = "AIzaSyCDQOM6DCZXDm1SU1qXl2qH3Z5qV10MgyI"; 
+
+        const modelName = "gemini-1.5-pro-latest"; 
+
+        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY); // Esta línea ahora funcionará
+        const model = genAI.getGenerativeModel({
+            model: modelName,
+            systemInstruction: "Eres Flor Data, un amable y experimentado asistente botánico de la UNACH. Tu objetivo es proporcionar información precisa sobre la flora, la fauna local y detalles sobre la página web Flor Data de forma concisa y amigable. Siempre responde en español.",
+        });
+
+        chat = model.startChat();
+        
+        console.log("Gemini inicializado correctamente.");
+
+        chatMessages = document.getElementById('chat-messages');
+        userInput = document.getElementById('user-input');
+        sendButton = document.querySelector('.input-area button');
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
             }
+        });
+    }
 
-            console.log("Gemini SDK cargada correctamente. Inicializando...");
+    async function getGeminiResponse(userMessage) {
+        try {
+            const result = await chat.sendMessage(userMessage);
+            const response = result.response;
+            const text = response.text();
+            return text;
+        } catch (error) {
+            console.error("Error al comunicarse con Gemini:", error);
+            return "Error de API: No se pudo obtener respuesta. Revisa la Consola para más detalles.";
+        }
+    }
 
-           
-            const GEMINI_API_KEY = "AIzaSyC14D2J5b2JER7qt44RmebE5NBQAKG3v7A";
+    function appendMessage(sender, text) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', `${sender}-message`);
 
-            // 2. Crear instancias de la IA (DEBE SER LA CLASE GLOBAL)
-            ai = new GoogleGenerativeAI(GEMINI_API_KEY);
-            const model = "gemini-2.5-flash";
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('message-content');
+        contentDiv.innerHTML = text;
 
-            // 3. Configuración del Chat
-            chat = ai.chats.create({
-                model: model,
-                config: {
-                    systemInstruction: "Eres Flor Data, un amable y experimentado asistente botánico de la UNACH. Tu objetivo es proporcionar información precisa sobre la flora, la fauna local y detalles sobre la página web Flor Data de forma concisa y amigable. Siempre responde en español.",
-                }
-            });
+        if (sender === 'bot') {
+            const avatarDiv = document.createElement('div');
+            avatarDiv.classList.add('bot-avatar');
+            avatarDiv.innerHTML = '<img src="mascota-ia.png" alt="Bot IA">';
+            messageDiv.appendChild(avatarDiv);
+        }
+        
+        messageDiv.appendChild(contentDiv);
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
-            // 4. Referencias a elementos del DOM
-            chatMessages = document.getElementById('chat-messages');
-            userInput = document.getElementById('user-input');
-            sendButton = document.querySelector('.input-area button');
+    const sendMessage = async function () {
+        const message = userInput.value.trim();
+        if (!message) return;
 
-            // 5. Agregar listeners (Eventos)
-            sendButton.addEventListener('click', sendMessage);
+        userInput.disabled = true;
+        sendButton.disabled = true;
 
-            userInput.addEventListener('keypress', (event) => {
-                if (event.key === 'Enter') {
-                    sendMessage();
-                }
-            });
+        appendMessage('user', message);
+        userInput.value = '';
+
+        appendMessage('bot', '<p style="color:#666; font-style:italic;">Flor Data IA está escribiendo...</p>');
+        const loadingMessage = chatMessages.lastElementChild.querySelector('.message-content');
+
+        try {
+            const botResponseText = await getGeminiResponse(message);
+            loadingMessage.innerHTML = botResponseText;
+        } catch (error) {
+            loadingMessage.innerHTML = "No pude conectar con el asistente de IA.";
+        } finally {
+            userInput.disabled = false;
+            sendButton.disabled = false;
+            userInput.focus();
         }
 
-        // Funciones de mensajería (se mantienen)
-        async function getGeminiResponse(userMessage) {
-            // ... (Tu función getGeminiResponse)
-            try {
-                const response = await chat.sendMessage({
-                    message: userMessage,
-                });
-                return response.text;
-            } catch (error) {
-                console.error("Error al comunicarse con Gemini:", error);
-                return " Error de API: No se pudo obtener respuesta. Revisa la Consola (pestaña Red) para ver el código de error.";
-            }
-        }
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
-        function appendMessage(sender, text) {
-            // ... (Tu función appendMessage)
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', `${sender}-message`);
-
-            const contentDiv = document.createElement('div');
-            contentDiv.classList.add('message-content');
-            contentDiv.innerHTML = text;
-
-            if (sender === 'bot') {
-                const avatarDiv = document.createElement('div');
-                avatarDiv.classList.add('bot-avatar');
-                avatarDiv.innerHTML = '<img src="mascota-ia.png" alt="Bot IA">';
-                messageDiv.appendChild(avatarDiv);
-                messageDiv.appendChild(contentDiv);
-            } else {
-                messageDiv.appendChild(contentDiv);
-            }
-
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        const sendMessage = async function () {
-            // función sendMessage
-            const message = userInput.value.trim();
-            if (!message) return;
-
-            userInput.disabled = true;
-            sendButton.disabled = true;
-
-            appendMessage('user', message);
-            userInput.value = '';
-
-            appendMessage('bot', '<p style="color:#666; font-style:italic;">Flor Data IA está escribiendo...</p>');
-            const loadingMessage = chatMessages.lastChild.querySelector('.message-content');
-
-            try {
-                const botResponseText = await getGeminiResponse(message);
-                loadingMessage.innerHTML = botResponseText;
-            } catch (error) {
-                loadingMessage.innerHTML = "No pude conectar con el asistente de IA.";
-            } finally {
-                userInput.disabled = false;
-                sendButton.disabled = false;
-                userInput.focus();
-            }
-
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // ** Llama a la función de inicialización cuando el DOM esté listo **
-        document.addEventListener('DOMContentLoaded', initializeGemini);
-    </script>
+    document.addEventListener('DOMContentLoaded', initializeGemini);
+</script>
 </body>
 
 </html>

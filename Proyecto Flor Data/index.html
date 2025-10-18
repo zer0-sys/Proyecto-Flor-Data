@@ -380,53 +380,57 @@
     </div>
 
     <script>
-    const splash = document.getElementById("splash");
-    const mainContent = document.getElementById("main");
-    
-    const FADE_DURATION = 1000; 
-    const MIN_VISIBLE_TIME = 2000; 
-
-    // ✅ NUEVA LÓGICA: Comprobar el parámetro 'skip_splash'
-    const urlParams = new URLSearchParams(window.location.search);
-    const skipSplash = urlParams.get('skip_splash');
-
-    window.onload = function () {
-        
-        // 1. Si el parámetro skip_splash es 'true', saltamos la animación.
-        if (skipSplash === 'true') {
-            splash.style.display = 'none';
-            mainContent.style.display = 'block';
-            checkVisibility(); 
-            return; // Detiene la ejecución de la animación
+        // Función para abrir el chat de la IA
+        function openIAChat() {
+            window.location.href = 'ia-chat.html';
         }
+        const splash = document.getElementById("splash");
+        const mainContent = document.getElementById("main");
 
-        // 2. Ejecutar la animación si venimos de una recarga o entrada directa
-        setTimeout(function () {
-            splash.classList.add("fade-out");
-            
-            setTimeout(function () {
-                splash.style.display = "none";
-                mainContent.style.display = "block";
+        const FADE_DURATION = 1000;
+        const MIN_VISIBLE_TIME = 2000;
+
+        // ✅ NUEVA LÓGICA: Comprobar el parámetro 'skip_splash'
+        const urlParams = new URLSearchParams(window.location.search);
+        const skipSplash = urlParams.get('skip_splash');
+
+        window.onload = function () {
+
+            // 1. Si el parámetro skip_splash es 'true', saltamos la animación.
+            if (skipSplash === 'true') {
+                splash.style.display = 'none';
+                mainContent.style.display = 'block';
                 checkVisibility();
-            }, FADE_DURATION);
-            
-        }, MIN_VISIBLE_TIME);
-    };
-
-    // Animación de secciones (código original)
-    const sections = document.querySelectorAll('.fade-section');
-    function checkVisibility() {
-        const triggerBottom = window.innerHeight * 0.85;
-        sections.forEach(sec => {
-            const boxTop = sec.getBoundingClientRect().top;
-            if (boxTop < triggerBottom) {
-                sec.classList.add('visible');
+                return; // Detiene la ejecución de la animación
             }
-        });
-    }
-    window.addEventListener('scroll', checkVisibility);
-    window.addEventListener('load', checkVisibility);
-</script>
+
+            // 2. Ejecutar la animación si venimos de una recarga o entrada directa
+            setTimeout(function () {
+                splash.classList.add("fade-out");
+
+                setTimeout(function () {
+                    splash.style.display = "none";
+                    mainContent.style.display = "block";
+                    checkVisibility();
+                }, FADE_DURATION);
+
+            }, MIN_VISIBLE_TIME);
+        };
+
+        // Animación de secciones (código original)
+        const sections = document.querySelectorAll('.fade-section');
+        function checkVisibility() {
+            const triggerBottom = window.innerHeight * 0.85;
+            sections.forEach(sec => {
+                const boxTop = sec.getBoundingClientRect().top;
+                if (boxTop < triggerBottom) {
+                    sec.classList.add('visible');
+                }
+            });
+        }
+        window.addEventListener('scroll', checkVisibility);
+        window.addEventListener('load', checkVisibility);
+    </script>
 
 </body>
 
