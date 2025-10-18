@@ -183,29 +183,48 @@
         </div>
 
         <div id="plant-list">
-            <div class="plant-card">
-                <div class="card-image">
-                    <img src="palmera-ejemplo.jpg" alt="Palmera">
-                </div>
-                <div class="card-info">
-                    <h3>Nombre Común: Palmera de Jardín</h3>
-                    <p>Nombre Científico: *Chamaedorea elegans*</p>
-                    <p>Descripción: Palmera pequeña y elegante, ideal para interiores y jardines sombreados. Muy resistente.</p>
-                </div>
-            </div>
-
-            <div class="plant-card">
-                <div class="card-image">
-                    <img src="eucalipto-ejemplo.jpg" alt="Eucalipto">
-                </div>
-                <div class="card-info">
-                    <h3>Nombre Común: Eucalipto Azul</h3>
-                    <p>Nombre Científico: *Eucalyptus globulus*</p>
-                    <p>Descripción: Árbol de crecimiento rápido conocido por su aroma fuerte y sus hojas medicinales.</p>
-                </div>
-            </div>
-            
+            <!-- Las plantas se cargarán dinámicamente desde la API -->
         </div>
     </div>
+
+    <script>
+        const plantList = document.getElementById('plant-list');
+        const searchInput = document.querySelector('.search-container input');
+
+        // Función para renderizar plantas
+        function renderPlantas(plantas) {
+            plantList.innerHTML = '';
+            plantas.forEach(planta => {
+                const card = document.createElement('div');
+                card.className = 'plant-card';
+                card.innerHTML = `
+                    <div class="card-image">
+                        <img src="${planta.imagen || 'placeholder.jpg'}" alt="${planta.nombreComun}">
+                    </div>
+                    <div class="card-info">
+                        <h3>${planta.nombreComun}</h3>
+                        <p><em>${planta.nombreCientifico}</em></p>
+                        <p>${planta.descripcion}</p>
+                    </div>
+                `;
+                plantList.appendChild(card);
+            });
+        }
+
+        // Cargar todas las plantas al inicio
+        fetch('http://localhost:5001/api/plantas')
+            .then(res => res.json())
+            .then(renderPlantas)
+            .catch(err => console.error('Error cargando plantas:', err));
+
+        // Búsqueda en tiempo real
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            const url = query ? `http://localhost:5001/api/plantas/search?q=${encodeURIComponent(query)}` : 'http://localhost:5001/api/plantas';
+            fetch(url)
+                .then(res => res.json())
+                .then(renderPlantas);
+        });
+    </script>
 </body>
 </html>
