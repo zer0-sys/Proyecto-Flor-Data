@@ -9,7 +9,7 @@ app.use(express.json());
 
 // Iniciar servidor con: node server.js
 /*
-curl -X POST http://localhost:5003/api/plantas \
+curl -X POST http://localhost:5001/api/plantas \
   -H "Content-Type: application/json" \
   -d '{
     "nombreComun": "Rosa Roja",
@@ -98,5 +98,5 @@ app.post('/api/plantas', (req, res) => {
 process.on('exit', () => db.close());
 
 // Iniciar servidor
-const PORT = process.env.PORT || 5003;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
