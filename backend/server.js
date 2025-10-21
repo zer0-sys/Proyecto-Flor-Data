@@ -1,103 +1,84 @@
 require('dotenv').config();
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg'); // Cambia de sqlite3 a pg
 const cors = require('cors');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Iniciar servidor con: ./start.sh (o node server.js si el puerto está libre)
-/*
-curl -X POST http://localhost:5004/api/plantas \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nombreComun": "Rosa Roja",
-    "nombreCientifico": "Rosa rubiginosa",
-    "descripcion": "Flor aromática y colorida, símbolo de amor.",
-    "imagen": ""
-  }'
-*/
+// Conectar a PostgreSQL (en Supabase)
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }, // Cambia a true para Supabase
+  connectionTimeoutMillis: 10000 // Timeout de 10 segundos
+});
 
-// Conectar a SQLite (crea 'plantas.db' si no existe)
-const db = new sqlite3.Database('./plantas.db', (err) => {
+// Crear tabla si no existe (comentado porque ya la creaste manualmente en Supabase)
+/*
+pool.query(`
+  CREATE TABLE IF NOT EXISTS plantas (
+    id SERIAL PRIMARY KEY,
+    nombreComun TEXT NOT NULL,
+    nombreCientifico TEXT NOT NULL,
+    descripcion TEXT NOT NULL,
+    imagen TEXT
+  )
+`, (err) => {
   if (err) {
-    console.error('Error conectando a SQLite:', err.message);
+    console.error('Error creando tabla:', err);
   } else {
-    console.log('Conectado a SQLite.');
-    // Crear tabla después de conectar
-    db.run(`
-      CREATE TABLE IF NOT EXISTS plantas (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombreComun TEXT NOT NULL,
-        nombreCientifico TEXT NOT NULL,
-        descripcion TEXT NOT NULL,
-        imagen TEXT
-      )
-    `, (err) => {
-      if (err) {
-        console.error('Error creando tabla:', err.message);
-      } else {
-        console.log('Tabla plantas creada o ya existe.');
-        // Verificar si hay plantas, si no, insertar iniciales
-        db.get('SELECT COUNT(*) as count FROM plantas', [], (err, row) => {
-          if (err) {
-            console.error('Error verificando plantas:', err);
-          } else if (row.count === 0) {
-          } else {
-            console.log('Datos iniciales ya existen.');
-          }
-        });
-      }
-    });
+    console.log('Tabla plantas creada o ya existe.');
   }
 });
+*/
 
 // Rutas API
 // Obtener todas las plantas
-app.get('/api/plantas', (req, res) => {
-  db.all('SELECT * FROM plantas', [], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-    } else {
-      res.json(rows);
-    }
-  });
+app.get('/api/plantas', async (req, res) => {
+  console.log('Intentando obtener plantas...');
+  try {
+    const result = await pool.query('SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, imagen FROM plantas');
+    console.log('Plantas obtenidas:', result.rows.length);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error en GET /api/plantas:', err);
+    res.status(500).json({ error: err.message || 'Error interno' });
+  }
 });
 
 // Buscar plantas (por nombre común o científico)
-app.get('/api/plantas/search', (req, res) => {
+app.get('/api/plantas/search', async (req, res) => {
   const query = req.query.q || '';
-  const sql = `
-    SELECT * FROM plantas
-    WHERE nombreComun LIKE ? OR nombreCientifico LIKE ?
-  `;
-  const params = [`%${query}%`, `%${query}%`];
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-    } else {
-      res.json(rows);
-    }
-  });
+  console.log('Buscando plantas con query:', query);
+  try {
+    const sql = `SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, imagen FROM plantas WHERE nombrecomun ILIKE $1 OR nombrecientifico ILIKE $1`;
+    const result = await pool.query(sql, [`%${query}%`]);
+    console.log('Resultados de búsqueda:', result.rows.length);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error en GET /api/plantas/search:', err);
+    res.status(500).json({ error: err.message || 'Error interno' });
+  }
 });
-
 
 // Agregar una nueva planta
-app.post('/api/plantas', (req, res) => {
+app.post('/api/plantas', async (req, res) => {
   const { nombreComun, nombreCientifico, descripcion, imagen } = req.body;
-  const sql = 'INSERT INTO plantas (nombreComun, nombreCientifico, descripcion, imagen) VALUES (?, ?, ?, ?)';
-  db.run(sql, [nombreComun, nombreCientifico, descripcion, imagen], function(err) {
-    if (err) {
-      res.status(400).json({ error: err.message });
-    } else {
-      res.status(201).json({ id: this.lastID, nombreComun, nombreCientifico, descripcion, imagen });
-    }
-  });
+  console.log('Agregando planta:', { nombreComun, nombreCientifico });
+  try {
+    const sql = 'INSERT INTO plantas (nombreComun, nombreCientifico, descripcion, imagen) VALUES ($1, $2, $3, $4) RETURNING id';
+    const result = await pool.query(sql, [nombreComun, nombreCientifico, descripcion, imagen]);
+    console.log('Planta agregada con ID:', result.rows[0].id);
+    res.status(201).json({ id: result.rows[0].id, nombreComun, nombreCientifico, descripcion, imagen });
+  } catch (err) {
+    console.error('Error en POST /api/plantas:', err);
+    res.status(400).json({ error: err.message || 'Error interno' });
+  }
 });
 
-// Cerrar BD al salir (opcional, para desarrollo)
-process.on('exit', () => db.close());
+// Cerrar pool al salir (opcional, para desarrollo)
+process.on('exit', () => pool.end());
 
 // Iniciar servidor
 const PORT = 5004;
