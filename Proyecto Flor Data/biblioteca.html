@@ -212,7 +212,7 @@
         }
 
         // Cargar todas las plantas al inicio
-        fetch('http://localhost:5001/api/plantas')
+        fetch('http://localhost:5004/api/plantas')
             .then(res => res.json())
             .then(renderPlantas)
             .catch(err => console.error('Error cargando plantas:', err));
@@ -220,7 +220,7 @@
         // Búsqueda en tiempo real
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.trim();
-            const url = query ? `http://localhost:5001/api/plantas/search?q=${encodeURIComponent(query)}` : 'http://localhost:5001/api/plantas';
+            const url = query ? `http://localhost:5004/api/plantas/search?q=${encodeURIComponent(query)}` : 'http://localhost:5004/api/plantas';
             fetch(url)
                 .then(res => res.json())
                 .then(renderPlantas);

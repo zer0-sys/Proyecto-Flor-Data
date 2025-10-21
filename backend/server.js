@@ -7,9 +7,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Iniciar servidor con: node server.js
+// Iniciar servidor con: ./start.sh (o node server.js si el puerto está libre)
 /*
-curl -X POST http://localhost:5001/api/plantas \
+curl -X POST http://localhost:5004/api/plantas \
   -H "Content-Type: application/json" \
   -d '{
     "nombreComun": "Rosa Roja",
@@ -39,13 +39,14 @@ const db = new sqlite3.Database('./plantas.db', (err) => {
         console.error('Error creando tabla:', err.message);
       } else {
         console.log('Tabla plantas creada o ya existe.');
-        // Insertar datos iniciales
-        const inserts = [
-          ['Palmera de Jardín', 'Chamaedorea elegans', 'Palmera pequeña y elegante, ideal para interiores y jardines sombreados. Muy resistente.', 'palmera-ejemplo.jpg'],
-          ['Eucalipto Azul', 'Eucalyptus globulus', 'Árbol de crecimiento rápido conocido por su aroma fuerte y sus hojas medicinales.', 'eucalipto-ejemplo.jpg']
-        ];
-        inserts.forEach(([comun, cientifico, desc, img]) => {
-          db.run('INSERT OR IGNORE INTO plantas (nombreComun, nombreCientifico, descripcion, imagen) VALUES (?, ?, ?, ?)', [comun, cientifico, desc, img]);
+        // Verificar si hay plantas, si no, insertar iniciales
+        db.get('SELECT COUNT(*) as count FROM plantas', [], (err, row) => {
+          if (err) {
+            console.error('Error verificando plantas:', err);
+          } else if (row.count === 0) {
+          } else {
+            console.log('Datos iniciales ya existen.');
+          }
         });
       }
     });
@@ -81,6 +82,7 @@ app.get('/api/plantas/search', (req, res) => {
   });
 });
 
+
 // Agregar una nueva planta
 app.post('/api/plantas', (req, res) => {
   const { nombreComun, nombreCientifico, descripcion, imagen } = req.body;
@@ -98,5 +100,5 @@ app.post('/api/plantas', (req, res) => {
 process.on('exit', () => db.close());
 
 // Iniciar servidor
-const PORT = process.env.PORT || 5001;
+const PORT = 5004;
 app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
