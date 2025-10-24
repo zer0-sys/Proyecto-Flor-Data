@@ -3,6 +3,6 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "./start.sh"
+    "startCommand": "npm start"
   }
 }
