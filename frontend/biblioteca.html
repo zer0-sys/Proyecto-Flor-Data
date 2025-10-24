@@ -154,6 +154,42 @@
             font-size: 1em;
             color: #333;
         }
+
+        /* Estilos para formulario de agregar planta */
+        .add-plant-form {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            max-width: 500px;
+        }
+
+        .add-plant-form h3 {
+            margin-bottom: 15px;
+            color: #2e7d32;
+        }
+
+        .add-plant-form input,
+        .add-plant-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .add-plant-form button {
+            background: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-plant-form button:hover {
+            background: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -184,6 +220,16 @@
 
         <div id="plant-list">
             <!-- Las plantas se cargarán dinámicamente desde la API -->
+        </div>
+
+        <!-- Formulario para agregar planta -->
+        <div class="add-plant-form">
+            <h3>Agregar Nueva Planta</h3>
+            <input type="text" id="nombreComun" placeholder="Nombre Común" required>
+            <input type="text" id="nombreCientifico" placeholder="Nombre Científico" required>
+            <textarea id="descripcion" placeholder="Descripción" required></textarea>
+            <input type="file" id="imagen" accept="image/*">
+            <button onclick="agregarPlanta()">Agregar Planta</button>
         </div>
     </div>
 
@@ -225,6 +271,44 @@
                 .then(res => res.json())
                 .then(renderPlantas);
         });
+
+        // Función para subir imagen
+        async function subirImagen() {
+            const file = document.getElementById('imagen').files[0];
+            if (!file) return null;
+            const formData = new FormData();
+            formData.append('imagen', file);
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            return data.url || null;
+        }
+
+        // Función para agregar planta
+        async function agregarPlanta() {
+            const nombreComun = document.getElementById('nombreComun').value;
+            const nombreCientifico = document.getElementById('nombreCientifico').value;
+            const descripcion = document.getElementById('descripcion').value;
+            if (!nombreComun || !nombreCientifico || !descripcion) return alert('Completa todos los campos');
+
+            const imagenUrl = await subirImagen();
+
+            const res = await fetch('/api/plantas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombreComun, nombreCientifico, descripcion, imagen: imagenUrl })
+            });
+
+            if (res.ok) {
+                alert('Planta agregada');
+                document.getElementById('nombreComun').value = '';
+                document.getElementById('nombreCientifico').value = '';
+                document.getElementById('descripcion').value = '';
+                document.getElementById('imagen').value = '';
+                fetch('/api/plantas').then(res => res.json()).then(renderPlantas); // Recargar lista
+            } else {
+                alert('Error agregando planta');
+            }
+        }
     </script>
 </body>
 </html>
