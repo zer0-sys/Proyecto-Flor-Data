@@ -3,11 +3,22 @@ const express = require('express');
 const { Pool } = require('pg'); // Cambia de sqlite3 a pg
 const cors = require('cors');
 const path = require('path');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('frontend'));
+
+// Configurar Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const upload = multer({ dest: 'uploads/' }); // Carpeta temporal
 
 // Conectar a PostgreSQL (en Supabase)
 const pool = new Pool({
@@ -76,6 +87,17 @@ app.post('/api/plantas', async (req, res) => {
   } catch (err) {
     console.error('Error en POST /api/plantas:', err);
     res.status(400).json({ error: err.message || 'Error interno' });
+  }
+});
+
+// Subir imagen a Cloudinary
+app.post('/api/upload', upload.single('imagen'), async (req, res) => {
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path);
+    res.json({ url: result.secure_url });
+  } catch (err) {
+    console.error('Error subiendo imagen:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 
