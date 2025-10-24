@@ -2,10 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const { Pool } = require('pg'); // Cambia de sqlite3 a pg
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static('frontend'));
 
 // Conectar a PostgreSQL (en Supabase)
 const pool = new Pool({
@@ -75,6 +77,11 @@ app.post('/api/plantas', async (req, res) => {
     console.error('Error en POST /api/plantas:', err);
     res.status(400).json({ error: err.message || 'Error interno' });
   }
+});
+
+// Servir frontend para rutas no API
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/index.html'));
 });
 
 // Cerrar pool al salir (opcional, para desarrollo)
