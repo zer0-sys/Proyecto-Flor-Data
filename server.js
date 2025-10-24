@@ -75,6 +75,24 @@ app.get('/api/plantas/search', async (req, res) => {
   }
 });
 
+// Obtener una planta por ID
+app.get('/api/plantas/:id', async (req, res) => {
+  const { id } = req.params;
+  console.log('Obteniendo planta con ID:', id);
+  try {
+    const sql = 'SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, imagen FROM plantas WHERE id = $1';
+    const result = await pool.query(sql, [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Planta no encontrada' });
+    }
+    console.log('Planta obtenida:', result.rows[0]);
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error en GET /api/plantas/:id:', err);
+    res.status(500).json({ error: err.message || 'Error interno' });
+  }
+});
+
 // Agregar una nueva planta
 app.post('/api/plantas', async (req, res) => {
   const { nombreComun, nombreCientifico, descripcion, imagen } = req.body;
