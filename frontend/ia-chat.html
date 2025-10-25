@@ -196,8 +196,12 @@
 </head>
 
 <body>
+
     <header>
-        <div class="logo-bar"><span>Flor Data</span></div>
+        <div class="logo-bar">
+            <img src="logo-unach.png" alt="UNACH">
+            <span>Flor Data</span>
+        </div>
         <nav>
             <ul>
                 <li><a href="index.html?skip_splash=true#inicio">INICIO</a></li>
@@ -206,7 +210,12 @@
                 <li><a href="#">APLICACIÓN</a></li>
             </ul>
         </nav>
-        <div class="social"></div>
+
+        <div class="social">
+            <a href="https://www.facebook.com/unach.mx" target="_blank" rel="noopener noreferrer">
+                <img src="facebook.png" alt="Facebook">
+            </a>
+        </div>
     </header>
 
     <div class="chat-view">
@@ -217,11 +226,12 @@
                     <img src="mascota-ia.png" alt="Bot IA">
                 </div>
                 <div class="message-content">
-                    ¡Hola! Soy tu <b>Botani</b>. Estoy aquí para ayudarte con información sobre nuestra
+                    ¡Hola! Soy tu <b>Asistente Botánico</b>. Estoy aquí para ayudarte con información sobre nuestra
                     flora, la página web, o resolver tus dudas botánicas. ¿Qué quieres saber hoy?
                 </div>
             </div>
         </div>
+
         <div class="input-area">
             <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
             <button>Enviar</button>
@@ -304,51 +314,32 @@
                 }
             }
 
-            /* ================================================================
-            ¡CAMBIO 1: Nueva función para "limpiar" el texto!
-            ================================================================
-            */
             normalizeString(str) {
                 return str
-                    .toLowerCase() // 1. Pone todo en minúsculas
-                    .normalize("NFD") // 2. Separa acentos de las letras
-                    .replace(/[\u0300-\u036f]/g, "") // 3. Quita los acentos
-                    .replace(/[¿?¡!.,]/g, ""); // 4. Quita puntuación común
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[¿?¡!.,]/g, "");
             }
 
-            // --- Cerebro del Bot (Actualizado) ---
             async getBotResponse(userMessage) {
-                /* ================================================================
-                ¡CAMBIO 2: Usamos la función de normalización!
-                ================================================================
-                */
                 const input = this.normalizeString(userMessage);
 
                 // --- Intenciones Básicas ---
                 if (input.includes("hola") || input.includes("buenos dias")) {
-                    return "¡Hola! Soy Botani. ¿En qué puedo ayudarte hoy?";
+                    return "¡Hola! Soy FloraBot. ¿En qué puedo ayudarte hoy?";
                 }
                 if (input.includes("gracias")) {
                     return "¡De nada! Es un placer ayudarte con tus dudas sobre plantas.";
                 }
-                if (input.includes("adios") || input.includes("hasta luego")) { // Sin acento
+                if (input.includes("adios") || input.includes("hasta luego")) {
                     return "¡Espero haberte ayudado! Que tengas un gran día. 🌱";
                 }
 
-                /* ================================================================
-                ¡CAMBIO 3: Lógica mejorada para detectar la pregunta!
-                ================================================================
-                */
-                // Busca la palabra "planta" (o "plantas")
+                // --- Intención: "qué plantas hay" ---
                 const hasPlantas = input.includes("planta");
-                // Busca palabras clave de pregunta
-                const hasQuery = input.includes("que") ||
-                    input.includes("cual") ||
-                    input.includes("tienes") ||
-                    input.includes("hay") ||
-                    input.includes("lista");
+                const hasQuery = input.includes("que") || input.includes("cual") || input.includes("tienes") || input.includes("hay") || input.includes("lista");
 
-                // Si pregunta por la lista de plantas O menciona la biblioteca
                 if ((hasPlantas && hasQuery) || input.includes("biblioteca")) {
                     if (this.plantList.length === 0) {
                         return "Aún estoy intentando conectar con la biblioteca, pero no tengo la lista.";
@@ -368,11 +359,7 @@
                     }
                 }
 
-                /* ================================================================
-                ¡CAMBIO 4: Normaliza también los nombres de la base de datos!
-                ================================================================
-                */
-                // Compara el input "limpio" con el nombre de la planta "limpio"
+                // --- Intención: "curiosidades de [planta]" ---
                 const foundPlant = this.plantList.find(planta =>
                     input.includes(this.normalizeString(planta.nombreComun))
                 );
@@ -387,7 +374,7 @@
                         if (input.includes("curiosidad")) {
                             return `<b>Curiosidad de ${plantData.nombreComun}:</b> ${plantData.curiosidades || 'No tengo curiosidades para esta planta.'}`;
                         }
-                        if (input.includes("descripcion")) { // Sin acento
+                        if (input.includes("descripcion")) {
                             return `<b>Descripción de ${plantData.nombreComun}:</b> ${plantData.descripcion || 'No tengo descripción.'}`;
                         }
 
@@ -400,7 +387,6 @@
                 }
 
                 // --- Intención Default (No entendido) ---
-                // Se actualiza el mensaje de error para reflejar la nueva lógica
                 return "Lo siento, no entendí eso. Pregúntame 'qué plantas hay' o 'dame una curiosidad de la monstera'.";
             }
 
