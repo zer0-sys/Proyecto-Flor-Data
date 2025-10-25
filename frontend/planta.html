@@ -20,7 +20,7 @@
             color: #333;
         }
 
-        /* --- Barra de navegación --- */
+        /* --- Barra de navegación (SIN CAMBIOS) --- */
         header {
             background: #2c2c2c;
             padding: 10px 30px;
@@ -31,45 +31,15 @@
             top: 0;
             z-index: 100;
         }
+        .logo-bar { display: flex; align-items: center; gap: 15px; }
+        .logo-bar img { height: 50px; }
+        .logo-bar span { font-size: 20px; font-weight: bold; color: white; }
+        nav ul { list-style: none; display: flex; gap: 30px; }
+        nav ul li a { text-decoration: none; color: white; font-size: 16px; transition: color 0.3s ease; }
+        nav ul li a:hover { color: #6bbf59; }
+        .social img { height: 28px; }
 
-        .logo-bar {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-bar img {
-            height: 50px;
-        }
-
-        .logo-bar span {
-            font-size: 20px;
-            font-weight: bold;
-            color: white;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 30px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 16px;
-            transition: color 0.3s ease;
-        }
-
-        nav ul li a:hover {
-            color: #6bbf59;
-        }
-
-        .social img {
-            height: 28px;
-        }
-
-        /* --- Contenedor Principal (verde claro con borde morado) --- */
+        /* --- Contenedor Principal (SIN CAMBIOS) --- */
         .container {
             max-width: 800px;
             margin: 20px auto;
@@ -80,37 +50,43 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* --- Ajuste para la imagen de la planta --- */
+        /* --- Ajuste del contenedor de la planta (SIN CAMBIOS) --- */
         .plant-detail {
-            /* Añadimos display flex y justify-content center
-            para centrar la imagen si es más pequeña que el 100% */
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centra horizontalmente la imagen */
-            margin-bottom: 20px; /* Espacio debajo del contenido de la planta */
+            align-items: center; 
+            margin-bottom: 20px; 
         }
         
+        /* ============================================================
+        ¡AQUÍ ESTÁ EL CAMBIO!
+        Se quitó la altura fija (height) y el object-fit 
+        para que la imagen no se corte.
+        Se redujo el max-width para hacerla más pequeña.
+        ============================================================
+        */
         .plant-detail img {
-            max-width: 500px; /* Tamaño máximo deseado para la imagen */
-            width: 100%; /* Asegura que la imagen sea responsiva hasta su max-width */
-            height: 250px; /* ¡CAMBIO CLAVE! Altura fija para todas las imágenes */
-            object-fit: cover; /* ¡CAMBIO CLAVE! Corta la imagen si es necesario para rellenar el espacio */
+            max-width: 400px; /* ¡CAMBIO! Más pequeña (antes 500px) */
+            width: 100%; 
+            /* height: 250px; (ELIMINADO) */
+            /* object-fit: cover; (ELIMINADO) */
             border-radius: 15px; 
-            margin: 0 auto 20px auto; /* Centrada y espacio abajo */
+            margin: 0 auto 20px auto; 
             display: block;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         /* --- Fin de ajustes de imagen --- */
 
-        /* --- Estilos para las secciones de la Base de Datos --- */
+        /* --- Estilos para las secciones (SIN CAMBIOS) --- */
+        /* (El texto seguirá teniendo 500px de ancho, lo cual se ve bien) */
         .plant-detail h4 {
             color: #2c522f; 
             margin-top: 0;
             margin-bottom: 5px;
             font-size: 1.2em;
             text-align: left;
-            width: 100%; /* Asegura que ocupe todo el ancho disponible */
-            max-width: 500px; /* Limita el ancho como la imagen */
+            width: 100%; 
+            max-width: 500px; 
         }
         
         .plant-detail p, .plant-detail h2 {
@@ -120,27 +96,25 @@
             margin-bottom: 20px;
             text-align: left;
             font-size: 1em;
-            width: 100%; /* Asegura que ocupe todo el ancho disponible */
-            max-width: 500px; /* Limita el ancho como la imagen */
+            width: 100%; 
+            max-width: 500px; 
         }
-
         .plant-detail h2 {
             font-style: italic;
             font-weight: normal;
             font-size: 1.1em;
         }
-
         .plant-detail hr {
             border: 0;
             height: 1px;
             background-color: #c4cbbA; 
             margin: 20px 0;
-            width: 100%; /* Asegura que ocupe todo el ancho disponible */
-            max-width: 500px; /* Limita el ancho como la imagen */
+            width: 100%; 
+            max-width: 500px; 
         }
         /* --- Fin de estilos de sección --- */
 
-        /* --- Botón "Volver" (redondo) --- */
+        /* --- Botón "Volver" (SIN CAMBIOS) --- */
         .back-btn {
             display: inline-block;
             background-color: #f0f0f0; 
@@ -157,25 +131,23 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: background-color 0.3s;
         }
-
         .back-btn:hover {
             background: #ddd;
         }
 
-        /* --- Estilos de Carga y Error --- */
+        /* --- Estilos de Carga y Error (SIN CAMBIOS) --- */
         .loading {
             text-align: center;
             font-size: 1.5em;
             margin-top: 50px;
-            max-width: 100%; /* Para que el texto de carga también esté centrado */
+            max-width: 100%;
         }
-
         .error {
             text-align: center;
             color: red;
             font-size: 1.5em;
             margin-top: 50px;
-            max-width: 100%; /* Para el texto de error */
+            max-width: 100%;
         }
     </style>
 </head>
