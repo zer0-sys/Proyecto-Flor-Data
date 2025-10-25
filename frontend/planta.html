@@ -16,14 +16,11 @@
             height: 100%;
             font-family: Arial, sans-serif;
             scroll-behavior: smooth;
-            /* ¡CAMBIO! 
-            Este es el color verde de fondo de tu maqueta original 
-            */
             background-color: #a3b899; 
             color: #333;
         }
 
-        /* --- Barra de navegación (Tus estilos originales) --- */
+        /* --- Barra de navegación --- */
         header {
             background: #2c2c2c;
             padding: 10px 30px;
@@ -72,43 +69,48 @@
             height: 28px;
         }
 
-        /* ¡CAMBIO! 
-        Estilos del contenedor principal para coincidir con la maqueta 
-        */
+        /* --- Contenedor Principal (verde claro con borde morado) --- */
         .container {
             max-width: 800px;
             margin: 20px auto;
             padding: 25px;
-            /* Color de fondo del contenedor */
             background: #e0e6d9; 
             border-radius: 15px;
-            /* Borde morado que señalaste en la maqueta */
             border: 3px solid #9078E8; 
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* ¡CAMBIO! 
-        Estilos para la imagen de la planta 
-        */
+        /* --- Ajuste para la imagen de la planta --- */
+        .plant-detail {
+            /* Añadimos display flex y justify-content center
+            para centrar la imagen si es más pequeña que el 100% */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centra horizontalmente la imagen */
+            margin-bottom: 20px; /* Espacio debajo del contenido de la planta */
+        }
+        
         .plant-detail img {
-            max-width: 500px; /* Tamaño máximo */
-            width: 100%; /* Responsiva */
-            height: auto;
-            border-radius: 15px; /* Bordes redondeados */
-            margin: 0 auto 20px auto; /* Centrada */
+            max-width: 500px; /* Tamaño máximo deseado para la imagen */
+            width: 100%; /* Asegura que la imagen sea responsiva hasta su max-width */
+            height: 250px; /* ¡CAMBIO CLAVE! Altura fija para todas las imágenes */
+            object-fit: cover; /* ¡CAMBIO CLAVE! Corta la imagen si es necesario para rellenar el espacio */
+            border-radius: 15px; 
+            margin: 0 auto 20px auto; /* Centrada y espacio abajo */
             display: block;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
+        /* --- Fin de ajustes de imagen --- */
 
-        /* ¡NUEVO! 
-        Estilos para las secciones de la Base de Datos 
-        */
+        /* --- Estilos para las secciones de la Base de Datos --- */
         .plant-detail h4 {
-            color: #2c522f; /* Verde oscuro para títulos de sección */
+            color: #2c522f; 
             margin-top: 0;
             margin-bottom: 5px;
             font-size: 1.2em;
-            text-align: left; /* Alineado a la izquierda */
+            text-align: left;
+            width: 100%; /* Asegura que ocupe todo el ancho disponible */
+            max-width: 500px; /* Limita el ancho como la imagen */
         }
         
         .plant-detail p, .plant-detail h2 {
@@ -116,43 +118,42 @@
             line-height: 1.6;
             margin-top: 0;
             margin-bottom: 20px;
-            text-align: left; /* Alineado a la izquierda */
-            font-size: 1em; /* Tamaño de texto normal */
+            text-align: left;
+            font-size: 1em;
+            width: 100%; /* Asegura que ocupe todo el ancho disponible */
+            max-width: 500px; /* Limita el ancho como la imagen */
         }
 
         .plant-detail h2 {
-            /* Estilo específico para el nombre científico */
             font-style: italic;
             font-weight: normal;
             font-size: 1.1em;
         }
 
         .plant-detail hr {
-            /* Línea divisora */
             border: 0;
             height: 1px;
             background-color: #c4cbbA; 
             margin: 20px 0;
+            width: 100%; /* Asegura que ocupe todo el ancho disponible */
+            max-width: 500px; /* Limita el ancho como la imagen */
         }
-        /* --- Fin de nuevos estilos de sección --- */
+        /* --- Fin de estilos de sección --- */
 
-
-        /* ¡CAMBIO! 
-        Estilo del botón "Volver" para que sea redondo como en la maqueta 
-        */
+        /* --- Botón "Volver" (redondo) --- */
         .back-btn {
             display: inline-block;
-            background-color: #f0f0f0; /* Color del botón en la maqueta */
+            background-color: #f0f0f0; 
             color: #333;
             font-size: 24px;
             font-weight: bold;
             text-decoration: none;
             width: 50px;
             height: 50px;
-            line-height: 50px; /* Centra la flecha verticalmente */
+            line-height: 50px; 
             text-align: center;
-            border-radius: 50%; /* Lo hace circular */
-            margin-bottom: 10px; /* Espacio antes del contenedor */
+            border-radius: 50%; 
+            margin-bottom: 10px; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: background-color 0.3s;
         }
@@ -161,11 +162,12 @@
             background: #ddd;
         }
 
-        /* Tus estilos de Carga y Error (sin cambios) */
+        /* --- Estilos de Carga y Error --- */
         .loading {
             text-align: center;
             font-size: 1.5em;
             margin-top: 50px;
+            max-width: 100%; /* Para que el texto de carga también esté centrado */
         }
 
         .error {
@@ -173,13 +175,14 @@
             color: red;
             font-size: 1.5em;
             margin-top: 50px;
+            max-width: 100%; /* Para el texto de error */
         }
     </style>
 </head>
 <body>
     <header>
         <div class="logo-bar">
-            <img src="logo-unach.png" alt="UNACH">
+            <img src="logo-unach.png" alt="UNACH"> 
             <span>Flor Data</span>
         </div>
         <nav>
@@ -191,7 +194,7 @@
             </ul>
         </nav>
         <div class="social">
-            <a href="#"><img src="facebook.png" alt="Facebook"></a>
+            <a href="#"><img src="facebook.png" alt="Facebook"></a> 
         </div>
     </header>
 
@@ -214,33 +217,32 @@
             document.getElementById('plant-detail').innerHTML = '<div class="error">ID de planta no especificado</div>';
         } else {
             // Cargar detalles de la planta
-            fetch(`/api/plantas/${plantId}`)
+            // Asumiendo que tu API está en la misma URL base
+            fetch(`/api/plantas/${plantId}`) 
                 .then(res => {
-                    if (!res.ok) throw new Error('Planta no encontrada');
+                    if (!res.ok) {
+                        // Si la respuesta no es OK (ej. 404 Not Found), lanzamos un error
+                        throw new Error(`Error HTTP: ${res.status} - Planta no encontrada`);
+                    }
                     return res.json();
                 })
                 .then(planta => {
-
-                    /* ¡CAMBIO IMPORTANTE!
-                    Aquí rellenamos el HTML con las secciones
-                    que pediste (Nombre, Descripción, etc.)
-                    Asegúrate que tu base de datos envíe "curiosidades"
-                    */
+                    // Aseguramos que la estructura de la información se adapte al diseño
                     document.getElementById('plant-detail').innerHTML = `
                         <img src="${planta.imagen || 'placeholder.jpg'}" alt="${planta.nombreComun}">
                         
                         <h4>Nombre Común:</h4>
-                        <p>${planta.nombreComun}</p>
+                        <p>${planta.nombreComun || 'No disponible'}</p>
                         
                         <hr>
                         
                         <h4>Nombre Científico:</h4>
-                        <h2>${planta.nombreCientifico}</h2>
+                        <h2>${planta.nombreCientifico || 'No disponible'}</h2>
                         
                         <hr>
                         
                         <h4>Descripción:</h4>
-                        <p>${planta.descripcion}</p>
+                        <p>${planta.descripcion || 'No hay descripción disponible.'}</p>
                         
                         <hr>
                         
@@ -250,7 +252,7 @@
                 })
                 .catch(err => {
                     console.error('Error cargando planta:', err);
-                    document.getElementById('plant-detail').innerHTML = '<div class="error">Error al cargar la información de la planta.</div>';
+                    document.getElementById('plant-detail').innerHTML = `<div class="error">Error al cargar la información de la planta: ${err.message}</div>`;
                 });
         }
     </script>
