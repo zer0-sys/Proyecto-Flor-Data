@@ -241,13 +241,15 @@
 
         /* Reglas responsivas generales (coinciden con biblioteca) */
         @media (max-width: 900px) {
-            header { padding: 8px 16px; align-items: center; }
+            header { padding: 8px 16px; align-items: center; flex-direction: column; position: relative; gap: 8px; }
             .logo-bar img { height: 42px; }
-            nav ul { gap: 12px; flex-wrap: wrap; }
+            nav ul { gap: 12px; flex-wrap: wrap; justify-content: center; }
             nav ul li a { font-size: 14px; }
-            .download-btn { padding: 6px 10px; font-size: 14px; }
+            .download-btn { padding: 6px 14px; font-size: 14px; border-radius: 20px; margin: 6px 0; }
             .content { padding: 40px 12px; }
             .card { width: 100%; }
+            .social { position: absolute; right: 12px; top: 10px; }
+            .logo-bar { justify-content: center; gap: 10px; }
         }
 
         @media (max-width: 480px) {
