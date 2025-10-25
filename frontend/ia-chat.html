@@ -6,22 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flor Data - Asistente IA</title>
     <style>
-        /* Estilos base (tomados de tu index.html) */
+        /* --- TUS ESTILOS ORIGINALES (SIN CAMBIOS) --- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        body,
-        html {
+        body, html {
             width: 100%;
             height: 100%;
             font-family: Arial, sans-serif;
             background-color: #ebe8e3;
         }
-
-        /* Barra de navegación (Header) */
         header {
             background: #2c2c2c;
             padding: 10px 30px;
@@ -32,56 +28,22 @@
             top: 0;
             z-index: 100;
         }
-
-        .logo-bar {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-bar img {
-            height: 50px;
-        }
-
-        .logo-bar span {
-            font-size: 20px;
-            font-weight: bold;
-            color: white;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 30px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 16px;
-            transition: color 0.3s ease;
-        }
-
-        nav ul li a:hover {
-            color: #6bbf59;
-        }
-
-        .social img {
-            height: 28px;
-        }
-
-        /* Contenedor principal del chat */
+        .logo-bar { display: flex; align-items: center; gap: 15px; }
+        .logo-bar img { height: 50px; }
+        .logo-bar span { font-size: 20px; font-weight: bold; color: white; }
+        nav ul { list-style: none; display: flex; gap: 30px; }
+        nav ul li a { text-decoration: none; color: white; font-size: 16px; transition: color 0.3s ease; }
+        nav ul li a:hover { color: #6bbf59; }
+        .social img { height: 28px; }
         .chat-view {
             width: 100%;
-            height: calc(100vh - 70px);
+            height: calc(100vh - 70px); /* 70px es la altura aprox de tu header */
             background-color: #d8e4d8;
             position: relative;
             display: flex;
             flex-direction: column;
             padding: 20px;
         }
-
-        /* Botón de regreso */
         .back-button {
             position: absolute;
             top: 20px;
@@ -101,8 +63,6 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             z-index: 10;
         }
-
-        /* Área de Mensajes */
         .messages-container {
             flex-grow: 1;
             overflow-y: auto;
@@ -111,26 +71,14 @@
             width: 100%;
             max-width: 800px;
         }
-
-        /* Burbuja base */
         .message {
             display: flex;
             margin-bottom: 25px;
             align-items: flex-end;
             max-width: 100%;
         }
-
-        /* Burbuja del Bot (Izquierda) */
-        .bot-message {
-            justify-content: flex-start;
-        }
-
-        /* Burbuja del Usuario (Derecha) */
-        .user-message {
-            justify-content: flex-end;
-        }
-
-        /* Contenido de la burbuja */
+        .bot-message { justify-content: flex-start; }
+        .user-message { justify-content: flex-end; }
         .message-content {
             padding: 10px 15px;
             border-radius: 20px;
@@ -139,21 +87,17 @@
             line-height: 1.4;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-
         .bot-message .message-content {
             background-color: #f0f0f0;
             border-top-left-radius: 5px;
             margin-left: 10px;
             order: 2;
         }
-
         .user-message .message-content {
             background-color: #6bbf59;
             color: white;
             border-top-right-radius: 5px;
         }
-
-        /* Estilo de la mascota (si aparece en el chat) */
         .bot-avatar {
             width: 70px;
             height: 70px;
@@ -161,14 +105,7 @@
             flex-shrink: 0;
             order: 1;
         }
-
-        .bot-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        /* Área de entrada de texto */
+        .bot-avatar img { width: 100%; height: 100%; object-fit: contain; }
         .input-area {
             padding: 15px 20px;
             border-top: 1px solid #c0c0c0;
@@ -178,7 +115,6 @@
             width: 100%;
             margin: 0 auto;
         }
-
         .input-area input[type="text"] {
             flex-grow: 1;
             padding: 10px 20px;
@@ -187,7 +123,6 @@
             font-size: 16px;
             outline: none;
         }
-
         .input-area button {
             background-color: #2c2c2c;
             color: white;
@@ -198,33 +133,25 @@
             transition: background-color 0.3s;
             font-weight: bold;
         }
-
-        .input-area button:hover {
-            background-color: #6bbf59;
-        }
+        .input-area button:hover { background-color: #6bbf59; }
     </style>
-
 </head>
 
 <body>
     <header>
         <div class="logo-bar">
-            <a href="index.html" class="back-button" title="Regresar">&larr;</a>
-            <img src="logo-unach.png" alt="UNACH">
             <span>Flor Data</span>
         </div>
         <nav>
             <ul>
                 <li><a href="index.html?skip_splash=true#inicio">INICIO</a></li>
-
                 <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
                 <li><a href="ia-chat.html#inicio">IA</a></li>
                 <li><a href="#">APLICACIÓN</a></li>
             </ul>
         </nav>
         <div class="social">
-            <a href="#"><img src="facebook.png" alt="Facebook"></a>
-        </div>
+            </div>
     </header>
 
     <div class="chat-view">
@@ -235,7 +162,7 @@
                     <img src="mascota-ia.png" alt="Bot IA">
                 </div>
                 <div class="message-content">
-                    ¡Hola! Soy tu **Asistente Botánico IA**. Estoy aquí para ayudarte con información sobre nuestra
+                    ¡Hola! Soy tu <b>Asistente Botánico</b>. Estoy aquí para ayudarte con información sobre nuestra
                     flora, la página web, o resolver tus dudas botánicas. ¿Qué quieres saber hoy?
                 </div>
             </div>
@@ -247,103 +174,136 @@
         </div>
     </div>
 
-    <script type="module">
-    // CAMBIO FINAL: Usamos la URL correcta y volvemos a importar con llaves {}
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+    <script>
+        // --- Variables Globales ---
+        let chatMessages, userInput, sendButton;
 
-    // El resto del código se queda igual
-    let chat, chatMessages, userInput, sendButton;
+        // --- FUNCIÓN 1: Inicializar el Chat ---
+        function initializeChat() {
+            console.log("Inicializando chat simple...");
 
-    function initializeGemini() {
-        console.log("Inicializando Gemini...");
+            chatMessages = document.getElementById('chat-messages');
+            userInput = document.getElementById('user-input');
+            sendButton = document.querySelector('.input-area button');
 
-        const GEMINI_API_KEY = "AIzaSyCDQOM6DCZXDm1SU1qXl2qH3Z5qV10MgyI"; 
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
 
-        const modelName = "gemini-1.5-pro-latest"; 
+            console.log("Chat simple inicializado.");
+        }
 
-        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY); // Esta línea ahora funcionará
-        const model = genAI.getGenerativeModel({
-            model: modelName,
-            systemInstruction: "Eres Flor Data, un amable y experimentado asistente botánico de la UNACH. Tu objetivo es proporcionar información precisa sobre la flora, la fauna local y detalles sobre la página web Flor Data de forma concisa y amigable. Siempre responde en español.",
-        });
+        // --- FUNCIÓN 2: El "Cerebro" del Bot (Reemplaza a Gemini) ---
+        async function getBotResponse(userMessage) {
+            const input = userMessage.toLowerCase();
+            let botResponse = "";
 
-        chat = model.startChat();
-        
-        console.log("Gemini inicializado correctamente.");
+            // Simula un pequeño retraso para que no sea instantáneo
+            await new Promise(resolve => setTimeout(resolve, 500)); 
 
-        chatMessages = document.getElementById('chat-messages');
-        userInput = document.getElementById('user-input');
-        sendButton = document.querySelector('.input-area button');
+            // Intención: Saludo
+            if (input.includes("hola") || input.includes("buenos días")) {
+                botResponse = "¡Hola! Soy FloraBot. ¿En qué puedo ayudarte hoy?";
+            
+            // Intención: Agradecimiento
+            } else if (input.includes("gracias")) {
+                botResponse = "¡De nada! Es un placer ayudarte con tus dudas sobre plantas.";
 
-        sendButton.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                sendMessage();
+            // Intención: Despedida
+            } else if (input.includes("adiós") || input.includes("hasta luego")) {
+                botResponse = "¡Espero haberte ayudado! Que tengas un gran día. 🌱";
+            
+            // Intención: Consulta Específica (FloraData)
+            } else if (input.includes("costilla de adán") || input.includes("monstera")) {
+                botResponse = "La *Monstera deliciosa* (Costilla de Adán) es famosa por sus hojas con agujeros. ¡Es una gran planta de interior!";
+            
+            // Intención: Consulta Específica (Imagen)
+            } else if (input.includes("rosa") || input.includes("flor rosa")) {
+                botResponse = "¡Ah, sí! La imagen que subiste (image_cc2f44.jpg) es una hermosa rosa. Hay miles de variedades, pero todas son geniales.";
+
+            // Intención: Dinámica (API Call de Datos Curiosos)
+            } else if (input.includes("dato") || input.includes("curiosidad") || input.includes("aburrido")) {
+                
+                try {
+                    // Usamos una API gratuita de datos curiosos en español
+                    const response = await fetch('https://uselessfacts.js.org/api/v2/facts/random?language=es');
+                    const data = await response.json();
+                    botResponse = data.text; // Esta es la respuesta dinámica
+                
+                } catch (error) {
+                    console.error("Error fetching fact:", error);
+                    botResponse = "Oh, no pude conectarme a la base de datos de curiosidades. Intenta de nuevo.";
+                }
+
+            // Intención: Default (No entendido)
+            } else {
+                botResponse = "Lo siento, no entendí eso. Intenta preguntarme sobre 'monstera', 'rosa', o pídeme un 'dato curioso'.";
             }
-        });
-    }
-
-    async function getGeminiResponse(userMessage) {
-        try {
-            const result = await chat.sendMessage(userMessage);
-            const response = result.response;
-            const text = response.text();
-            return text;
-        } catch (error) {
-            console.error("Error al comunicarse con Gemini:", error);
-            return "Error de API: No se pudo obtener respuesta. Revisa la Consola para más detalles.";
-        }
-    }
-
-    function appendMessage(sender, text) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', `${sender}-message`);
-
-        const contentDiv = document.createElement('div');
-        contentDiv.classList.add('message-content');
-        contentDiv.innerHTML = text;
-
-        if (sender === 'bot') {
-            const avatarDiv = document.createElement('div');
-            avatarDiv.classList.add('bot-avatar');
-            avatarDiv.innerHTML = '<img src="mascota-ia.png" alt="Bot IA">';
-            messageDiv.appendChild(avatarDiv);
-        }
-        
-        messageDiv.appendChild(contentDiv);
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    const sendMessage = async function () {
-        const message = userInput.value.trim();
-        if (!message) return;
-
-        userInput.disabled = true;
-        sendButton.disabled = true;
-
-        appendMessage('user', message);
-        userInput.value = '';
-
-        appendMessage('bot', '<p style="color:#666; font-style:italic;">Flor Data IA está escribiendo...</p>');
-        const loadingMessage = chatMessages.lastElementChild.querySelector('.message-content');
-
-        try {
-            const botResponseText = await getGeminiResponse(message);
-            loadingMessage.innerHTML = botResponseText;
-        } catch (error) {
-            loadingMessage.innerHTML = "No pude conectar con el asistente de IA.";
-        } finally {
-            userInput.disabled = false;
-            sendButton.disabled = false;
-            userInput.focus();
+            
+            return botResponse;
         }
 
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+        // --- FUNCIÓN 3: Mostrar mensaje en pantalla (Tu código original) ---
+        // (Esta función es perfecta, no necesita cambios)
+        function appendMessage(sender, text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', `${sender}-message`);
 
-    document.addEventListener('DOMContentLoaded', initializeGemini);
-</script>
+            const contentDiv = document.createElement('div');
+            contentDiv.classList.add('message-content');
+            contentDiv.innerHTML = text; // Permite HTML para el "escribiendo..."
+
+            if (sender === 'bot') {
+                const avatarDiv = document.createElement('div');
+                avatarDiv.classList.add('bot-avatar');
+                avatarDiv.innerHTML = '<img src="mascota-ia.png" alt="Bot IA">';
+                messageDiv.appendChild(avatarDiv);
+            }
+            
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // --- FUNCIÓN 4: Lógica de envío (Tu código original, adaptado) ---
+        const sendMessage = async function () {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            userInput.disabled = true;
+            sendButton.disabled = true;
+
+            appendMessage('user', message);
+            userInput.value = '';
+
+            // Mensaje de "Escribiendo..."
+            appendMessage('bot', '<p style="color:#666; font-style:italic;">Flor Data está escribiendo...</p>');
+            const loadingMessage = chatMessages.lastElementChild.querySelector('.message-content');
+
+            try {
+                // Llama al NUEVO cerebro del bot
+                const botResponseText = await getBotResponse(message);
+                
+                // Reemplaza el "escribiendo..." con la respuesta real
+                loadingMessage.innerHTML = botResponseText; 
+            
+            } catch (error) {
+                loadingMessage.innerHTML = "Hubo un error al procesar tu mensaje.";
+            } finally {
+                userInput.disabled = false;
+                sendButton.disabled = false;
+                userInput.focus();
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // --- Inicia todo cuando la página carga ---
+        document.addEventListener('DOMContentLoaded', initializeChat);
+    </script>
 </body>
 
 </html>
