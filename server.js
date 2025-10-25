@@ -123,13 +123,15 @@ app.post('/api/upload', upload.single('imagen'), async (req, res) => {
 // Esto evita que peticiones a recursos (ej. /downloads/Proyecto-Flor-Data.apk) devuelvan
 // el HTML de la SPA y sean descargadas como un archivo erróneo.
 app.get('*', (req, res, next) => {
-  // Si el cliente acepta HTML, devolvemos index.html (SPA routing).
-  if (req.accepts && req.accepts('html')) {
-    return res.sendFile(path.join(__dirname, 'frontend/index.html'));
+  // Si la ruta solicita un archivo con extensión (ej. .apk, .png, .js),
+  // no devolvemos index.html. Dejar que express.static maneje el archivo.
+  const ext = require('path').extname(req.path);
+  if (ext) {
+    return next();
   }
-  // Para otros tipos (imagenes, apk, json, etc.) pasar al siguiente manejador
-  // (esto normalmente devolverá 404 si el archivo no existe en express.static)
-  return next();
+
+  // Si la ruta NO tiene extensión, asumimos navegación de SPA y devolvemos index.html
+  return res.sendFile(path.join(__dirname, 'frontend/index.html'));
 });
 
 // Cerrar pool al salir (opcional, para desarrollo)
