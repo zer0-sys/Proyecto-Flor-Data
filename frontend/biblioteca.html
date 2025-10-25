@@ -91,6 +91,30 @@
             /* ✅ CRÍTICO: Limita el icono de Facebook */
             width: 28px;
         }
+        /* Evitar efecto "presionado" o resaltado en móviles/pendientes
+           - -webkit-tap-highlight-color quita el resaltado al tocar
+           - anular transform/opacity en :active/:focus evita que parezca apachurrado
+        */
+        .social a {
+            display: inline-block;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        .social a img {
+            transition: transform 120ms ease, opacity 120ms ease;
+            transform: none;
+            opacity: 1;
+            will-change: transform, opacity;
+        }
+
+        .social a:active img,
+        .social a:focus img,
+        .social a:focus-visible img {
+            transform: none !important;
+            opacity: 1 !important;
+            box-shadow: none !important;
+        }
 
         /* ____________________________________ */
         /* ESTILOS ESPECÍFICOS DE LA BIBLIOTECA */
