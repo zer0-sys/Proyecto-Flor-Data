@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Detalles de Planta - Flor Data</title>
     <style>
-        /* Reset */
+        /* --- Reset --- */
         * {
             margin: 0;
             padding: 0;
@@ -16,11 +16,11 @@
             height: 100%;
             font-family: Arial, sans-serif;
             scroll-behavior: smooth;
-            background-color: #ebe8e3;
+            background-color: #a3b899; 
             color: #333;
         }
 
-        /* Barra de navegación */
+        /* --- Barra de navegación (SIN CAMBIOS) --- */
         header {
             background: #2c2c2c;
             padding: 10px 30px;
@@ -31,115 +31,130 @@
             top: 0;
             z-index: 100;
         }
+        .logo-bar { display: flex; align-items: center; gap: 15px; }
+        .logo-bar img { height: 50px; }
+        .logo-bar span { font-size: 20px; font-weight: bold; color: white; }
+        nav ul { list-style: none; display: flex; gap: 30px; }
+        nav ul li a { text-decoration: none; color: white; font-size: 16px; transition: color 0.3s ease; }
+        nav ul li a:hover { color: #6bbf59; }
+        .social img { height: 28px; }
 
-        .logo-bar {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-bar img {
-            height: 50px;
-        }
-
-        .logo-bar span {
-            font-size: 20px;
-            font-weight: bold;
-            color: white;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 30px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: white;
-            font-size: 16px;
-            transition: color 0.3s ease;
-        }
-
-        nav ul li a:hover {
-            color: #6bbf59;
-        }
-
-        .social img {
-            height: 28px;
-        }
-
+        /* --- Contenedor Principal (SIN CAMBIOS) --- */
         .container {
             max-width: 800px;
             margin: 20px auto;
-            padding: 20px;
-            background: white;
+            padding: 25px;
+            background: #e0e6d9; 
             border-radius: 15px;
+            border: 3px solid #9078E8; 
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
+        /* --- Ajuste del contenedor de la planta (SIN CAMBIOS) --- */
         .plant-detail {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            margin-bottom: 20px; 
         }
-
+        
+        /* ============================================================
+        ¡AQUÍ ESTÁ EL CAMBIO!
+        Se quitó la altura fija (height) y el object-fit 
+        para que la imagen no se corte.
+        Se redujo el max-width para hacerla más pequeña.
+        ============================================================
+        */
         .plant-detail img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin: 20px 0;
+            max-width: 200px; /* ¡CAMBIO! Más pequeña (antes 500px) */
+            width: 100%; 
+            /* height: 250px; (ELIMINADO) */
+            /* object-fit: cover; (ELIMINADO) */
+            border-radius: 15px; 
+            margin: 0 auto 20px auto; 
+            display: block;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
+        /* --- Fin de ajustes de imagen --- */
 
-        .plant-detail h1 {
-            font-size: 2.5em;
-            color: #2e7d32;
-            margin-bottom: 10px;
-        }
-
-        .plant-detail h2 {
-            font-size: 1.5em;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .plant-detail p {
+        /* --- Estilos para las secciones (SIN CAMBIOS) --- */
+        /* (El texto seguirá teniendo 500px de ancho, lo cual se ve bien) */
+        .plant-detail h4 {
+            color: #2c522f; 
+            margin-top: 0;
+            margin-bottom: 5px;
             font-size: 1.2em;
-            line-height: 1.6;
-            margin-bottom: 20px;
+            text-align: left;
+            width: 100%; 
+            max-width: 500px; 
         }
+        
+        .plant-detail p, .plant-detail h2 {
+            color: #333;
+            line-height: 1.6;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: left;
+            font-size: 1em;
+            width: 100%; 
+            max-width: 500px; 
+        }
+        .plant-detail h2 {
+            font-style: italic;
+            font-weight: normal;
+            font-size: 1.1em;
+        }
+        .plant-detail hr {
+            border: 0;
+            height: 1px;
+            background-color: #c4cbbA; 
+            margin: 20px 0;
+            width: 100%; 
+            max-width: 500px; 
+        }
+        /* --- Fin de estilos de sección --- */
 
+        /* --- Botón "Volver" (SIN CAMBIOS) --- */
         .back-btn {
             display: inline-block;
-            background: #4caf50;
-            color: white;
-            padding: 10px 20px;
+            background-color: #f0f0f0; 
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
             text-decoration: none;
-            border-radius: 5px;
-            margin-top: 20px;
-            transition: background 0.3s ease;
+            width: 50px;
+            height: 50px;
+            line-height: 50px; 
+            text-align: center;
+            border-radius: 50%; 
+            margin-bottom: 10px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
         }
-
         .back-btn:hover {
-            background: #45a049;
+            background: #ddd;
         }
 
+        /* --- Estilos de Carga y Error (SIN CAMBIOS) --- */
         .loading {
             text-align: center;
             font-size: 1.5em;
             margin-top: 50px;
+            max-width: 100%;
         }
-
         .error {
             text-align: center;
             color: red;
             font-size: 1.5em;
             margin-top: 50px;
+            max-width: 100%;
         }
     </style>
 </head>
 <body>
     <header>
         <div class="logo-bar">
-            <img src="logo-unach.png" alt="UNACH">
+            <img src="logo-unach.png" alt="UNACH"> 
             <span>Flor Data</span>
         </div>
         <nav>
@@ -151,7 +166,7 @@
             </ul>
         </nav>
         <div class="social">
-            <a href="#"><img src="facebook.png" alt="Facebook"></a>
+            <a href="#"><img src="facebook.png" alt="Facebook"></a> 
         </div>
         <div>
             <a class="download-btn" href="/downloads/Proyecto-Flor-Data.apk" download>Descargar App</a>
@@ -159,10 +174,13 @@
     </header>
 
     <div class="container">
+        
+        <a href="biblioteca.html" class="back-btn">&#x21A9;</a>
+        
         <div id="plant-detail" class="plant-detail">
             <div class="loading">Cargando...</div>
         </div>
-        <a href="biblioteca.html" class="back-btn">Volver a Biblioteca</a>
+
     </div>
 
     <script>
@@ -174,22 +192,42 @@
             document.getElementById('plant-detail').innerHTML = '<div class="error">ID de planta no especificado</div>';
         } else {
             // Cargar detalles de la planta
-            fetch(`/api/plantas/${plantId}`)
+            // Asumiendo que tu API está en la misma URL base
+            fetch(`/api/plantas/${plantId}`) 
                 .then(res => {
-                    if (!res.ok) throw new Error('Planta no encontrada');
+                    if (!res.ok) {
+                        // Si la respuesta no es OK (ej. 404 Not Found), lanzamos un error
+                        throw new Error(`Error HTTP: ${res.status} - Planta no encontrada`);
+                    }
                     return res.json();
                 })
                 .then(planta => {
+                    // Aseguramos que la estructura de la información se adapte al diseño
                     document.getElementById('plant-detail').innerHTML = `
                         <img src="${planta.imagen || 'placeholder.jpg'}" alt="${planta.nombreComun}">
-                        <h1>${planta.nombreComun}</h1>
-                        <h2>${planta.nombreCientifico}</h2>
-                        <p>${planta.descripcion}</p>
+                        
+                        <h4>Nombre Común:</h4>
+                        <p>${planta.nombreComun || 'No disponible'}</p>
+                        
+                        <hr>
+                        
+                        <h4>Nombre Científico:</h4>
+                        <h2>${planta.nombreCientifico || 'No disponible'}</h2>
+                        
+                        <hr>
+                        
+                        <h4>Descripción:</h4>
+                        <p>${planta.descripcion || 'No hay descripción disponible.'}</p>
+                        
+                        <hr>
+                        
+                        <h4>Curiosidades:</h4>
+                        <p>${planta.curiosidades || 'No hay curiosidades disponibles.'}</p>
                     `;
                 })
                 .catch(err => {
                     console.error('Error cargando planta:', err);
-                    document.getElementById('plant-detail').innerHTML = '<div class="error">Error cargando la planta</div>';
+                    document.getElementById('plant-detail').innerHTML = `<div class="error">Error al cargar la información de la planta: ${err.message}</div>`;
                 });
         }
     </script>

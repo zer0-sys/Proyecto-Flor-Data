@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flor Data - Asistente IA</title>
     <style>
-        /* Estilos base (tomados de tu index.html) */
+        /* --- TUS ESTILOS ORIGINALES (SIN CAMBIOS) --- */
         * {
             margin: 0;
             padding: 0;
@@ -21,7 +21,6 @@
             background-color: #ebe8e3;
         }
 
-        /* Barra de navegación (Header) */
         header {
             background: #2c2c2c;
             padding: 10px 30px;
@@ -70,7 +69,6 @@
             height: 28px;
         }
 
-        /* Contenedor principal del chat */
         .chat-view {
             width: 100%;
             height: calc(100vh - 70px);
@@ -81,7 +79,6 @@
             padding: 20px;
         }
 
-        /* Botón de regreso */
         .back-button {
             position: absolute;
             top: 20px;
@@ -102,7 +99,6 @@
             z-index: 10;
         }
 
-        /* Área de Mensajes */
         .messages-container {
             flex-grow: 1;
             overflow-y: auto;
@@ -112,7 +108,6 @@
             max-width: 800px;
         }
 
-        /* Burbuja base */
         .message {
             display: flex;
             margin-bottom: 25px;
@@ -120,17 +115,14 @@
             max-width: 100%;
         }
 
-        /* Burbuja del Bot (Izquierda) */
         .bot-message {
             justify-content: flex-start;
         }
 
-        /* Burbuja del Usuario (Derecha) */
         .user-message {
             justify-content: flex-end;
         }
 
-        /* Contenido de la burbuja */
         .message-content {
             padding: 10px 15px;
             border-radius: 20px;
@@ -153,7 +145,6 @@
             border-top-right-radius: 5px;
         }
 
-        /* Estilo de la mascota (si aparece en el chat) */
         .bot-avatar {
             width: 70px;
             height: 70px;
@@ -168,7 +159,6 @@
             object-fit: contain;
         }
 
-        /* Área de entrada de texto */
         .input-area {
             padding: 15px 20px;
             border-top: 1px solid #c0c0c0;
@@ -203,27 +193,28 @@
             background-color: #6bbf59;
         }
     </style>
-
 </head>
 
 <body>
+
     <header>
         <div class="logo-bar">
-            <a href="index.html" class="back-button" title="Regresar">&larr;</a>
             <img src="logo-unach.png" alt="UNACH">
             <span>Flor Data</span>
         </div>
         <nav>
             <ul>
                 <li><a href="index.html?skip_splash=true#inicio">INICIO</a></li>
-
                 <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
                 <li><a href="ia-chat.html#inicio">IA</a></li>
                 <li><a href="#">APLICACIÓN</a></li>
             </ul>
         </nav>
+
         <div class="social">
-            <a href="#"><img src="facebook.png" alt="Facebook"></a>
+            <a href="https://www.facebook.com/profile.php?id=100057134842799" target="_blank" rel="noopener noreferrer">
+                <img src="facebook.png" alt="Facebook">
+            </a>
         </div>
     </header>
 
@@ -235,7 +226,7 @@
                     <img src="mascota-ia.png" alt="Bot IA">
                 </div>
                 <div class="message-content">
-                    ¡Hola! Soy tu **Asistente Botánico IA**. Estoy aquí para ayudarte con información sobre nuestra
+                    ¡Hola! Soy tu <b>Botani</b>. Estoy aquí para ayudarte con información sobre nuestra
                     flora, la página web, o resolver tus dudas botánicas. ¿Qué quieres saber hoy?
                 </div>
             </div>
@@ -247,103 +238,182 @@
         </div>
     </div>
 
-    <script type="module">
-    // CAMBIO FINAL: Usamos la URL correcta y volvemos a importar con llaves {}
-    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-
-    // El resto del código se queda igual
-    let chat, chatMessages, userInput, sendButton;
-
-    function initializeGemini() {
-        console.log("Inicializando Gemini...");
-
-        const GEMINI_API_KEY = "AIzaSyCDQOM6DCZXDm1SU1qXl2qH3Z5qV10MgyI"; 
-
-        const modelName = "gemini-1.5-pro-latest"; 
-
-        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY); // Esta línea ahora funcionará
-        const model = genAI.getGenerativeModel({
-            model: modelName,
-            systemInstruction: "Eres Flor Data, un amable y experimentado asistente botánico de la UNACH. Tu objetivo es proporcionar información precisa sobre la flora, la fauna local y detalles sobre la página web Flor Data de forma concisa y amigable. Siempre responde en español.",
-        });
-
-        chat = model.startChat();
-        
-        console.log("Gemini inicializado correctamente.");
-
-        chatMessages = document.getElementById('chat-messages');
-        userInput = document.getElementById('user-input');
-        sendButton = document.querySelector('.input-area button');
-
-        sendButton.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                sendMessage();
+    <script>
+        class FloraBot {
+            constructor() {
+                this.plantList = [];
+                this.chatMessages = document.getElementById('chat-messages');
+                this.userInput = document.getElementById('user-input');
+                this.sendButton = document.querySelector('.input-area button');
+                this.loadingMessageElement = null;
+                this.initialize();
             }
+
+            async initialize() {
+                this.sendButton.addEventListener('click', () => this.sendMessage());
+                this.userInput.addEventListener('keypress', (event) => {
+                    if (event.key === 'Enter') this.sendMessage();
+                });
+
+                setTimeout(() => {
+                    this.appendLoadingMessage();
+                    this.fetchPlantList();
+                }, 500);
+            }
+
+            appendLoadingMessage() {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', 'bot-message');
+                const contentDiv = document.createElement('div');
+                contentDiv.classList.add('message-content');
+                contentDiv.innerHTML = '<p style="color:#666; font-style:italic;">Estoy cargando la información de la biblioteca...</p>';
+                const avatarDiv = document.createElement('div');
+                avatarDiv.classList.add('bot-avatar');
+                avatarDiv.innerHTML = '<img src="mascota-ia.png" alt="Bot IA">';
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                this.chatMessages.appendChild(messageDiv);
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+                this.loadingMessageElement = contentDiv;
+            }
+
+            async fetchPlantList() {
+                try {
+                    const response = await fetch('/api/plantas');
+                    if (!response.ok) throw new Error('No se pudo cargar la lista de plantas.');
+                    this.plantList = await response.json();
+                    if (this.loadingMessageElement) {
+                        this.loadingMessageElement.innerHTML = '¡Listo! Ya tengo toda la información. ¿Qué te gustaría aprender hoy?';
+                    }
+                } catch (error) {
+                    console.error("Error al cargar la lista de plantas:", error);
+                    if (this.loadingMessageElement) {
+                        this.loadingMessageElement.innerHTML = 'Error: No pude conectarme a la biblioteca. Mis respuestas serán limitadas, pero ¡pregunta!';
+                    }
+                }
+            }
+
+            async sendMessage() {
+                const message = this.userInput.value.trim();
+                if (!message) return;
+                this.userInput.disabled = true;
+                this.sendButton.disabled = true;
+                this.appendMessage('user', message);
+                this.userInput.value = '';
+                this.appendMessage('bot', '<p style="color:#666; font-style:italic;">Flor Data está pensando...</p>');
+                const loadingMessage = this.chatMessages.lastElementChild.querySelector('.message-content');
+                try {
+                    const botResponseText = await this.getBotResponse(message);
+                    loadingMessage.innerHTML = botResponseText;
+                } catch (error) {
+                    loadingMessage.innerHTML = "Hubo un error al procesar tu mensaje.";
+                } finally {
+                    this.userInput.disabled = false;
+                    this.sendButton.disabled = false;
+                    this.userInput.focus();
+                }
+            }
+
+            normalizeString(str) {
+                return str
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[¿?¡!.,]/g, "");
+            }
+
+            async getBotResponse(userMessage) {
+                const input = this.normalizeString(userMessage);
+
+                // --- Intenciones Básicas ---
+                if (input.includes("hola") || input.includes("buenos dias")) {
+                    return "¡Hola! Soy Botani. ¿En qué puedo ayudarte hoy?";
+                }
+                if (input.includes("gracias")) {
+                    return "¡De nada! Es un placer ayudarte con tus dudas sobre plantas.";
+                }
+                if (input.includes("adios") || input.includes("hasta luego")) {
+                    return "¡Espero haberte ayudado! Que tengas un gran día. 🌱";
+                }
+
+                // --- Intención: "qué plantas hay" ---
+                const hasPlantas = input.includes("planta");
+                const hasQuery = input.includes("que") || input.includes("cual") || input.includes("tienes") || input.includes("hay") || input.includes("lista");
+
+                if ((hasPlantas && hasQuery) || input.includes("biblioteca")) {
+                    if (this.plantList.length === 0) {
+                        return "Aún estoy intentando conectar con la biblioteca, pero no tengo la lista.";
+                    }
+                    const plantNames = this.plantList.map(p => p.nombreComun).join(', ');
+                    return `En la biblioteca tenemos: ${plantNames}.`;
+                }
+
+                // --- Intención: "dato curioso" (API Externa) ---
+                if (input.includes("dato") || (input.includes("curiosidad") && !input.includes("de"))) {
+                    try {
+                        const response = await fetch('https.uselessfacts.js.org/api/v2/facts/random?language=es');
+                        const data = await response.json();
+                        return data.text;
+                    } catch (error) {
+                        return "Oh, no pude conectarme a la base de datos de curiosidades. Intenta de nuevo.";
+                    }
+                }
+
+                // --- Intención: "curiosidades de [planta]" ---
+                const foundPlant = this.plantList.find(planta =>
+                    input.includes(this.normalizeString(planta.nombreComun))
+                );
+
+                if (foundPlant) {
+                    try {
+                        const response = await fetch(`/api/plantas/${foundPlant.id}`);
+                        if (!response.ok) throw new Error('Planta encontrada en la lista, pero no en detalles.');
+
+                        const plantData = await response.json();
+
+                        if (input.includes("curiosidad")) {
+                            return `<b>Curiosidad de ${plantData.nombreComun}:</b> ${plantData.curiosidades || 'No tengo curiosidades para esta planta.'}`;
+                        }
+                        if (input.includes("descripcion")) {
+                            return `<b>Descripción de ${plantData.nombreComun}:</b> ${plantData.descripcion || 'No tengo descripción.'}`;
+                        }
+
+                        return `Encontré la <b>${plantData.nombreComun}</b>. ¿Quieres saber su 'descripción' o alguna 'curiosidad'?`;
+
+                    } catch (error) {
+                        console.error("Error al buscar detalle de planta:", error);
+                        return `Encontré ${foundPlant.nombreComun} en mi lista, pero no pude cargar sus detalles desde la base de datos.`;
+                    }
+                }
+
+                // --- Intención Default (No entendido) ---
+                return "Lo siento, no entendí eso. Pregúntame 'qué plantas hay' o 'dame una curiosidad de la monstera'.";
+            }
+
+            // --- Mostrar mensajes (Tu código original sin cambios) ---
+            appendMessage(sender, text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', `${sender}-message`);
+                const contentDiv = document.createElement('div');
+                contentDiv.classList.add('message-content');
+                contentDiv.innerHTML = text;
+                if (sender === 'bot') {
+                    const avatarDiv = document.createElement('div');
+                    avatarDiv.classList.add('bot-avatar');
+                    avatarDiv.innerHTML = '<img src="mascota-ia.png" alt="Bot IA">';
+                    messageDiv.appendChild(avatarDiv);
+                }
+                messageDiv.appendChild(contentDiv);
+                this.chatMessages.appendChild(messageDiv);
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+        }
+
+        // --- Inicia todo cuando la página carga ---
+        document.addEventListener('DOMContentLoaded', () => {
+            new FloraBot();
         });
-    }
-
-    async function getGeminiResponse(userMessage) {
-        try {
-            const result = await chat.sendMessage(userMessage);
-            const response = result.response;
-            const text = response.text();
-            return text;
-        } catch (error) {
-            console.error("Error al comunicarse con Gemini:", error);
-            return "Error de API: No se pudo obtener respuesta. Revisa la Consola para más detalles.";
-        }
-    }
-
-    function appendMessage(sender, text) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', `${sender}-message`);
-
-        const contentDiv = document.createElement('div');
-        contentDiv.classList.add('message-content');
-        contentDiv.innerHTML = text;
-
-        if (sender === 'bot') {
-            const avatarDiv = document.createElement('div');
-            avatarDiv.classList.add('bot-avatar');
-            avatarDiv.innerHTML = '<img src="mascota-ia.png" alt="Bot IA">';
-            messageDiv.appendChild(avatarDiv);
-        }
-        
-        messageDiv.appendChild(contentDiv);
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    const sendMessage = async function () {
-        const message = userInput.value.trim();
-        if (!message) return;
-
-        userInput.disabled = true;
-        sendButton.disabled = true;
-
-        appendMessage('user', message);
-        userInput.value = '';
-
-        appendMessage('bot', '<p style="color:#666; font-style:italic;">Flor Data IA está escribiendo...</p>');
-        const loadingMessage = chatMessages.lastElementChild.querySelector('.message-content');
-
-        try {
-            const botResponseText = await getGeminiResponse(message);
-            loadingMessage.innerHTML = botResponseText;
-        } catch (error) {
-            loadingMessage.innerHTML = "No pude conectar con el asistente de IA.";
-        } finally {
-            userInput.disabled = false;
-            sendButton.disabled = false;
-            userInput.focus();
-        }
-
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    document.addEventListener('DOMContentLoaded', initializeGemini);
-</script>
+    </script>
 </body>
 
 </html>
