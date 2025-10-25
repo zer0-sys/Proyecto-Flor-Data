@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Detalles de Planta - Flor Data</title>
     <style>
-        /* Reset */
+        /* --- Reset --- */
         * {
             margin: 0;
             padding: 0;
@@ -16,11 +16,14 @@
             height: 100%;
             font-family: Arial, sans-serif;
             scroll-behavior: smooth;
-            background-color: #ebe8e3;
+            /* ¡CAMBIO! 
+            Este es el color verde de fondo de tu maqueta original 
+            */
+            background-color: #a3b899; 
             color: #333;
         }
 
-        /* Barra de navegación */
+        /* --- Barra de navegación (Tus estilos originales) --- */
         header {
             background: #2c2c2c;
             padding: 10px 30px;
@@ -69,59 +72,96 @@
             height: 28px;
         }
 
+        /* ¡CAMBIO! 
+        Estilos del contenedor principal para coincidir con la maqueta 
+        */
         .container {
             max-width: 800px;
             margin: 20px auto;
-            padding: 20px;
-            background: white;
+            padding: 25px;
+            /* Color de fondo del contenedor */
+            background: #e0e6d9; 
             border-radius: 15px;
+            /* Borde morado que señalaste en la maqueta */
+            border: 3px solid #9078E8; 
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .plant-detail {
-            text-align: center;
-        }
-
+        /* ¡CAMBIO! 
+        Estilos para la imagen de la planta 
+        */
         .plant-detail img {
-            max-width: 100%;
+            max-width: 500px; /* Tamaño máximo */
+            width: 100%; /* Responsiva */
             height: auto;
-            border-radius: 10px;
-            margin: 20px 0;
+            border-radius: 15px; /* Bordes redondeados */
+            margin: 0 auto 20px auto; /* Centrada */
+            display: block;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        .plant-detail h1 {
-            font-size: 2.5em;
-            color: #2e7d32;
-            margin-bottom: 10px;
+        /* ¡NUEVO! 
+        Estilos para las secciones de la Base de Datos 
+        */
+        .plant-detail h4 {
+            color: #2c522f; /* Verde oscuro para títulos de sección */
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 1.2em;
+            text-align: left; /* Alineado a la izquierda */
+        }
+        
+        .plant-detail p, .plant-detail h2 {
+            color: #333;
+            line-height: 1.6;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: left; /* Alineado a la izquierda */
+            font-size: 1em; /* Tamaño de texto normal */
         }
 
         .plant-detail h2 {
-            font-size: 1.5em;
-            color: #666;
-            margin-bottom: 20px;
+            /* Estilo específico para el nombre científico */
+            font-style: italic;
+            font-weight: normal;
+            font-size: 1.1em;
         }
 
-        .plant-detail p {
-            font-size: 1.2em;
-            line-height: 1.6;
-            margin-bottom: 20px;
+        .plant-detail hr {
+            /* Línea divisora */
+            border: 0;
+            height: 1px;
+            background-color: #c4cbbA; 
+            margin: 20px 0;
         }
+        /* --- Fin de nuevos estilos de sección --- */
 
+
+        /* ¡CAMBIO! 
+        Estilo del botón "Volver" para que sea redondo como en la maqueta 
+        */
         .back-btn {
             display: inline-block;
-            background: #4caf50;
-            color: white;
-            padding: 10px 20px;
+            background-color: #f0f0f0; /* Color del botón en la maqueta */
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
             text-decoration: none;
-            border-radius: 5px;
-            margin-top: 20px;
-            transition: background 0.3s ease;
+            width: 50px;
+            height: 50px;
+            line-height: 50px; /* Centra la flecha verticalmente */
+            text-align: center;
+            border-radius: 50%; /* Lo hace circular */
+            margin-bottom: 10px; /* Espacio antes del contenedor */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
         }
 
         .back-btn:hover {
-            background: #45a049;
+            background: #ddd;
         }
 
+        /* Tus estilos de Carga y Error (sin cambios) */
         .loading {
             text-align: center;
             font-size: 1.5em;
@@ -156,10 +196,13 @@
     </header>
 
     <div class="container">
+        
+        <a href="biblioteca.html" class="back-btn">&#x21A9;</a>
+        
         <div id="plant-detail" class="plant-detail">
             <div class="loading">Cargando...</div>
         </div>
-        <a href="biblioteca.html" class="back-btn">Volver a Biblioteca</a>
+
     </div>
 
     <script>
@@ -177,16 +220,37 @@
                     return res.json();
                 })
                 .then(planta => {
+
+                    /* ¡CAMBIO IMPORTANTE!
+                    Aquí rellenamos el HTML con las secciones
+                    que pediste (Nombre, Descripción, etc.)
+                    Asegúrate que tu base de datos envíe "curiosidades"
+                    */
                     document.getElementById('plant-detail').innerHTML = `
                         <img src="${planta.imagen || 'placeholder.jpg'}" alt="${planta.nombreComun}">
-                        <h1>${planta.nombreComun}</h1>
+                        
+                        <h4>Nombre Común:</h4>
+                        <p>${planta.nombreComun}</p>
+                        
+                        <hr>
+                        
+                        <h4>Nombre Científico:</h4>
                         <h2>${planta.nombreCientifico}</h2>
+                        
+                        <hr>
+                        
+                        <h4>Descripción:</h4>
                         <p>${planta.descripcion}</p>
+                        
+                        <hr>
+                        
+                        <h4>Curiosidades:</h4>
+                        <p>${planta.curiosidades || 'No hay curiosidades disponibles.'}</p>
                     `;
                 })
                 .catch(err => {
                     console.error('Error cargando planta:', err);
-                    document.getElementById('plant-detail').innerHTML = '<div class="error">Error cargando la planta</div>';
+                    document.getElementById('plant-detail').innerHTML = '<div class="error">Error al cargar la información de la planta.</div>';
                 });
         }
     </script>
