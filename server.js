@@ -119,9 +119,17 @@ app.post('/api/upload', upload.single('imagen'), async (req, res) => {
   }
 });
 
-// Servir frontend para rutas no API
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/index.html'));
+// Servir frontend para rutas no API **solo** cuando el cliente acepte HTML.
+// Esto evita que peticiones a recursos (ej. /downloads/Proyecto-Flor-Data.apk) devuelvan
+// el HTML de la SPA y sean descargadas como un archivo erróneo.
+app.get('*', (req, res, next) => {
+  // Si el cliente acepta HTML, devolvemos index.html (SPA routing).
+  if (req.accepts && req.accepts('html')) {
+    return res.sendFile(path.join(__dirname, 'frontend/index.html'));
+  }
+  // Para otros tipos (imagenes, apk, json, etc.) pasar al siguiente manejador
+  // (esto normalmente devolverá 404 si el archivo no existe en express.static)
+  return next();
 });
 
 // Cerrar pool al salir (opcional, para desarrollo)
