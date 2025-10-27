@@ -51,7 +51,7 @@ pool.query(`
 app.get('/api/plantas', async (req, res) => {
   console.log('Intentando obtener plantas...');
   try {
-    const result = await pool.query('SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, descripcioncompleta AS "descripcionCompleta", curiosidades, imagen FROM plantas');
+    const result = await pool.query('SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, descripcioncompleta AS "descripcionCompleta", curiosidades, imagen FROM plantas ORDER BY nombrecomun ASC');
     console.log('Plantas obtenidas:', result.rows.length);
     res.json(result.rows);
   } catch (err) {
@@ -65,7 +65,7 @@ app.get('/api/plantas/search', async (req, res) => {
   const query = req.query.q || '';
   console.log('Buscando plantas con query:', query);
   try {
-    const sql = `SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, descripcioncompleta AS "descripcionCompleta", curiosidades, imagen FROM plantas WHERE nombrecomun ILIKE $1 OR nombrecientifico ILIKE $1`;
+    const sql = `SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, descripcioncompleta AS "descripcionCompleta", curiosidades, imagen FROM plantas WHERE nombrecomun ILIKE $1 OR nombrecientifico ILIKE $1 ORDER BY nombrecomun ASC`;
     const result = await pool.query(sql, [`%${query}%`]);
     console.log('Resultados de búsqueda:', result.rows.length);
     res.json(result.rows);
