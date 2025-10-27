@@ -80,7 +80,7 @@ app.get('/api/plantas/:id', async (req, res) => {
   const { id } = req.params;
   console.log('Obteniendo planta con ID:', id);
   try {
-    const sql = 'SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, imagen FROM plantas WHERE id = $1';
+  const sql = 'SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, descripcioncompleta AS "descripcionCompleta", imagen FROM plantas WHERE id = $1';
     const result = await pool.query(sql, [id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Planta no encontrada' });
