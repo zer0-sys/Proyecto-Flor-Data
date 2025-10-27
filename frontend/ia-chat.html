@@ -170,6 +170,15 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
+        /* Estilos para la lista de info de la planta */
+        .message-content ul {
+            margin-top: 8px;
+            margin-left: 20px;
+        }
+        .message-content li {
+            margin-bottom: 5px;
+        }
+
         .bot-message .message-content {
             background-color: #f0f0f0;
             border-top-left-radius: 5px;
@@ -230,7 +239,7 @@
         .input-area button:hover {
             background-color: #6bbf59;
         }
-        /* Reglas responsivas para móviles (coinciden con biblioteca) */
+        /* Reglas responsivas (SIN CAMBIOS) */
         @media (max-width: 900px) {
             header { padding: 8px 16px; align-items: center; flex-direction: column; position: relative; gap: 8px; }
             .logo-bar img { height: 42px; }
@@ -286,7 +295,7 @@
                     <img src="mascota-ia.png" alt="Bot IA">
                 </div>
                 <div class="message-content">
-                    ¡Hola! Soy tu <b>Botani</b>. Estoy aquí para ayudarte con información sobre nuestra
+                    ¡Hola! Soy <b>Botani</b>. Estoy aquí para ayudarte con información sobre nuestra
                     flora, la página web, o resolver tus dudas botánicas.
                 </div>
             </div>
@@ -360,7 +369,7 @@
                 this.sendButton.disabled = true;
                 this.appendMessage('user', message);
                 this.userInput.value = '';
-                this.appendMessage('bot', '<p style="color:#666; font-style:italic;">Flor Data está pensando...</p>');
+                this.appendMessage('bot', '<p style="color:#666; font-style:italic;">Botani está pensando...</p>');
                 const loadingMessage = this.chatMessages.lastElementChild.querySelector('.message-content');
                 try {
                     const botResponseText = await this.getBotResponse(message);
@@ -382,36 +391,70 @@
                     .replace(/[¿?¡!.,]/g, "");
             }
 
+            // --- ¡CEREBRO DEL BOT MEJORADO! ---
             async getBotResponse(userMessage) {
                 const input = this.normalizeString(userMessage);
 
-                // --- Intenciones Básicas ---
+                // --- 1. Intenciones de Identidad y Ayuda ---
+                if (input.includes("quien eres") || input.includes("que eres")) {
+                    return "¡Soy Botani! 🤖 Un asistente virtual creado para ayudarte a explorar la increíble flora de la Facultad de Negocios Campus IV.";
+                }
+                if (input.includes("que es flora data")) {
+                    return "<b>Flora Data</b> es un proyecto para catalogar y mostrar toda la flora de nuestra facultad. ¡Puedes usar esta página o la app para aprender sobre todas las plantas!";
+                }
+                if (input.includes("ayuda") || input.includes("que sabes hacer")) {
+                    return `¡Claro! Puedes preguntarme:
+                        <ul>
+                            <li>'¿Qué plantas hay?'</li>
+                            <li>'¿Cuántas plantas tienes?'</li>
+                            <li>'Háblame sobre la Rosa Roja'</li>
+                            <li>'¿Cómo descargo la aplicación?'</li>
+                            <li>'Dame un dato curioso'</li>
+                        </ul>`;
+                }
+                if (input.includes("app") || input.includes("aplicacion") || input.includes("descargar")) {
+                    return "¡Fácil! Puedes descargar la app de Android (.apk) haciendo clic en el botón verde <b>'APLICACIÓN'</b> que está en el menú de arriba. ⬆️";
+                }
+
+                // --- 2. Intenciones Básicas (saludos) ---
                 if (input.includes("hola") || input.includes("buenos dias")) {
                     return "¡Hola! Soy Botani. ¿En qué puedo ayudarte hoy?";
                 }
                 if (input.includes("gracias")) {
-                    return "¡De nada! Es un placer ayudarte con tus dudas sobre plantas.";
+                    return "¡De nada! Es un placer ayudarte con tus dudas sobre plantas. 🌱";
                 }
                 if (input.includes("adios") || input.includes("hasta luego")) {
-                    return "¡Espero haberte ayudado! Que tengas un gran día. 🌱";
+                    return "¡Espero haberte ayudado! Que tengas un gran día.";
                 }
 
-                // --- Intención: "qué plantas hay" ---
+                // --- 3. Intenciones de Biblioteca (Conexión a BD) ---
+
+                // --- Contar plantas ---
+                if (input.includes("cuantas plantas")) {
+                    if (this.plantList.length === 0) {
+                        return "Todavía estoy contando, pero dame un segundo...";
+                    }
+                    return `Actualmente tengo <b>${this.plantList.length} plantas</b> en mi memoria. ¡Pregúntame por una!`;
+                }
+
+                // --- Listar plantas ---
                 const hasPlantas = input.includes("planta");
-                const hasQuery = input.includes("que") || input.includes("cual") || input.includes("tienes") || input.includes("hay") || input.includes("lista");
+                // Añadido "cuales" a las palabras clave
+                const hasQuery = input.includes("que") || input.includes("cual") || input.includes("cuales") || input.includes("tienes") || input.includes("hay") || input.includes("lista");
 
                 if ((hasPlantas && hasQuery) || input.includes("biblioteca")) {
                     if (this.plantList.length === 0) {
                         return "Aún estoy intentando conectar con la biblioteca, pero no tengo la lista.";
                     }
                     const plantNames = this.plantList.map(p => p.nombreComun).join(', ');
-                    return `En la biblioteca tenemos: ${plantNames}.`;
+                    // Da un enlace de navegación
+                    return `En la biblioteca tenemos: <b>${plantNames}</b>. <br><br>¡Puedes verlas todas en la sección <b>'BIBLIOTECA DIGITAL'</b> del menú!`;
                 }
 
-                // --- Intención: "dato curioso" (API Externa) ---
+                // --- 4. Intención: "dato curioso" (API Externa) ---
                 if (input.includes("dato") || (input.includes("curiosidad") && !input.includes("de"))) {
                     try {
-                        const response = await fetch('https.uselessfacts.js.org/api/v2/facts/random?language=es');
+                        const response = await fetch('https://uselessfacts.js.org/api/v2/facts/random?language=es');
                         const data = await response.json();
                         return data.text;
                     } catch (error) {
@@ -419,7 +462,7 @@
                     }
                 }
 
-                // --- Intención: "curiosidades de [planta]" ---
+                // --- 5. Intención: Buscar planta específica (Lógica más avanzada) ---
                 const foundPlant = this.plantList.find(planta =>
                     input.includes(this.normalizeString(planta.nombreComun))
                 );
@@ -427,18 +470,29 @@
                 if (foundPlant) {
                     try {
                         const response = await fetch(`/api/plantas/${foundPlant.id}`);
-                        if (!response.ok) throw new Error('Planta encontrada en la lista, pero no en detalles.');
+                        if (!response.ok) throw new Error('Planta encontrada, pero no pude cargar sus detalles.');
 
                         const plantData = await response.json();
 
+                        // --- Respuestas a campos específicos ---
                         if (input.includes("curiosidad")) {
                             return `<b>Curiosidad de ${plantData.nombreComun}:</b> ${plantData.curiosidades || 'No tengo curiosidades para esta planta.'}`;
                         }
                         if (input.includes("descripcion")) {
                             return `<b>Descripción de ${plantData.nombreComun}:</b> ${plantData.descripcion || 'No tengo descripción.'}`;
                         }
+                        if (input.includes("nombre cientifico")) {
+                            return `El nombre científico de ${plantData.nombreComun} es: <b>${plantData.nombreCientifico}</b>.`;
+                        }
 
-                        return `Encontré la <b>${plantData.nombreComun}</b>. ¿Quieres saber su 'descripción' o alguna 'curiosidad'?`;
+                        // --- ¡MEJORA! Respuesta por defecto si solo se menciona la planta ---
+                        // (ej: "hablame de la rosa roja" o "rosa roja")
+                        return `¡Claro! Aquí tienes los datos de la <b>${plantData.nombreComun}</b>:
+                            <ul style="margin-top: 10px; margin-left: 15px;">
+                                <li><b>Nombre Científico:</b> ${plantData.nombreCientifico || 'No disponible'}</li>
+                                <li><b>Descripción:</b> ${plantData.descripcion || 'No disponible'}</li>
+                                <li><b>Curiosidades:</b> ${plantData.curiosidades || 'No disponible'}</li>
+                            </ul>`;
 
                     } catch (error) {
                         console.error("Error al buscar detalle de planta:", error);
@@ -447,7 +501,7 @@
                 }
 
                 // --- Intención Default (No entendido) ---
-                return "Lo siento, no entendí eso. Pregúntame 'qué plantas hay' o 'dame una curiosidad de la monstera'.";
+                return "Lo siento, no entendí eso. Intenta preguntarme 'ayuda' para ver una lista de lo que sé hacer.";
             }
 
             // --- Mostrar mensajes (Tu código original sin cambios) ---
