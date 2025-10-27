@@ -274,8 +274,24 @@
                             .replace(/&/g, '&amp;')
                             .replace(/</g, '&lt;')
                             .replace(/>/g, '&gt;')
-                            .replace(/"/g, '&quot;')
+                            .replace(/\"/g, '&quot;')
                             .replace(/'/g, '&#39;');
+                    };
+
+                    // Normalizar saltos de línea:
+                    // - Convertir secuencias literales "\\n" a saltos reales
+                    // - Convertir CRLF y CR a LF
+                    const normalizeNewlines = (s) => {
+                        if (!s && s !== '') return s;
+                        // primeramente asegurarnos que es string
+                        let t = String(s);
+                        // Secuencias literales \r\n o \n (backslash + n) -> newline
+                        t = t.replace(/\\r\\n/g, '\n');
+                        t = t.replace(/\\n/g, '\n');
+                        // Ahora normalizar retornos reales CRLF/CR -> LF
+                        t = t.replace(/\r\n/g, '\n');
+                        t = t.replace(/\r/g, '\n');
+                        return t;
                     };
                     // Aseguramos que la estructura de la información se adapte al diseño
                     document.getElementById('plant-detail').innerHTML = `
@@ -292,12 +308,12 @@
                         <hr>
                         
                             <h4>Descripción:</h4>
-                            <p class="full-desc">${esc(planta.descripcionCompleta || planta.descripcion) || 'No hay descripción disponible.'}</p>
+                            <p class="full-desc">${esc(normalizeNewlines(planta.descripcionCompleta || planta.descripcion)) || 'No hay descripción disponible.'}</p>
                         
                         <hr>
                         
                         <h4>Curiosidades:</h4>
-                        <p class="curiosidades">${esc(planta.curiosidades) || 'No hay curiosidades disponibles.'}</p>
+                        <p class="curiosidades">${esc(normalizeNewlines(planta.curiosidades)) || 'No hay curiosidades disponibles.'}</p>
                     `;
                 })
                 .catch(err => {
