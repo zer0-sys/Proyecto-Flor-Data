@@ -439,22 +439,21 @@
 
                 // --- Listar plantas ---
                 const hasPlantas = input.includes("planta");
-                // Añadido "cuales" a las palabras clave
                 const hasQuery = input.includes("que") || input.includes("cual") || input.includes("cuales") || input.includes("tienes") || input.includes("hay") || input.includes("lista");
 
                 if ((hasPlantas && hasQuery) || input.includes("biblioteca")) {
                     if (this.plantList.length === 0) {
                         return "Aún estoy intentando conectar con la biblioteca, pero no tengo la lista.";
                     }
+                    // La lógica para mostrar los nombres ahora es más limpia
                     const plantNames = this.plantList.map(p => p.nombreComun).join(', ');
-                    // Da un enlace de navegación
                     return `En la biblioteca tenemos: <b>${plantNames}</b>. <br><br>¡Puedes verlas todas en la sección <b>'BIBLIOTECA DIGITAL'</b> del menú!`;
                 }
 
                 // --- 4. Intención: "dato curioso" (API Externa) ---
                 if (input.includes("dato") || (input.includes("curiosidad") && !input.includes("de"))) {
                     try {
-                        const response = await fetch('https://uselessfacts.js.org/api/v2/facts/random?language=es');
+                        const response = await fetch('https.uselessfacts.js.org/api/v2/facts/random?language=es');
                         const data = await response.json();
                         return data.text;
                     } catch (error) {
@@ -462,10 +461,25 @@
                     }
                 }
 
-                // --- 5. Intención: Buscar planta específica (Lógica más avanzada) ---
-                const foundPlant = this.plantList.find(planta =>
-                    input.includes(this.normalizeString(planta.nombreComun))
-                );
+                /*
+                ================================================================
+                ¡CAMBIO CLAVE AQUÍ!
+                Esta es la nueva lógica para buscar la planta.
+                ================================================================
+                */
+                // --- 5. Intención: Buscar planta específica (Lógica corregida) ---
+                const foundPlant = this.plantList.find(planta => {
+                    // 1. Normaliza el string de la DB: "palmera areca, palmera mariposa"
+                    const dbNamesString = this.normalizeString(planta.nombreComun);
+                    
+                    // 2. Lo parte en una lista de alias: ["palmera areca", "palmera mariposa"]
+                    const aliases = dbNamesString.split(',').map(s => s.trim());
+
+                    // 3. Revisa si el input del usuario ("hablame de la palmera areca")
+                    //    contiene ALGUNO de los alias (y el alias tiene más de 2 letras)
+                    return aliases.some(alias => alias.length > 2 && input.includes(alias));
+                });
+
 
                 if (foundPlant) {
                     try {
@@ -485,8 +499,7 @@
                             return `El nombre científico de ${plantData.nombreComun} es: <b>${plantData.nombreCientifico}</b>.`;
                         }
 
-                        // --- ¡MEJORA! Respuesta por defecto si solo se menciona la planta ---
-                        // (ej: "hablame de la rosa roja" o "rosa roja")
+                        // --- Respuesta por defecto si solo se menciona la planta ---
                         return `¡Claro! Aquí tienes los datos de la <b>${plantData.nombreComun}</b>:
                             <ul style="margin-top: 10px; margin-left: 15px;">
                                 <li><b>Nombre Científico:</b> ${plantData.nombreCientifico || 'No disponible'}</li>
