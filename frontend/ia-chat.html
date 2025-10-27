@@ -265,7 +265,6 @@
 </head>
 
 <body>
-
     <header>
         <div class="logo-bar">
             <img src="logo-unach.png" alt="UNACH">
@@ -395,7 +394,7 @@
             async getBotResponse(userMessage) {
                 const input = this.normalizeString(userMessage);
 
-                // --- 1. Intenciones de Identidad y Ayuda ---
+                // --- 1. Intenciones de Identidad y Ayuda (SIN CAMBIOS) ---
                 if (input.includes("quien eres") || input.includes("que eres")) {
                     return "¡Soy Botani! 🤖 Un asistente virtual creado para ayudarte a explorar la increíble flora de la Facultad de Negocios Campus IV.";
                 }
@@ -415,8 +414,7 @@
                 if (input.includes("app") || input.includes("aplicacion") || input.includes("descargar")) {
                     return "¡Fácil! Puedes descargar la app de Android (.apk) haciendo clic en el botón verde <b>'APLICACIÓN'</b> que está en el menú de arriba. ⬆️";
                 }
-
-                // --- 2. Intenciones Básicas (saludos) ---
+                // --- 2. Intenciones Básicas (saludos) (SIN CAMBIOS) ---
                 if (input.includes("hola") || input.includes("buenos dias")) {
                     return "¡Hola! Soy Botani. ¿En qué puedo ayudarte hoy?";
                 }
@@ -426,26 +424,19 @@
                 if (input.includes("adios") || input.includes("hasta luego")) {
                     return "¡Espero haberte ayudado! Que tengas un gran día.";
                 }
-
-                // --- 3. Intenciones de Biblioteca (Conexión a BD) ---
-
-                // --- Contar plantas ---
+                // --- 3. Intenciones de Biblioteca (Conexión a BD) (SIN CAMBIOS) ---
                 if (input.includes("cuantas plantas")) {
                     if (this.plantList.length === 0) {
                         return "Todavía estoy contando, pero dame un segundo...";
                     }
                     return `Actualmente tengo <b>${this.plantList.length} plantas</b> en mi memoria. ¡Pregúntame por una!`;
                 }
-
-                // --- Listar plantas ---
                 const hasPlantas = input.includes("planta");
                 const hasQuery = input.includes("que") || input.includes("cual") || input.includes("cuales") || input.includes("tienes") || input.includes("hay") || input.includes("lista");
-
                 if ((hasPlantas && hasQuery) || input.includes("biblioteca")) {
                     if (this.plantList.length === 0) {
                         return "Aún estoy intentando conectar con la biblioteca, pero no tengo la lista.";
                     }
-                    // La lógica para mostrar los nombres ahora es más limpia
                     const plantNames = this.plantList.map(p => p.nombreComun).join(', ');
                     return `En la biblioteca tenemos: <b>${plantNames}</b>. <br><br>¡Puedes verlas todas en la sección <b>'BIBLIOTECA DIGITAL'</b> del menú!`;
                 }
@@ -453,31 +444,33 @@
                 // --- 4. Intención: "dato curioso" (API Externa) ---
                 if (input.includes("dato") || (input.includes("curiosidad") && !input.includes("de"))) {
                     try {
-                        const response = await fetch('https.uselessfacts.js.org/api/v2/facts/random?language=es');
+                        /* ================================================================
+                        ¡CAMBIO 1: URL CORREGIDA!
+                        ================================================================
+                        */
+                        const response = await fetch('https://uselessfacts.js.org/api/v2/facts/random?language=es');
                         const data = await response.json();
                         return data.text;
                     } catch (error) {
+                        console.error("Error al buscar dato curioso:", error);
                         return "Oh, no pude conectarme a la base de datos de curiosidades. Intenta de nuevo.";
                     }
                 }
 
                 /*
                 ================================================================
-                ¡CAMBIO CLAVE AQUÍ!
-                Esta es la nueva lógica para buscar la planta.
+                ¡CAMBIO 2: LÓGICA DE BÚSQUEDA CORREGIDA!
                 ================================================================
                 */
                 // --- 5. Intención: Buscar planta específica (Lógica corregida) ---
                 const foundPlant = this.plantList.find(planta => {
-                    // 1. Normaliza el string de la DB: "palmera areca, palmera mariposa"
                     const dbNamesString = this.normalizeString(planta.nombreComun);
-                    
-                    // 2. Lo parte en una lista de alias: ["palmera areca", "palmera mariposa"]
                     const aliases = dbNamesString.split(',').map(s => s.trim());
-
-                    // 3. Revisa si el input del usuario ("hablame de la palmera areca")
-                    //    contiene ALGUNO de los alias (y el alias tiene más de 2 letras)
-                    return aliases.some(alias => alias.length > 2 && input.includes(alias));
+                    
+                    // Lógica más flexible:
+                    // 1. (input.includes(alias)) -> El usuario escribió "hablame de la palmera areca" y el alias es "palmera areca"
+                    // 2. (alias.includes(input)) -> El usuario escribió "areca" y el alias es "palmera areca"
+                    return aliases.some(alias => alias.length > 2 && (input.includes(alias) || alias.includes(input)));
                 });
 
 
@@ -488,7 +481,7 @@
 
                         const plantData = await response.json();
 
-                        // --- Respuestas a campos específicos ---
+                        // --- Respuestas a campos específicos (SIN CAMBIOS) ---
                         if (input.includes("curiosidad")) {
                             return `<b>Curiosidad de ${plantData.nombreComun}:</b> ${plantData.curiosidades || 'No tengo curiosidades para esta planta.'}`;
                         }
@@ -499,7 +492,7 @@
                             return `El nombre científico de ${plantData.nombreComun} es: <b>${plantData.nombreCientifico}</b>.`;
                         }
 
-                        // --- Respuesta por defecto si solo se menciona la planta ---
+                        // --- Respuesta por defecto (SIN CAMBIOS) ---
                         return `¡Claro! Aquí tienes los datos de la <b>${plantData.nombreComun}</b>:
                             <ul style="margin-top: 10px; margin-left: 15px;">
                                 <li><b>Nombre Científico:</b> ${plantData.nombreCientifico || 'No disponible'}</li>
@@ -513,7 +506,7 @@
                     }
                 }
 
-                // --- Intención Default (No entendido) ---
+                // --- Intención Default (No entendido) (SIN CAMBIOS) ---
                 return "Lo siento, no entendí eso. Intenta preguntarme 'ayuda' para ver una lista de lo que sé hacer.";
             }
 
