@@ -449,6 +449,12 @@
                         ================================================================
                         */
                         const response = await fetch('https://uselessfacts.js.org/api/v2/facts/random?language=es');
+                        
+                        // ¡NUEVO! Comprobar si la API respondió bien
+                        if (!response.ok) {
+                            throw new Error(`API error: ${response.status}`);
+                        }
+                        
                         const data = await response.json();
                         return data.text;
                     } catch (error) {
@@ -460,18 +466,24 @@
                 /*
                 ================================================================
                 ¡CORRECCIÓN 2: LÓGICA DE BÚSQUEDA MEJORADA!
+                La lógica anterior (mi culpa) normalizaba ANTES de partir.
+                Esta lógica parte PRIMERO, y luego normaliza CADA PARTE.
                 ================================================================
                 */
                 // --- 5. Intención: Buscar planta específica (Lógica corregida) ---
                 const foundPlant = this.plantList.find(planta => {
-                    const dbNamesString = this.normalizeString(planta.nombreComun);
-                    const aliases = dbNamesString.split(',').map(s => s.trim());
-                    
-                    // Lógica más flexible:
-                    // Comprueba si el input del usuario (ej. "hablame de la areca")
-                    // contiene algún alias (ej. "palmera areca")
-                    // O si algún alias (ej. "palmera areca") contiene el input del usuario (ej. "areca")
-                    return aliases.some(alias => alias.length > 2 && (input.includes(alias) || alias.includes(input)));
+                    // 1. PRIMERO, partimos el string original (con comas)
+                    // ej: "Palmera areca, palmera mariposa" -> ["Palmera areca", " palmera mariposa"]
+                    const originalAliases = planta.nombreComun.split(',');
+
+                    // 2. SEGUNDO, normalizamos CADA alias
+                    // ej: ["palmera areca", "palmera mariposa"]
+                    const normalizedAliases = originalAliases.map(s => this.normalizeString(s.trim()));
+
+                    // 3. TERCERO, comparamos
+                    // (input.includes(alias)) -> "hablame de la palmera areca".includes("palmera areca") -> TRUE
+                    // (alias.includes(input)) -> "palmera areca".includes("areca") -> TRUE
+                    return normalizedAliases.some(alias => alias.length > 2 && (input.includes(alias) || alias.includes(input)));
                 });
 
 
