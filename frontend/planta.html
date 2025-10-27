@@ -173,6 +173,12 @@
             width: 100%; 
             max-width: 500px; 
         }
+        /* Mostrar saltos de línea guardados en la base de datos
+           usa white-space: pre-line para respetar \n y colapsar espacios
+        */
+        .full-desc, .curiosidades {
+            white-space: pre-line;
+        }
         /* --- Fin de estilos de sección --- */
 
         /* --- Botón "Volver" (SIN CAMBIOS) --- */
@@ -261,27 +267,37 @@
                     return res.json();
                 })
                 .then(planta => {
+                    // función para escapar HTML y evitar inyección
+                    const esc = (s) => {
+                        if (!s && s !== '') return s;
+                        return String(s)
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#39;');
+                    };
                     // Aseguramos que la estructura de la información se adapte al diseño
                     document.getElementById('plant-detail').innerHTML = `
-                        <img src="${planta.imagen || 'placeholder.jpg'}" alt="${planta.nombreComun}">
+                        <img src="${esc(planta.imagen) || 'placeholder.jpg'}" alt="${esc(planta.nombreComun)}">
                         
                         <h4>Nombre Común:</h4>
-                        <p>${planta.nombreComun || 'No disponible'}</p>
+                        <p>${esc(planta.nombreComun) || 'No disponible'}</p>
                         
                         <hr>
                         
                         <h4>Nombre Científico:</h4>
-                        <h2>${planta.nombreCientifico || 'No disponible'}</h2>
+                        <h2>${esc(planta.nombreCientifico) || 'No disponible'}</h2>
                         
                         <hr>
                         
                             <h4>Descripción:</h4>
-                            <p>${planta.descripcionCompleta || planta.descripcion || 'No hay descripción disponible.'}</p>
+                            <p class="full-desc">${esc(planta.descripcionCompleta || planta.descripcion) || 'No hay descripción disponible.'}</p>
                         
                         <hr>
                         
                         <h4>Curiosidades:</h4>
-                        <p>${planta.curiosidades || 'No hay curiosidades disponibles.'}</p>
+                        <p class="curiosidades">${esc(planta.curiosidades) || 'No hay curiosidades disponibles.'}</p>
                     `;
                 })
                 .catch(err => {
