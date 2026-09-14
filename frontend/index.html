@@ -5,6 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flor Data - Inicio</title>
+
+    <!-- 1. LIBRERÍAS PARA EL MAPA (RADAR TÁCTICO) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- 👇 NUEVAS LIBRERÍAS PARA AGRUPAR PUNTOS CERCANOS (CLUSTERS) 👇 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+    <!-- 2. REGISTRO DEL SERVICE WORKER (MODO OFFLINE) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Busca el archivo sw.js en la raíz de tu frontend
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registro => {
+                        console.log('Service Worker registrado correctamente. Scope:', registro.scope);
+                    })
+                    .catch(error => {
+                        console.warn('El Service Worker falló:', error);
+                    });
+            });
+        }
+    </script>
+
     <style>
         /* Reset */
         * {
@@ -125,7 +151,6 @@
             height: 28px;
         }
 
-        /* Evitar efecto "presionado" en móviles para iconos sociales */
         .social a {
             display: inline-block;
             -webkit-tap-highlight-color: transparent;
@@ -147,7 +172,6 @@
             box-shadow: none !important;
         }
 
-        /* Botón de descarga de la app (coincide con biblioteca) */
         .download-btn {
             background: #539037;
             color: rgb(118, 243, 118);
@@ -208,6 +232,21 @@
             line-height: 1.6;
         }
 
+        /* 3. ESTILOS DEL MAPA TÁCTICO (RADAR) */
+        #radar-censo {
+            height: 450px;
+            width: 100%;
+            max-width: 1000px;
+            margin: 40px auto;
+            border-radius: 12px;
+            border: 2px solid #1b4b1a;
+            /* Borde verde oscuro */
+            box-shadow: 0 0 20px rgba(46, 125, 50, 0.4);
+            /* Brillo tipo radar */
+            z-index: 1;
+            /* Asegura que quede debajo del menú superior */
+        }
+
         /* Sección Final (Objetivos) */
         .final {
             background: #ebe8e3;
@@ -240,27 +279,97 @@
             transform: translateY(-8px);
         }
 
-        /* Reglas responsivas generales (coinciden con biblioteca) */
         @media (max-width: 900px) {
-            header { padding: 8px 16px; align-items: center; flex-direction: column; position: relative; gap: 8px; }
-            .logo-bar img { height: 42px; }
-            nav ul { gap: 12px; flex-wrap: wrap; justify-content: center; }
-            nav ul li a { font-size: 14px; }
-            .download-btn { padding: 6px 14px; font-size: 14px; border-radius: 20px; margin: 6px 0; }
-            .content { padding: 40px 12px; }
-            .card { width: 100%; }
-            .social { position: absolute; right: 12px; top: 10px; }
-            .logo-bar { justify-content: center; gap: 10px; }
+            header {
+                padding: 8px 16px;
+                align-items: center;
+                flex-direction: column;
+                position: relative;
+                gap: 8px;
+            }
+
+            .logo-bar img {
+                height: 42px;
+            }
+
+            nav ul {
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav ul li a {
+                font-size: 14px;
+            }
+
+            .download-btn {
+                padding: 6px 14px;
+                font-size: 14px;
+                border-radius: 20px;
+                margin: 6px 0;
+            }
+
+            .content {
+                padding: 40px 12px;
+            }
+
+            .card {
+                width: 100%;
+            }
+
+            .social {
+                position: absolute;
+                right: 12px;
+                top: 10px;
+            }
+
+            .logo-bar {
+                justify-content: center;
+                gap: 10px;
+            }
+
+            #radar-censo {
+                height: 350px;
+            }
+
+            /* Ajuste de mapa para móviles */
         }
 
         @media (max-width: 480px) {
-            header { padding: 8px 12px; }
-            .logo-bar img { height: 36px; }
-            .logo-bar span { font-size: 18px; }
-            nav ul { gap: 8px; }
-            nav ul li a { font-size: 13px; }
-            .download-btn { font-size: 13px; padding: 6px 8px; }
-            .content h1 { font-size: 28px; }
+            header {
+                padding: 8px 12px;
+            }
+
+            .logo-bar img {
+                height: 36px;
+            }
+
+            .logo-bar span {
+                font-size: 18px;
+            }
+
+            nav ul {
+                gap: 8px;
+            }
+
+            nav ul li a {
+                font-size: 13px;
+            }
+
+            .download-btn {
+                font-size: 13px;
+                padding: 6px 8px;
+            }
+
+            .content h1 {
+                font-size: 28px;
+            }
+
+            #radar-censo {
+                height: 280px;
+            }
+
+            /* Ajuste de mapa para pantallas muy pequeñas */
         }
 
         .card img {
@@ -290,7 +399,6 @@
         }
 
         /* 🤖 ESTILOS AÑADIDOS PARA LA MASCOTA IA 🤖 */
-
         #ia-mascot {
             position: fixed;
             bottom: 30px;
@@ -307,19 +415,15 @@
             transform: scale(1.05);
         }
 
-        /* Imagen de la mascota */
         .ia-image {
             width: 80px;
-            /* Ajusta el tamaño de la mascota */
             height: 80px;
             border-radius: 50%;
             object-fit: cover;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             border: 4px solid #b3d1b3;
-            /* Borde verde claro */
         }
 
-        /* Burbuja de texto */
         .ia-bubble {
             background-color: #ffffff;
             color: #333;
@@ -334,7 +438,6 @@
             border: 1px solid #c8d8c8;
         }
 
-        /* Flecha de la burbuja que apunta a la mascota */
         .bubble-arrow {
             position: absolute;
             bottom: -8px;
@@ -350,6 +453,27 @@
 
 <body>
 
+    <!-- Modal para la API Key de Plant.id -->
+    <div id="modalApiKey"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+        <div
+            style="background: white; padding: 30px; border-radius: 15px; max-width: 400px; text-align: center; font-family: sans-serif;">
+            <h2 style="color: #2c7a7b;">¡Bienvenido a Flor Data! 🌿</h2>
+            <p>Para identificar plantas usando el laboratorio experto, necesitas tu propia llave de acceso.</p>
+            <ol style="text-align: left; font-size: 14px; margin-bottom: 20px;">
+                <li>Ve a <a href="https://plant.id/" target="_blank"
+                        style="color: #319795; font-weight: bold;">Plant.id</a> y crea una cuenta gratuita.</li>
+                <li>Inicia sesión y busca tu <b>API Key</b>.</li>
+                <li>Pégala aquí abajo:</li>
+            </ol>
+            <input type="text" id="inputApiKey" placeholder="Pega tu API Key aquí..."
+                style="width: 100%; padding: 10px; border: 2px solid #ccc; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box;">
+            <button onclick="guardarLlave()"
+                style="background: #2c7a7b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%;">Guardar
+                y Entrar</button>
+        </div>
+    </div>
+
     <div id="splash">
         <div class="logo"></div>
         <div class="loader"></div>
@@ -363,10 +487,12 @@
             </div>
             <nav>
                 <ul>
-
                     <li><a href="index.html#inicio">INICIO</a></li>
                     <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
                     <li><a href="ia-chat.html#inicio">IA</a></li>
+                    <button onclick="cambiarApiKey()" style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+    🔄 Renovar API Key
+</button>
                     <li><a class="download-btn" href="/downloads/Flor-Data.apk" download>APLICACIÓN</a></li>
                 </ul>
             </nav>
@@ -407,6 +533,18 @@
             </p>
         </section>
 
+        <!-- ========================================== -->
+        <!-- NUEVA SECCIÓN: MAPA / RADAR TÁCTICO        -->
+        <!-- ========================================== -->
+        <section id="mapa" class="fade-section" style="background: #ebe8e3; padding: 20px;">
+            <h2 style="text-align: center; color: #2e7d32; font-size: 32px; margin-bottom: 10px;">Radar de Exploración
+            </h2>
+            <p style="text-align: center; color: #555; margin-bottom: 20px;">Zonas de cobertura vegetal y especímenes
+                registrados.</p>
+            <!-- Contenedor del mapa -->
+            <div id="radar-censo"></div>
+        </section>
+
         <section id="final" class="final">
             <div class="card fade-section">
                 <img src="libro.png" alt="Libro">
@@ -437,6 +575,8 @@
         </section>
 
     </div>
+
+    <!-- MASCOTA IA -->
     <div id="ia-mascot" onclick="openIAChat()">
         <div class="ia-bubble">
             Hola, ¿qué tal? ¿Cómo<br>puedo ayudarte?
@@ -445,7 +585,28 @@
         <img src="mascota-ia.png" alt="Asistente IA" class="ia-image">
     </div>
 
+    <!-- ====== MODAL BONITO PARA CAMBIAR API KEY ====== -->
+<div id="modalCambiarKey" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        
+        <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
+        
+        <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
+            Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir escaneando.
+        </p>
+        
+        <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..." style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
+        
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="cerrarModalKey()" style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
+            
+            <button onclick="guardarNuevaKey()" style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+        </div>
+    </div>
+</div>
+
     <script>
+        
         // Función para abrir el chat de la IA
         function openIAChat() {
             window.location.href = 'ia-chat.html';
@@ -456,21 +617,92 @@
         const FADE_DURATION = 1000;
         const MIN_VISIBLE_TIME = 2000;
 
-        // ✅ NUEVA LÓGICA: Comprobar el parámetro 'skip_splash'
         const urlParams = new URLSearchParams(window.location.search);
         const skipSplash = urlParams.get('skip_splash');
 
-        window.onload = function () {
 
+        // ==========================================
+        // LÓGICA DEL MAPA (LEAFLET + CLUSTERS + FILTRO POR ESPECIE)
+        // ==========================================
+        let mapaIniciado = false;
+
+        async function iniciarRadarTactico() {
+            if (mapaIniciado) return;
+
+            const mapa = L.map('radar-censo').setView([14.6823, -92.1447], 15);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(mapa);
+
+            try {
+                // Leemos si el enlace trae el nombre de una planta para filtrar
+                const urlParams = new URLSearchParams(window.location.search);
+                const especieFiltro = urlParams.get('especie');
+
+                const response = await fetch('/api/censo/ubicaciones');
+                const ubicaciones = await response.json();
+
+                const grupoMarcadores = L.markerClusterGroup();
+
+                // 🌟 MAGIA DE FILTRADO MEJORADA: Busca coincidencias aunque haya diferencias menores
+                const ubicacionesAMostrar = especieFiltro
+                    ? ubicaciones.filter(p => p.nombre_identificado.toLowerCase().includes(especieFiltro.toLowerCase().trim()))
+                    : ubicaciones;
+
+                ubicacionesAMostrar.forEach(planta => {
+                    const lat = parseFloat(planta.latitud);
+                    const lng = parseFloat(planta.longitud);
+
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        const punto = L.circleMarker([lat, lng], {
+                            // Si estamos filtrando una especie, pintamos los puntos de Naranja. Si no, Verdes.
+                            color: especieFiltro ? '#ff9800' : '#00ff00',
+                            fillColor: especieFiltro ? '#ff9800' : '#00ff00',
+                            fillOpacity: 0.8,
+                            radius: 8
+                        });
+
+                        punto.bindPopup(`<b>${planta.nombre_identificado}</b><br>Registrada en Censo`);
+                        grupoMarcadores.addLayer(punto);
+                    }
+                });
+
+                mapa.addLayer(grupoMarcadores);
+
+                // Auto-centrar la cámara a los puntos encontrados
+                if (ubicacionesAMostrar.length > 0) {
+                    // Usamos maxZoom: 18 para que si solo hay 1 planta, no se acerque de forma exagerada
+                    mapa.fitBounds(grupoMarcadores.getBounds(), { padding: [50, 50], maxZoom: 18 });
+                } else if (especieFiltro) {
+                    // Si le dio clic al botón pero nadie ha guardado coordenadas de esa planta aún:
+                    alert(`Aún no hay ubicaciones registradas en el mapa para: ${especieFiltro}`);
+                }
+
+            } catch (error) {
+                console.error("Error cargando los datos del radar:", error);
+            }
+
+            setTimeout(() => {
+                mapa.invalidateSize();
+            }, 300);
+
+            mapaIniciado = true;
+        }
+
+        window.onload = function () {
             // 1. Si el parámetro skip_splash es 'true', saltamos la animación.
             if (skipSplash === 'true') {
                 splash.style.display = 'none';
                 mainContent.style.display = 'block';
                 checkVisibility();
-                return; // Detiene la ejecución de la animación
+                iniciarRadarTactico(); // INICIAMOS EL MAPA AQUÍ
+                return;
             }
 
-            // 2. Ejecutar la animación si venimos de una recarga o entrada directa
+            // 2. Ejecutar la animación
             setTimeout(function () {
                 splash.classList.add("fade-out");
 
@@ -478,12 +710,13 @@
                     splash.style.display = "none";
                     mainContent.style.display = "block";
                     checkVisibility();
+                    iniciarRadarTactico(); // Y TAMBIÉN LO INICIAMOS AQUÍ
                 }, FADE_DURATION);
 
             }, MIN_VISIBLE_TIME);
         };
 
-        // Animación de secciones (código original)
+        // Animación de secciones
         const sections = document.querySelectorAll('.fade-section');
         function checkVisibility() {
             const triggerBottom = window.innerHeight * 0.85;
@@ -496,6 +729,64 @@
         }
         window.addEventListener('scroll', checkVisibility);
         window.addEventListener('load', checkVisibility);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const llaveGuardada = localStorage.getItem('miPlantIdKey');
+            
+            // Si NO hay llave guardada, forzamos a que aparezca la ventana
+            if (!llaveGuardada) {
+                document.getElementById('modalApiKey').style.display = 'flex'; 
+            }
+        });
+
+        // Función que se activa al darle clic al botón
+        window.guardarLlave = function() {
+            const llaveInput = document.getElementById('inputApiKey').value.trim();
+            
+            if (llaveInput === "") {
+                alert("Por favor, ingresa una llave válida.");
+                return;
+            }
+            
+            // 1. Guardar la llave en la memoria del navegador
+            localStorage.setItem('miPlantIdKey', llaveInput); 
+            
+            // 2. Ocultar la ventanita
+            document.getElementById('modalApiKey').style.display = 'none'; 
+            
+            // 3. Avisarle al usuario
+            alert("¡Llave guardada con éxito! Ya puedes usar el laboratorio experto.");
+        }
+
+        // 1. Abre la ventana bonita
+function cambiarApiKey() {
+    const modal = document.getElementById('modalCambiarKey');
+    const input = document.getElementById('nuevaKeyInput');
+    
+    input.value = ''; // Limpiamos el texto por si había algo escrito antes
+    modal.style.display = 'flex'; // Mostramos el modal
+}
+
+// 2. Cierra la ventana si el usuario se arrepiente
+function cerrarModalKey() {
+    document.getElementById('modalCambiarKey').style.display = 'none';
+}
+
+// 3. Guarda la llave nueva cuando le dan al botón verde
+function guardarNuevaKey() {
+    const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
+    
+    if (nuevaLlave !== "") {
+        localStorage.setItem('miPlantIdKey', nuevaLlave);
+        cerrarModalKey(); // Escondemos el modal
+        
+        // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
+        alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
+    } else {
+        alert("Por favor, ingresa una llave válida.");
+    }
+}
+
     </script>
 
 </body>

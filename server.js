@@ -1,15 +1,29 @@
-require('dotenv').config();
+require('dotenv').config({ path: './backend/.env' });
 const express = require('express');
-const { Pool } = require('pg'); // Cambia de sqlite3 a pg
+const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
+const crypto = require('crypto');
+const fs = require('fs');
+const axios = require('axios');
+const { exec } = require('child_process');
+
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  generationConfig: { responseMimeType: "text/plain" }
+});
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static('frontend'));
+
+// Servir archivos estáticos
+app.use(express.static(path.join(__dirname, 'frontend')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Para que la web pueda ver la foto con pasto rojo
 
 // Configurar Cloudinary
 cloudinary.config({
@@ -18,35 +32,19 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const upload = multer({ dest: 'uploads/' }); // Carpeta temporal
+const upload = multer({ dest: 'uploads/' });
 
 // Conectar a PostgreSQL (en Supabase)
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }, // Cambia a true para Supabase
-  connectionTimeoutMillis: 10000 // Timeout de 10 segundos
+  ssl: { rejectUnauthorized: false },
+  connectionTimeoutMillis: 10000
 });
 
-// Crear tabla si no existe (comentado porque ya la creaste manualmente en Supabase)
-/*
-pool.query(`
-  CREATE TABLE IF NOT EXISTS plantas (
-    id SERIAL PRIMARY KEY,
-    nombreComun TEXT NOT NULL,
-    nombreCientifico TEXT NOT NULL,
-    descripcion TEXT NOT NULL,
-    imagen TEXT
-  )
-`, (err) => {
-  if (err) {
-    console.error('Error creando tabla:', err);
-  } else {
-    console.log('Tabla plantas creada o ya existe.');
-  }
-});
-*/
+// ==========================================
+// RUTAS API DE LA BIBLIOTECA BOTÁNICA
+// ==========================================
 
-// Rutas API
 // Obtener todas las plantas
 app.get('/api/plantas', async (req, res) => {
   console.log('Intentando obtener plantas...');
@@ -60,14 +58,13 @@ app.get('/api/plantas', async (req, res) => {
   }
 });
 
-// Buscar plantas (por nombre común o científico)
+// Buscar plantas
 app.get('/api/plantas/search', async (req, res) => {
   const query = req.query.q || '';
   console.log('Buscando plantas con query:', query);
   try {
     const sql = `SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, descripcioncompleta AS "descripcionCompleta", curiosidades, imagen FROM plantas WHERE nombrecomun ILIKE $1 OR nombrecientifico ILIKE $1 ORDER BY nombrecomun ASC`;
     const result = await pool.query(sql, [`%${query}%`]);
-    console.log('Resultados de búsqueda:', result.rows.length);
     res.json(result.rows);
   } catch (err) {
     console.error('Error en GET /api/plantas/search:', err);
@@ -78,14 +75,12 @@ app.get('/api/plantas/search', async (req, res) => {
 // Obtener una planta por ID
 app.get('/api/plantas/:id', async (req, res) => {
   const { id } = req.params;
-  console.log('Obteniendo planta con ID:', id);
   try {
-  const sql = 'SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, descripcioncompleta AS "descripcionCompleta", curiosidades, imagen FROM plantas WHERE id = $1';
+    const sql = 'SELECT id, nombrecomun AS "nombreComun", nombrecientifico AS "nombreCientifico", descripcion, descripcioncompleta AS "descripcionCompleta", curiosidades, imagen FROM plantas WHERE id = $1';
     const result = await pool.query(sql, [id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Planta no encontrada' });
     }
-    console.log('Planta obtenida:', result.rows[0]);
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Error en GET /api/plantas/:id:', err);
@@ -93,14 +88,41 @@ app.get('/api/plantas/:id', async (req, res) => {
   }
 });
 
-// Agregar una nueva planta
+// Conteo de plantas en el censo
+app.get('/api/censo/count', async (req, res) => {
+
+  const nombre = req.query.nombre;
+  try {
+    const result = await pool.query(
+      'SELECT COUNT(*) FROM registro_censo WHERE nombre_identificado ILIKE $1',
+      [`%${nombre}%`]
+    );
+    res.json({ count: result.rows[0].count });
+  } catch (err) {
+    console.error('Error obteniendo conteo del censo:', err);
+    res.status(500).json({ error: 'Error interno al contar' });
+  }
+
+});
+  // NUEVA RUTA: Obtener todas las ubicaciones del censo para el Radar Táctico
+  app.get('/api/censo/ubicaciones', async (req, res) => {
+    try {
+      // Buscamos todas las plantas que tengan coordenadas válidas
+      const sql = 'SELECT nombre_identificado, latitud, longitud FROM registro_censo WHERE latitud IS NOT NULL AND longitud IS NOT NULL';
+      const result = await pool.query(sql);
+      res.json(result.rows);
+    } catch (err) {
+      console.error('Error al obtener ubicaciones del mapa:', err);
+      res.status(500).json({ error: 'Error interno al cargar el mapa' });
+    }
+  });
+
+// Agregar una nueva planta manualmente
 app.post('/api/plantas', async (req, res) => {
   const { nombreComun, nombreCientifico, descripcion, imagen } = req.body;
-  console.log('Agregando planta:', { nombreComun, nombreCientifico });
   try {
     const sql = 'INSERT INTO plantas (nombreComun, nombreCientifico, descripcion, imagen) VALUES ($1, $2, $3, $4) RETURNING id';
     const result = await pool.query(sql, [nombreComun, nombreCientifico, descripcion, imagen]);
-    console.log('Planta agregada con ID:', result.rows[0].id);
     res.status(201).json({ id: result.rows[0].id, nombreComun, nombreCientifico, descripcion, imagen });
   } catch (err) {
     console.error('Error en POST /api/plantas:', err);
@@ -108,7 +130,7 @@ app.post('/api/plantas', async (req, res) => {
   }
 });
 
-// Subir imagen a Cloudinary
+// Subir imagen suelta a Cloudinary
 app.post('/api/upload', upload.single('imagen'), async (req, res) => {
   try {
     const result = await cloudinary.uploader.upload(req.file.path);
@@ -119,24 +141,330 @@ app.post('/api/upload', upload.single('imagen'), async (req, res) => {
   }
 });
 
-// Servir frontend para rutas no API **solo** cuando el cliente acepte HTML.
-// Esto evita que peticiones a recursos (ej. /downloads/Proyecto-Flor-Data.apk) devuelvan
-// el HTML de la SPA y sean descargadas como un archivo erróneo.
+// ==========================================
+// RUTA DE INTELIGENCIA ARTIFICIAL Y CENSO
+// ==========================================
+
+app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No se subió ninguna imagen." });
+    }
+
+    const imagePath = req.file.path;
+    const fileBuffer = fs.readFileSync(imagePath);
+
+    // 1. Generar HASH para evitar fotos duplicadas
+    const hashFoto = crypto.createHash('md5').update(fileBuffer).digest('hex');
+
+    // ==========================================
+    // NIVEL 1: ESCUDO OPENCV (PYTHON)
+    // ==========================================
+    let porcentajePasto = "0.00";
+    let imagenMascara = "";
+    let hojasEstimadas = "0"; 
+
+    try {
+      const pythonResult = await new Promise((resolve, reject) => {
+        // CÓDIGO CORREGIDO "A LA ANTIGUA"
+        exec("python analizar_pasto.py \"" + imagePath + "\"", (error, stdout, stderr) => {
+          if (error) {
+            console.warn("Error ejecutando Python:", error.message);
+            resolve({ porcentaje: "0.00", imagen: "", hojas: "0" });
+          } else {
+            try {
+              const lineas = stdout.trim().split('\n');
+              const ultimaLinea = lineas[lineas.length - 1].trim();
+              const datos = JSON.parse(ultimaLinea);
+              resolve(datos);
+            } catch (e) {
+              console.error("Error parseando JSON:", e);
+              resolve({ porcentaje: "0.00", imagen: "", hojas: "0" });
+            }
+          }
+        });
+      });
+
+      porcentajePasto = pythonResult.porcentaje;
+      imagenMascara = pythonResult.imagen;
+      hojasEstimadas = pythonResult.hojas; 
+      
+      // CÓDIGO CORREGIDO "A LA ANTIGUA"
+      console.log("IA OpenCV detectó: " + porcentajePasto + "% de vegetación.");
+      
+    } catch (e) {
+      console.error("Error general en proceso de medición de pasto:", e);
+    }
+
+    // 🛡️ ACTIVACIÓN DEL ESCUDO: Si no hay casi verde, abortamos para no gastar IA
+    if (parseFloat(porcentajePasto) < 5.0) {
+      console.log("Escudo activado: No hay suficiente vegetación. Abortando petición a la API.");
+      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+      
+      return res.json({
+        encontrado: false,
+        nombreSugerido: "Objeto no botánico",
+        mensaje: "No logro detectar suficiente vegetación en esta imagen. ¡Intenta enfocar mejor las hojas o el tallo de la planta!",
+        porcentajePasto: porcentajePasto,
+        imagenMascara: imagenMascara
+      });
+    }
+
+// Preparamos la imagen para enviarla a la nube
+    const imageBase64 = fileBuffer.toString('base64');
+    
+    // CÓDIGO CORREGIDO "A LA ANTIGUA"
+    const imageDataUrl = "data:image/jpeg;base64," + imageBase64;
+    let nombrePlanta = "DESCONOCIDO";
+
+    // ==========================================
+    // NIVEL 2: CARRERA DE IAs GRATUITAS (Ejecución en paralelo)
+    // ==========================================
+    try {
+      console.log("Iniciando carrera de IAs (NVIDIA vs Groq)...");
+
+      // 1. Preparamos el mensaje exacto que le enviaremos a todas las IAs
+// 1. Preparamos el mensaje exacto que le enviaremos a todas las IAs
+const promptExperto = "Eres un botánico experto de Chiapas. Analiza esta imagen. Si es una planta muy común y estás 100% seguro, dime ÚNICAMENTE su Nombre Común EN ESPAÑOL (ejemplo: 'Palma Areca', nunca en inglés). Si tienes la más mínima duda, si es una familia difícil (como palmas, helechos o suculentas), o si la foto no es perfecta, responde OBLIGATORIAMENTE con la palabra: DESCONOCIDO. No saludes. Solo el nombre en ESPAÑOL o DESCONOCIDO.";
+      const mensajesIA = [{
+        role: "user",
+        content: [
+          { type: "text", text: promptExperto },
+          { type: "image_url", image_url: { url: imageDataUrl } }
+        ]
+      }];
+
+      // 2. Creamos un "molde" (función) para lanzar a los competidores
+      const lanzarCompetidor = async (nombre, url, token, modelo) => {
+        const respuesta = await axios.post(url, {
+          model: modelo,
+          messages: mensajesIA,
+          max_tokens: 50,
+          temperature: 0.0
+        }, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          timeout: 10000 // ⏱️ LÍMITE DE 10 SEGUNDOS
+        });
+
+        const resultado = respuesta.data.choices[0].message.content.trim();
+        
+        // Si no sabe, lanzamos un error a propósito para descalificar a este competidor
+        if (resultado.includes("DESCONOCIDO")) {
+          throw new Error(`${nombre} no supo la respuesta.`);
+        }
+        
+        console.log(`🏆 ¡Ganador de la carrera! ${nombre} respondió primero con: ${resultado}`);
+        return resultado;
+      };
+
+ // 3. ¡ARRANCA LA CARRERA! (Promise.any elige al primero que termine con éxito)
+      nombrePlanta = await Promise.any([
+        lanzarCompetidor("NVIDIA (Llama 90b)", 'https://integrate.api.nvidia.com/v1/chat/completions', process.env.NVIDIA_API_KEY_1, 'meta/llama-3.2-90b-vision-instruct'),
+        lanzarCompetidor("NVIDIA (Llama 11b rápida)", 'https://integrate.api.nvidia.com/v1/chat/completions', process.env.NVIDIA_API_KEY_2, 'meta/llama-3.2-11b-vision-instruct'),
+        lanzarCompetidor("Groq (Llama 90b)", 'https://api.groq.com/openai/v1/chat/completions', process.env.GROQ_API_KEY, 'llama-3.2-90b-vision-preview')
+      ]);
+
+      console.log("IA ganadora identificó: " + nombrePlanta);
+
+      // 👇 Limpiamos la basura de la IA (puntos, comas y espacios) 👇
+      nombrePlanta = nombrePlanta.replace(/[.,]/g, '').trim();
+
+    } catch (carreraError) {
+      // Si llega aquí, significa que las 3 fallaron, dieron error 504, o las 3 dijeron "DESCONOCIDO"
+      console.log("Ninguna IA gratuita logró identificarla a tiempo o con seguridad. Pasando a Plant.id...");
+      nombrePlanta = "DESCONOCIDO"; 
+    }
+
+// ==========================================
+    // NIVEL 3: LABORATORIO DE PAGA (PLANT.ID - FALLBACK)
+    // ==========================================
+    if (nombrePlanta.toUpperCase().includes("DESCONOCIDO")) {
+      console.log("NVIDIA no está seguro. Llamando a Plant.id...");
+      
+      // 👇 Extraemos la llave que mandó el frontend
+      const llaveDelUsuario = req.body.llavePlantId;
+
+      if (!llaveDelUsuario) {
+        console.log("El usuario no ingresó API Key. Abortando Nivel 3.");
+        throw new Error("Se requiere tu propia API Key de Plant.id para plantas difíciles.");
+      }
+
+      try {
+        console.log("Consumiendo 1 Crédito de la cuenta del usuario...");
+        const response = await axios.post('https://api.plant.id/v2/identify', {
+          images: [imageBase64],
+          organs: ["leaf"]
+        }, {
+          headers: {
+            'Api-Key': llaveDelUsuario, // 👈 ¡MAGIA! Usamos la llave del usuario
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        nombrePlanta = response.data.suggestions[0].plant_name;
+        console.log("Plant.id identificó: " + nombrePlanta);
+        
+      } catch (plantIdErr) {
+        console.error("Error en Plant.id:", plantIdErr.message);
+        throw new Error("La API Key es inválida o el laboratorio falló.");
+      }
+    }
+
+// ==========================================
+    // LÓGICA DE BASE DE DATOS Y CENSO
+    // ==========================================
+    
+    // 👇 ¡NUEVO: Extraemos la 'zona' que calculó el frontend! 👇
+    const { latitud, longitud, zona } = req.body;
+    const zonaPlanta = zona || 'General'; // Si por algo falla, le ponemos 'General' por defecto
+
+    // CÓDIGO CORREGIDO "A LA ANTIGUA"
+    const queryCenso = "SELECT * FROM registro_censo WHERE nombre_identificado ILIKE $1 AND (hash_foto = $2 OR (ABS(latitud - $3::numeric) < 0.0001 AND ABS(longitud - $4::numeric) < 0.0001)) LIMIT 1";
+    const dbResultCenso = await pool.query(queryCenso, ["%" + nombrePlanta + "%", hashFoto, latitud, longitud]);
+    
+    let queryBiblioteca = 'SELECT * FROM plantas WHERE nombreComun ILIKE $1 OR nombreCientifico ILIKE $1 LIMIT 1';
+
+    if (dbResultCenso.rows.length > 0) {
+      // Ya estaba en el censo
+      const busquedaNormal = await pool.query(queryBiblioteca, ["%" + nombrePlanta + "%"]);
+      res.json({
+        encontrado: true,
+        datos: busquedaNormal.rows[0],
+        porcentajePasto: porcentajePasto,
+        imagenMascara: imagenMascara,
+        hojasEstimadas: hojasEstimadas,
+        zonaUbicacion: zonaPlanta, // 👈 Enviamos la zona de vuelta a la app
+        mensaje: "¡Excelente! Ejemplar ya existente en el censo identificado con éxito."
+      });
+    } else {
+      // Es nueva, hay que insertarla
+      if (latitud && longitud) {
+        try {
+          // 👇 ¡NUEVO: Agregamos 'zona' al INSERT de la base de datos! 👇
+          await pool.query(
+            'INSERT INTO registro_censo (nombre_identificado, latitud, longitud, hash_foto, zona) VALUES ($1, $2, $3, $4, $5)',
+            [nombrePlanta, latitud, longitud, hashFoto, zonaPlanta]
+          );
+          console.log("📍 ¡Nuevo registro en el censo! Agregado en zona: " + zonaPlanta);
+        } catch (dbError) {
+          if (dbError.message.includes('unique constraint') || dbError.message.includes('hash_foto_key')) {
+            console.log("⚠️ Aviso: Foto duplicada omitida.");
+          } else {
+            console.error("Error guardando en la BD:", dbError.message);
+          }
+        }
+      }
+
+      const busquedaNormal = await pool.query(queryBiblioteca, ["%" + nombrePlanta + "%"]);
+
+      if (busquedaNormal.rows.length > 0) {
+        res.json({
+          encontrado: true,
+          datos: busquedaNormal.rows[0],
+          porcentajePasto: porcentajePasto,
+          imagenMascara: imagenMascara,
+          zonaUbicacion: zonaPlanta, // 👈 Enviamos la zona de vuelta a la app
+          mensaje: "¡Excelente! Has registrado un nuevo ejemplar para el censo."
+        });
+      } else {
+        res.json({
+          encontrado: false,
+          nombreSugerido: nombrePlanta,
+          porcentajePasto: porcentajePasto,
+          imagenMascara: imagenMascara,
+          zonaUbicacion: zonaPlanta, // 👈 Enviamos la zona de vuelta a la app
+          mensaje: "Identificada como: " + nombrePlanta + ". (Nueva en el censo, pero no en biblioteca)."
+        });
+      }
+    }
+
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+    }
+
+  } catch (err) {
+    console.error("Error en proceso de identificación:", err.message);
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ error: "No se pudo identificar la planta." });
+  }
+});
+
+// ==========================================
+// RUTA PRINCIPAL (Catch-all) - SIEMPRE AL FINAL
+// ==========================================
 app.get('*', (req, res, next) => {
-  // Si la ruta solicita un archivo con extensión (ej. .apk, .png, .js),
-  // no devolvemos index.html. Dejar que express.static maneje el archivo.
-  const ext = require('path').extname(req.path);
+  const ext = path.extname(req.path);
   if (ext) {
     return next();
   }
-
-  // Si la ruta NO tiene extensión, asumimos navegación de SPA y devolvemos index.html
   return res.sendFile(path.join(__dirname, 'frontend/index.html'));
 });
 
-// Cerrar pool al salir (opcional, para desarrollo)
+// Manejo de cierres de conexión
 process.on('exit', () => pool.end());
+process.on('SIGINT', () => {
+  pool.end(() => {
+    console.log('Pool de conexiones cerrado.');
+    process.exit(0);
+  });
+});
+
+// ==========================================
+// CEREBRO DE BOTANI (NVIDIA - NEMOTRON 3.5 - VERSIÓN FINAL)
+// ==========================================
+app.post('/api/chat', async (req, res) => {
+    const { mensaje } = req.body;
+
+    if (!mensaje) {
+        return res.status(400).json({ error: "El mensaje está vacío" });
+    }
+
+    const promptSistema = `Eres Botani, un asistente virtual amigable y experto en botánica, especializado en la flora de Chiapas, México, y el Parque Los Cerritos. Perteneces al proyecto 'Flor Data' de la UNACH. Tus respuestas deben ser cálidas, entusiastas, claras y concisas (máximo 2 o 3 párrafos cortos). Usa emojis relacionados con plantas. No inventes datos que no sepas. 
+    
+    REGLA DE ORO ESTRICTA: NO incluyas tu proceso de pensamiento ("thinking process"). NO expliques cómo llegaste a la respuesta. Escribe DIRECTAMENTE y ÚNICAMENTE la respuesta final conversacional en español que leerá el usuario.`;
+
+    try {
+        console.log("Pensando la respuesta con NVIDIA (Nemotron 3.5)...");
+        
+        const respuestaNvidia = await axios.post('https://integrate.api.nvidia.com/v1/chat/completions', {
+            model: "nvidia/nemotron-3.5-lightning-30b-a3b", 
+            messages: [
+                { role: "system", content: promptSistema },
+                { role: "user", content: mensaje }
+            ],
+            temperature: 0.6,
+            // ✨ ÚNICO CAMBIO: Subimos a 1000 para que termine de pensar y te dé tu respuesta final
+            max_tokens: 10000 
+        }, {
+            headers: {
+                "Authorization": "Bearer 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", 
+                "Content-Type": "application/json"
+            },
+            timeout: 90000 
+        });
+
+        const respuestaFinal = respuestaNvidia.data.choices[0].message.content;
+        console.log("✅ ¡Botani respondió con éxito usando Nemotron!");
+        
+        res.json({ respuesta: respuestaFinal });
+
+    } catch (error) {
+        console.error("❌ Error en NVIDIA:", error.response ? error.response.data : error.message);
+        res.status(500).json({ respuesta: "Uy, mis raíces digitales se enredaron un momento 🌿. Dame un minuto y vuelve a intentarlo." });
+    }
+});
 
 // Iniciar servidor
 const PORT = process.env.PORT || 5004;
-app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
+const HOST = '192.168.1.69'; // 👈 Tu IP actual
+
+// Agregamos '0.0.0.0' para obligar al servidor a escuchar en toda tu red Wi-Fi
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Servidor listo para el celular en: http://${HOST}:${PORT}`);
+});

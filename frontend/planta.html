@@ -229,6 +229,9 @@
                 <li><a href="index.html#inicio">INICIO</a></li>
                 <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
                 <li><a href="ia-chat.html#inicio">IA</a></li>
+                <button onclick="cambiarApiKey()" style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+    🔄 Renovar API Key
+</button>
                 <li><a class="download-btn" href="/downloads/Proyecto-Flor-Data.apk" download>APLICACIÓN</a></li>
             </ul>
         </nav>
@@ -248,79 +251,150 @@
 
     </div>
 
-    <script>
-        // Obtener ID de la URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const plantId = urlParams.get('id');
+<!-- ====== MODAL BONITO PARA CAMBIAR API KEY ====== -->
+<div id="modalCambiarKey" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        
+        <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
+        
+        <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
+            Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir escaneando.
+        </p>
+        
+        <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..." style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
+        
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="cerrarModalKey()" style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
+            
+            <button onclick="guardarNuevaKey()" style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+        </div>
+    </div>
+</div>
 
-        if (!plantId) {
-            document.getElementById('plant-detail').innerHTML = '<div class="error">ID de planta no especificado</div>';
-        } else {
-            // Cargar detalles de la planta
-            // Asumiendo que tu API está en la misma URL base
-            fetch(`/api/plantas/${plantId}`) 
-                .then(res => {
-                    if (!res.ok) {
-                        // Si la respuesta no es OK (ej. 404 Not Found), lanzamos un error
-                        throw new Error(`Error HTTP: ${res.status} - Planta no encontrada`);
-                    }
-                    return res.json();
-                })
-                .then(planta => {
-                    // función para escapar HTML y evitar inyección
-                    const esc = (s) => {
-                        if (!s && s !== '') return s;
-                        return String(s)
-                            .replace(/&/g, '&amp;')
-                            .replace(/</g, '&lt;')
-                            .replace(/>/g, '&gt;')
-                            .replace(/\"/g, '&quot;')
-                            .replace(/'/g, '&#39;');
-                    };
+<script>
+    
+  // Obtener ID de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const plantId = urlParams.get('id');
 
-                    // Normalizar saltos de línea:
-                    // - Convertir secuencias literales "\\n" a saltos reales
-                    // - Convertir CRLF y CR a LF
-                    const normalizeNewlines = (s) => {
-                        if (!s && s !== '') return s;
-                        // primeramente asegurarnos que es string
-                        let t = String(s);
-                        // Secuencias literales \r\n o \n (backslash + n) -> newline
-                        t = t.replace(/\\r\\n/g, '\n');
-                        t = t.replace(/\\n/g, '\n');
-                        // Ahora normalizar retornos reales CRLF/CR -> LF
-                        t = t.replace(/\r\n/g, '\n');
-                        t = t.replace(/\r/g, '\n');
-                        return t;
-                    };
-                    // Aseguramos que la estructura de la información se adapte al diseño
-                    document.getElementById('plant-detail').innerHTML = `
-                        <img src="${esc(planta.imagen) || 'placeholder.jpg'}" alt="${esc(planta.nombreComun)}">
-                        
-                        <h4>Nombre Común:</h4>
-                        <p>${esc(planta.nombreComun) || 'No disponible'}</p>
-                        
-                        <hr>
-                        
-                        <h4>Nombre Científico:</h4>
-                        <h2>${esc(planta.nombreCientifico) || 'No disponible'}</h2>
-                        
-                        <hr>
-                        
-                            <h4>Descripción:</h4>
-                            <p class="full-desc">${esc(normalizeNewlines(planta.descripcionCompleta || planta.descripcion)) || 'No hay descripción disponible.'}</p>
-                        
-                        <hr>
-                        
-                        <h4>Curiosidades:</h4>
-                        <p class="curiosidades">${esc(normalizeNewlines(planta.curiosidades)) || 'No hay curiosidades disponibles.'}</p>
-                    `;
-                })
-                .catch(err => {
-                    console.error('Error cargando planta:', err);
-                    document.getElementById('plant-detail').innerHTML = `<div class="error">Error al cargar la información de la planta: ${err.message}</div>`;
-                });
-        }
-    </script>
+    if (!plantId) {
+        document.getElementById('plant-detail').innerHTML = '<div class="error">ID de planta no especificado</div>';
+    } else {
+        // Cargar detalles de la planta
+        // Asumiendo que tu API está en la misma URL base
+        fetch(`/api/plantas/${plantId}`) 
+            .then(res => {
+                if (!res.ok) {
+                    // Si la respuesta no es OK (ej. 404 Not Found), lanzamos un error
+                    throw new Error(`Error HTTP: ${res.status} - Planta no encontrada`);
+                }
+                return res.json();
+            })
+            .then(planta => {
+                // función para escapar HTML y evitar inyección
+                const esc = (s) => {
+                    if (!s && s !== '') return s;
+                    return String(s)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/\"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
+                };
+
+                // Normalizar saltos de línea
+                const normalizeNewlines = (s) => {
+                    if (!s && s !== '') return s;
+                    let t = String(s);
+                    t = t.replace(/\\r\\n/g, '\n');
+                    t = t.replace(/\\n/g, '\n');
+                    t = t.replace(/\r\n/g, '\n');
+                    t = t.replace(/\r/g, '\n');
+                    return t;
+                };
+
+                // Aseguramos que la estructura de la información se adapte al diseño
+                const contenedorDetalle = document.getElementById('plant-detail');
+                
+                // Hacemos el contenedor relativo para que el contador absoluto se posicione respecto a este div
+                contenedorDetalle.style.position = 'relative';
+
+                contenedorDetalle.innerHTML = `
+                    <img src="${esc(planta.imagen) || 'placeholder.jpg'}" alt="${esc(planta.nombreComun || planta.nombrecomun)}">
+                    
+                    <h4>Nombre Común:</h4>
+                    <p>${esc(planta.nombreComun || planta.nombrecomun) || 'No disponible'}</p>
+                    
+                    <hr>
+                    
+                    <h4>Nombre Científico:</h4>
+                    <h2>${esc(planta.nombreCientifico || planta.nombrecientifico) || 'No disponible'}</h2>
+                    
+                    <hr>
+                    
+                        <h4>Descripción:</h4>
+                        <p class="full-desc">${esc(normalizeNewlines(planta.descripcionCompleta || planta.descripcion)) || 'No hay descripción disponible.'}</p>
+                    
+                    <hr>
+                    
+                    <h4>Curiosidades:</h4>
+                    <p class="curiosidades">${esc(normalizeNewlines(planta.curiosidades)) || 'No hay curiosidades disponibles.'}</p>
+                `;
+
+                // --- NUEVO CÓDIGO: CONSULTAR Y MOSTRAR EL CONTADOR ---
+                const nombreParaCenso = planta.nombreCientifico || planta.nombrecientifico;
+
+                fetch(`/api/censo/count?nombre=${encodeURIComponent(nombreParaCenso)}`)
+                    .then(r => r.json())
+                    .then(datosCenso => {
+                        // Si el contador es mayor a 0, mostramos la etiqueta
+                        if (datosCenso.count > 0) {
+                            const contadorDiv = document.createElement('div');
+                            contadorDiv.innerHTML = `📍 Ejemplares en Los Cerritos: <b>${datosCenso.count}</b>`;
+                            
+                            // Estilos CSS inyectados para ponerlo arriba a la derecha
+                            contadorDiv.style.cssText = "position: absolute; top: 15px; right: 15px; background: #28a745; color: white; padding: 8px 15px; border-radius: 20px; font-weight: normal; font-size: 0.9em; box-shadow: 0 4px 6px rgba(0,0,0,0.2); z-index: 10;";
+                            
+                            contenedorDetalle.appendChild(contadorDiv);
+                        }
+                    })
+                    .catch(err => console.error('Error al cargar el contador:', err));
+
+            })
+            .catch(err => {
+                console.error('Error cargando planta:', err);
+                document.getElementById('plant-detail').innerHTML = `<div class="error">Error al cargar la información de la planta: ${err.message}</div>`;
+            });
+    }
+
+    // 1. Abre la ventana bonita
+function cambiarApiKey() {
+    const modal = document.getElementById('modalCambiarKey');
+    const input = document.getElementById('nuevaKeyInput');
+    
+    input.value = ''; // Limpiamos el texto por si había algo escrito antes
+    modal.style.display = 'flex'; // Mostramos el modal
+}
+
+// 2. Cierra la ventana si el usuario se arrepiente
+function cerrarModalKey() {
+    document.getElementById('modalCambiarKey').style.display = 'none';
+}
+
+// 3. Guarda la llave nueva cuando le dan al botón verde
+function guardarNuevaKey() {
+    const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
+    
+    if (nuevaLlave !== "") {
+        localStorage.setItem('miPlantIdKey', nuevaLlave);
+        cerrarModalKey(); // Escondemos el modal
+        
+        // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
+        alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
+    } else {
+        alert("Por favor, ingresa una llave válida.");
+    }
+}
+</script>
 </body>
 </html>

@@ -1,0 +1,351 @@
+
+        /* --- TUS ESTILOS ORIGINALES (SIN CAMBIOS) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #ebe8e3;
+        }
+
+        header {
+            background: #2c2c2c;
+            padding: 10px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-bar img {
+            height: 50px;
+        }
+
+        .logo-bar span {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #6bbf59;
+        }
+
+        /* Botón de descarga de la app (coincide con biblioteca) */
+        .download-btn {
+            background: #539037;
+            color: rgb(118, 243, 118);
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 12px;
+            transition: background 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background: #ffffff;
+        }
+
+        .social img {
+            height: 28px;
+        }
+
+        /* Evitar efecto "presionado" en móviles para iconos sociales */
+        .social a {
+            display: inline-block;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        .social a img {
+            transition: transform 120ms ease, opacity 120ms ease;
+            transform: none;
+            opacity: 1;
+            will-change: transform, opacity;
+        }
+
+        .social a:active img,
+        .social a:focus img,
+        .social a:focus-visible img {
+            transform: none !important;
+            opacity: 1 !important;
+            box-shadow: none !important;
+        }
+
+        .chat-view {
+            width: 100%;
+            height: calc(100vh - 70px);
+            background-color: #d8e4d8;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 20px;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .messages-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 25px;
+            align-items: flex-end;
+            max-width: 100%;
+        }
+
+        .bot-message {
+            justify-content: flex-start;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 70%;
+            font-size: 16px;
+            line-height: 1.4;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilos para la lista de info de la planta */
+        .message-content ul {
+            margin-top: 8px;
+            margin-left: 20px;
+        }
+
+        .message-content li {
+            margin-bottom: 5px;
+        }
+
+        .bot-message .message-content {
+            background-color: #f0f0f0;
+            border-top-left-radius: 5px;
+            margin-left: 10px;
+            order: 2;
+        }
+
+        .user-message .message-content {
+            background-color: #6bbf59;
+            color: white;
+            border-top-right-radius: 5px;
+        }
+
+        .bot-avatar {
+            width: 70px;
+            height: 70px;
+            margin-right: 10px;
+            flex-shrink: 0;
+            order: 1;
+        }
+
+        .bot-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .input-area {
+            padding: 15px 20px;
+            border-top: 1px solid #c0c0c0;
+            display: flex;
+            gap: 10px;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .input-area input[type="text"] {
+            flex-grow: 1;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-area button {
+            background-color: #2c2c2c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .input-area button:hover {
+            background-color: #6bbf59;
+        }
+
+        /* Reglas responsivas (SIN CAMBIOS) */
+        @media (max-width: 900px) {
+            header {
+                padding: 8px 16px;
+                align-items: center;
+                flex-direction: column;
+                position: relative;
+                gap: 8px;
+            }
+
+            .logo-bar img {
+                height: 42px;
+            }
+
+            nav ul {
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav ul li a {
+                font-size: 14px;
+            }
+
+            .download-btn {
+                padding: 6px 14px;
+                font-size: 14px;
+                border-radius: 20px;
+                margin: 6px 0;
+            }
+
+            .chat-view {
+                height: calc(100vh - 70px);
+                padding: 12px;
+            }
+
+            .messages-container {
+                max-width: 100%;
+                padding: 8px;
+            }
+
+            .social {
+                position: absolute;
+                right: 12px;
+                top: 10px;
+            }
+
+            .logo-bar {
+                justify-content: center;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 8px 12px;
+            }
+
+            .logo-bar img {
+                height: 36px;
+            }
+
+            .logo-bar span {
+                font-size: 18px;
+            }
+
+            nav ul {
+                gap: 8px;
+            }
+
+            nav ul li a {
+                font-size: 13px;
+            }
+
+            .download-btn {
+                font-size: 13px;
+                padding: 6px 8px;
+            }
+
+            .bot-avatar {
+                width: 52px;
+                height: 52px;
+            }
+        }
+
+        .chat-input-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f4f4f4;
+            border-top: 1px solid #ccc;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #btn-camera,
+        #btn-upload,
+        #btn-send {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #btn-camera:hover,
+        #btn-upload:hover {
+            transform: scale(1.2);
+        }
