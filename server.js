@@ -210,7 +210,6 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
 
     // 1. Generar HASH para evitar fotos duplicadas
     const hashFoto = crypto.createHash('md5').update(fileBuffer).digest('hex');
-    // Donde generas o calculas el hash de la imagen:
     console.log("==========================================");
     console.log("📸 NUEVA FOTO ENVIADA AL CHAT");
     console.log("🔑 HASH PARA SUPABASE:", hashFoto);
@@ -225,7 +224,6 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
 
     try {
       const pythonResult = await new Promise((resolve, reject) => {
-        // CÓDIGO CORREGIDO "A LA ANTIGUA"
         exec("python analizar_pasto.py \"" + imagePath + "\"", (error, stdout, stderr) => {
           if (error) {
             console.warn("Error ejecutando Python:", error.message);
@@ -248,7 +246,6 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
       imagenMascara = pythonResult.imagen;
       hojasEstimadas = pythonResult.hojas;
 
-      // CÓDIGO CORREGIDO "A LA ANTIGUA"
       console.log("IA OpenCV detectó: " + porcentajePasto + "% de vegetación.");
 
     } catch (e) {
@@ -271,20 +268,19 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
 
     // Preparamos la imagen para enviarla a la nube
     const imageBase64 = fileBuffer.toString('base64');
-
-    // CÓDIGO CORREGIDO "A LA ANTIGUA"
     const imageDataUrl = "data:image/jpeg;base64," + imageBase64;
     let nombrePlanta = "DESCONOCIDO";
     let nombreComunBusqueda = "DESCONOCIDO";
     let nombreCientificoBusqueda = "DESCONOCIDO";
+
     // ==========================================
     // NIVEL 2: CARRERA DE IAs GRATUITAS (Ejecución en paralelo)
     // ==========================================
     try {
       console.log("Iniciando carrera de IAs (NVIDIA vs Groq)...");
 
-      // 1. Preparamos el mensaje exacto que le enviaremos a todas las IAs
-      const promptExperto = "Eres un botánico experto. Analiza esta imagen. Si la reconoces con seguridad, responde OBLIGATORIAMENTE en este formato exacto: Nombre Común|Nombre Científico (ejemplo: Palma Areca|Dypsis lutescens). Si tienes dudas, responde: DESCONOCIDO. No saludes ni des explicaciones, solo el formato indicado."; const mensajesIA = [{
+      const promptExperto = "Eres un botánico experto. Analiza esta imagen. Si la reconoces con seguridad, responde OBLIGATORIAMENTE en este formato exacto: Nombre Común|Nombre Científico (ejemplo: Palma Areca|Dypsis lutescens). Si tienes dudas, responde: DESCONOCIDO. No saludes ni des explicaciones, solo el formato indicado."; 
+      const mensajesIA = [{
         role: "user",
         content: [
           { type: "text", text: promptExperto },
@@ -292,7 +288,6 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
         ]
       }];
 
-      // 2. Creamos un "molde" (función) para lanzar a los competidores
       const lanzarCompetidor = async (nombre, url, token, modelo) => {
         const respuesta = await axios.post(url, {
           model: modelo,
@@ -310,7 +305,6 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
 
         const resultado = respuesta.data.choices[0].message.content.trim();
 
-        // Si no sabe, lanzamos un error a propósito para descalificar a este competidor
         if (resultado.includes("DESCONOCIDO")) {
           throw new Error(`${nombre} no supo la respuesta.`);
         }
@@ -319,7 +313,6 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
         return resultado;
       };
 
-      // 3. ¡ARRANCA LA CARRERA! (Promise.any elige al primero que termine con éxito)
       nombrePlanta = await Promise.any([
         lanzarCompetidor("NVIDIA (Llama 90b)", 'https://integrate.api.nvidia.com/v1/chat/completions', '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', 'meta/llama-3.2-90b-vision-instruct'),
         lanzarCompetidor("NVIDIA (Llama 11b rápida)", 'https://integrate.api.nvidia.com/v1/chat/completions', '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', 'meta/llama-3.2-11b-vision-instruct'),
@@ -328,12 +321,11 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
 
       console.log("IA ganadora identificó: " + nombrePlanta);
 
-      // 👇 ¡NUEVO: Separamos el nombre común y el científico! 👇
       if (nombrePlanta.includes('|')) {
         const partes = nombrePlanta.split('|');
         nombreComunBusqueda = partes[0].replace(/[.,]/g, '').trim();
         nombreCientificoBusqueda = partes[1].replace(/[.,]/g, '').trim();
-        nombrePlanta = nombreComunBusqueda; // Dejamos el común para mensajes y censo
+        nombrePlanta = nombreComunBusqueda; 
       } else {
         nombrePlanta = nombrePlanta.replace(/[.,]/g, '').trim();
         nombreComunBusqueda = nombrePlanta;
@@ -341,7 +333,6 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
       }
 
     } catch (carreraError) {
-      // Si llega aquí, significa que las 3 fallaron, dieron error 504, o las 3 dijeron "DESCONOCIDO"
       console.log("Ninguna IA gratuita logró identificarla a tiempo o con seguridad. Pasando a Plant.id...");
       nombrePlanta = "DESCONOCIDO";
     }
@@ -351,8 +342,6 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
     // ==========================================
     if (nombrePlanta.toUpperCase().includes("DESCONOCIDO")) {
       console.log("NVIDIA no está seguro. Llamando a Plant.id...");
-
-      // 👇 Extraemos la llave que mandó el frontend
       const llaveDelUsuario = req.body.llavePlantId;
 
       if (!llaveDelUsuario) {
@@ -367,7 +356,7 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
           organs: ["leaf"]
         }, {
           headers: {
-            'Api-Key': llaveDelUsuario, // 👈 ¡MAGIA! Usamos la llave del usuario
+            'Api-Key': llaveDelUsuario, 
             'Content-Type': 'application/json'
           }
         });
@@ -384,35 +373,41 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
     }
 
     // ==========================================
-    // LÓGICA DE BASE DE DATOS Y CENSO
+    // LÓGICA DE BASE DE DATOS Y CENSO CORREGIDA 
     // ==========================================
-
-    // 👇 ¡NUEVO: Extraemos la 'zona' que calculó el frontend! 👇
     const { latitud, longitud, zona } = req.body;
-    const zonaPlanta = zona || 'General'; // Si por algo falla, le ponemos 'General' por defecto
+    const zonaPlanta = zona || 'General';
 
-    // Disparamos la búsqueda buscando coincidencias con el nombre común OR el científico
+    // 1. Buscamos en el censo
     const queryCenso = "SELECT * FROM registro_censo WHERE (nombre_identificado ILIKE $1 OR nombre_identificado ILIKE $2) AND (hash_foto = $3 OR (ABS(latitud - $4::numeric) < 0.0001 AND ABS(longitud - $5::numeric) < 0.0001)) LIMIT 1";
     const dbResultCenso = await pool.query(queryCenso, ["%" + nombreComunBusqueda + "%", "%" + nombreCientificoBusqueda + "%", hashFoto, latitud, longitud]);
 
+    // 2. Buscamos en la biblioteca local
     let queryBiblioteca = 'SELECT * FROM plantas WHERE nombreComun ILIKE $1 OR nombreCientifico ILIKE $1 OR nombreComun ILIKE $2 OR nombreCientifico ILIKE $2 LIMIT 1';
+    const busquedaNormal = await pool.query(queryBiblioteca, ["%" + nombreComunBusqueda + "%", "%" + nombreCientificoBusqueda + "%"]);
+
+    // 3. Verificamos si realmente existe en la biblioteca
+    const estaEnBiblioteca = busquedaNormal.rows.length > 0;
+    const datosBiblioteca = estaEnBiblioteca ? busquedaNormal.rows[0] : null;
 
     if (dbResultCenso.rows.length > 0) {
       // Ya estaba en el censo
-      const busquedaNormal = await pool.query(queryBiblioteca, ["%" + nombreComunBusqueda + "%", "%" + nombreCientificoBusqueda + "%"]); res.json({
-        encontrado: true,
-        datos: busquedaNormal.rows[0],
+      res.json({
+        encontrado: estaEnBiblioteca, // true solo si está en tu biblioteca local
+        datos: datosBiblioteca,
+        nombreSugerido: nombrePlanta, // <-- EL SALVAVIDAS: siempre mandamos el nombre
         porcentajePasto: porcentajePasto,
         imagenMascara: imagenMascara,
         hojasEstimadas: hojasEstimadas,
-        zonaUbicacion: zonaPlanta, // 👈 Enviamos la zona de vuelta a la app
-        mensaje: "¡Excelente! Ejemplar ya existente en el censo identificado con éxito."
+        zonaUbicacion: zonaPlanta,
+        mensaje: estaEnBiblioteca 
+            ? "¡Excelente! Ejemplar ya existente en el censo identificado con éxito."
+            : "Ejemplar ya en censo, pero sin detalles en la biblioteca local."
       });
     } else {
-      // Es nueva, hay que insertarla
+      // Es nueva, hay que insertarla en el censo
       if (latitud && longitud) {
         try {
-          // 👇 ¡NUEVO: Agregamos 'zona' al INSERT de la base de datos! 👇
           await pool.query(
             'INSERT INTO registro_censo (nombre_identificado, latitud, longitud, hash_foto, zona) VALUES ($1, $2, $3, $4, $5)',
             [nombrePlanta, latitud, longitud, hashFoto, zonaPlanta]
@@ -427,28 +422,22 @@ app.post('/api/identificar-planta', upload.single('imagen'), async (req, res) =>
         }
       }
 
-      const busquedaNormal = await pool.query(queryBiblioteca, ["%" + nombreComunBusqueda + "%", "%" + nombreCientificoBusqueda + "%"]);
-      if (busquedaNormal.rows.length > 0) {
-        res.json({
-          encontrado: true,
-          datos: busquedaNormal.rows[0],
-          porcentajePasto: porcentajePasto,
-          imagenMascara: imagenMascara,
-          zonaUbicacion: zonaPlanta, // 👈 Enviamos la zona de vuelta a la app
-          mensaje: "¡Excelente! Has registrado un nuevo ejemplar para el censo."
-        });
-      } else {
-        res.json({
-          encontrado: false,
-          nombreSugerido: nombrePlanta,
-          porcentajePasto: porcentajePasto,
-          imagenMascara: imagenMascara,
-          zonaUbicacion: zonaPlanta, // 👈 Enviamos la zona de vuelta a la app
-          mensaje: "Identificada como: " + nombrePlanta + ". (Nueva en el censo, pero no en biblioteca)."
-        });
-      }
+      // Respuesta al frontend
+      res.json({
+        encontrado: estaEnBiblioteca, // true solo si está en tu biblioteca local
+        datos: datosBiblioteca,
+        nombreSugerido: nombrePlanta, // <-- EL SALVAVIDAS
+        porcentajePasto: porcentajePasto,
+        imagenMascara: imagenMascara,
+        hojasEstimadas: hojasEstimadas, 
+        zonaUbicacion: zonaPlanta,
+        mensaje: estaEnBiblioteca 
+            ? "¡Excelente! Has registrado un nuevo ejemplar para el censo."
+            : "Identificada como: " + nombrePlanta + ". (Nueva en el censo, pero no en biblioteca)."
+      });
     }
 
+    // Limpieza de foto temporal
     if (fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
     }
