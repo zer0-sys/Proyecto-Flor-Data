@@ -153,7 +153,7 @@ app.post('/api/upload', upload.single('imagen'), async (req, res) => {
 app.get('/admin/generar-hashes', async (req, res) => {
     try {
         // 1. Obtener plantas que no tienen hash en la tabla "plantas"
-        const dbResult = await pool.query("SELECT id, imagen_url FROM plantas WHERE hash_foto IS NULL");
+        const dbResult = await pool.query("SELECT id, imagen FROM plantas WHERE hash_foto IS NULL");
         const plantas = dbResult.rows;
 
         if (!plantas || plantas.length === 0) {
