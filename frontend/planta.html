@@ -219,6 +219,19 @@
     </style>
 </head>
 <body>
+
+<!-- Modal del Ranking -->
+<div id="modalRanking" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
+    <div style="background-color:#f8f9fa; margin: 10% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
+        <span onclick="cerrarModalRanking()" style="position: absolute; right: 15px; top: 10px; font-size: 24px; font-weight: bold; cursor: pointer; color: #555;">&times;</span>
+        <h2 style="text-align: center; color: #1b5e20; margin-top: 0;">🏆 Tabla de Clasificación</h2>
+        
+        <div id="contenidoRanking" style="margin-top: 15px; max-height: 350px; overflow-y: auto;">
+            <p style="text-align: center; color: #666;">Cargando posiciones...</p>
+        </div>
+    </div>
+</div>
+
     <header>
         <div class="logo-bar">
             <img src="logo-unach.png" alt="UNACH"> 
@@ -228,6 +241,7 @@
             <ul>
                 <li><a href="index.html#inicio">INICIO</a></li>
                 <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
+                <a href="#" onclick="abrirModalRanking()" style="text-decoration: none; color: white; font-weight: bold; margin-left: 20px;">RANKING 🏆</a>
                 <li><a href="ia-chat.html#inicio">IA</a></li>
                 <button onclick="cambiarApiKey()" style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
     🔄 Renovar API Key
@@ -394,6 +408,48 @@ function guardarNuevaKey() {
     } else {
         alert("Por favor, ingresa una llave válida.");
     }
+}
+
+
+async function abrirModalRanking() {
+    document.getElementById('modalRanking').style.display = 'block';
+    const contenedor = document.getElementById('contenidoRanking');
+    contenedor.innerHTML = '<p style="text-align: center; color: #666;">Cargando posiciones...</p>';
+    
+    try {
+        const response = await fetch('/api/ranking');
+        const datos = await response.json();
+        
+        if (datos.length === 0) {
+            contenedor.innerHTML = '<p style="text-align: center; color: #666;">Aún no hay misiones completadas. ¡Sé el primer equipo en registrar puntos!</p>';
+            return;
+        }
+        
+        let tablaHTML = '<table style="width:100%; border-collapse: collapse; text-align: left;">';
+        tablaHTML += '<tr style="background-color: #c8e6c9; border-bottom: 2px solid #81c784;"> <th style="padding: 10px;">Pos</th> <th style="padding: 10px;">Equipo</th> <th style="padding: 10px; text-align: center;">Puntos</th> </tr>';
+        
+        datos.forEach((fila, index) => {
+            let medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1);
+            let fondoFila = index % 2 === 0 ? '#ffffff' : '#f1f8e9';
+            
+            tablaHTML += `<tr style="background-color: ${fondoFila}; border-bottom: 1px solid #e0e0e0;">
+                <td style="padding: 10px; font-weight: bold; font-size: 1.1em;">${medalla}</td>
+                <td style="padding: 10px; font-weight: bold; color: #333;">${fila.nombre_equipo}</td>
+                <td style="padding: 10px; text-align: center; font-weight: bold; color: #2e7d32; font-size: 1.1em;">${fila.puntaje}</td>
+            </tr>`;
+        });
+        
+        tablaHTML += '</table>';
+        contenedor.innerHTML = tablaHTML;
+        
+    } catch (error) {
+        console.error(error);
+        contenedor.innerHTML = '<p style="color: #d32f2f; text-align: center;">Error al cargar el ranking. Verifica tu conexión.</p>';
+    }
+}
+
+function cerrarModalRanking() {
+    document.getElementById('modalRanking').style.display = 'none';
 }
 </script>
 </body>

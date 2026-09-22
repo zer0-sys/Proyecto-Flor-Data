@@ -364,6 +364,22 @@
 </head>
 
 <body>
+
+    <!-- Modal del Ranking -->
+    <div id="modalRanking"
+        style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
+        <div
+            style="background-color:#f8f9fa; margin: 10% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
+            <span onclick="cerrarModalRanking()"
+                style="position: absolute; right: 15px; top: 10px; font-size: 24px; font-weight: bold; cursor: pointer; color: #555;">&times;</span>
+            <h2 style="text-align: center; color: #1b5e20; margin-top: 0;">🏆 Tabla de Clasificación</h2>
+
+            <div id="contenidoRanking" style="margin-top: 15px; max-height: 350px; overflow-y: auto;">
+                <p style="text-align: center; color: #666;">Cargando posiciones...</p>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="logo-bar">
             <img src="logo-unach.png" alt="UNACH">
@@ -371,14 +387,27 @@
         </div>
         <nav>
             <ul>
-                <li> <a href="index.html" onclick="sessionStorage.removeItem('historialChat');">INICIO</a>
-                </li>
+                <li><a href="index.html" onclick="sessionStorage.removeItem('historialChat');">INICIO</a></li>
                 <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
+
+                <!-- Ranking ahora está dentro de un li -->
+                <li>
+                    <a href="#" onclick="abrirModalRanking()"
+                        style="text-decoration: none; color: white; font-weight: bold; cursor: pointer;">
+                        RANKING 🏆
+                    </a>
+                </li>
+
                 <li><a href="ia-chat.html#inicio">IA</a></li>
-                <button onclick="cambiarApiKey()"
-                    style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
-                    🔄 Renovar API Key
-                </button>
+
+                <!-- Botón API ahora está dentro de un li -->
+                <li style="display: flex; align-items: center; margin: 0 10px;">
+                    <button onclick="cambiarApiKey()"
+                        style="background: #ff9800; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.9em; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                        🔄 Renovar API Key
+                    </button>
+                </li>
+
                 <li><a class="download-btn" href="/downloads/Proyecto-Flor-Data.apk" download>APLICACIÓN</a></li>
             </ul>
         </nav>
@@ -423,26 +452,72 @@
         <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
     </div>
     <!-- ====== MODAL BONITO PARA CAMBIAR API KEY ====== -->
-<div id="modalCambiarKey" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-        
-        <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
-        
-        <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
-            Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir escaneando.
-        </p>
-        
-        <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..." style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
-        
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="cerrarModalKey()" style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
-            
-            <button onclick="guardarNuevaKey()" style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+    <div id="modalCambiarKey"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+        <div
+            style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+
+            <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
+
+            <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
+                Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir
+                escaneando.
+            </p>
+
+            <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..."
+                style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="cerrarModalKey()"
+                    style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
+
+                <button onclick="guardarNuevaKey()"
+                    style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+            </div>
         </div>
     </div>
-</div>
+
+    <!-- 👇 VENTANA EMERGENTE (MODAL) DE BOTANI 👇 -->
+    <div id="modal-botani"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(3px);">
+        <div
+            style="background: white; padding: 25px; border-radius: 12px; max-width: 90%; width: 350px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-family: sans-serif;">
+            <img src="mascota-ia.png" alt="Botani" style="width: 80px; margin-bottom: 10px;">
+            <h3 style="margin-top:0; color: #2e7d32;">¡Hola! Soy Botani 🌿</h3>
+
+            <!-- Pregunta Inicial -->
+            <div id="modal-paso-1">
+                <p style="color: #444; font-size: 15px;">¿Vienen a realizar la <b>actividad de campo</b> o solo quieren
+                    explorar de forma libre?</p>
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                    <button id="btn-actividad"
+                        style="background: #4caf50; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 15px;">🎒
+                        Hacer Actividad de Campo</button>
+                    <button id="btn-libre"
+                        style="background: #2196f3; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 15px;">🌱
+                        Modo Libre</button>
+                </div>
+            </div>
+
+            <!-- Formulario de Equipo (Oculto al inicio) -->
+            <div id="modal-paso-2" style="display: none;">
+                <p style="color: #444; font-size: 15px; margin-bottom: 15px;">¡Excelente! Registremos a su equipo:</p>
+                <input type="text" id="inputNombreEquipo" placeholder="Nombre de tu Equipo (ej. Los Botánicos)"
+                    style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+                <input type="number" id="input-integrantes" placeholder="¿Cuántos integrantes son?"
+                    style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+                <input type="text" id="input-zona" placeholder="¿Qué zona les tocó?"
+                    style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box;">
+                <button id="btn-iniciar-actividad"
+                    style="background: #ff9800; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 15px; width: 100%;">¡Comenzar
+                    Aventura! 📸</button>
+            </div>
+        </div>
+    </div>
+    <!-- 👆 FIN VENTANA EMERGENTE 👆 -->
 
     <script>
+        let ultimaImagenSubida = null;
 
         window.onload = () => {
             const chatGuardado = sessionStorage.getItem('historialChat');
@@ -567,6 +642,77 @@
                     this.appendLoadingMessage();
                     this.fetchPlantList();
                 }, 500);
+
+                // 👇 --- LÓGICA DE LA MINI VENTANA (MODAL) --- 👇
+                const modal = document.getElementById('modal-botani');
+                const paso1 = document.getElementById('modal-paso-1');
+                const paso2 = document.getElementById('modal-paso-2');
+                const btnActividad = document.getElementById('btn-actividad');
+                const btnLibre = document.getElementById('btn-libre');
+                const btnIniciar = document.getElementById('btn-iniciar-actividad');
+
+                let estadoActividad = sessionStorage.getItem('estado_actividad');
+
+                if (!estadoActividad) {
+                    // Si no hay estado, mostramos la ventana
+                    modal.style.display = 'flex';
+
+                    // Si eligen Actividad
+                    btnActividad.onclick = () => {
+                        paso1.style.display = 'none';
+                        paso2.style.display = 'block'; // Muestra las cajitas de texto
+                    };
+
+                    // Si eligen Libre
+                    btnLibre.onclick = () => {
+                        sessionStorage.setItem('estado_actividad', 'modo_libre');
+                        modal.style.display = 'none';
+                        this.appendMessage('bot', '¡Perfecto! <b>Modo libre activado</b> 🌱. Puedes preguntarme lo que quieras sobre botánica o subir una foto para identificar una planta.');
+                    };
+
+                   // Guardar datos del equipo
+                    btnIniciar.onclick = () => {
+                        // Capturamos el nuevo campo del nombre (si no existe, ponemos uno por defecto)
+                        const inputNombre = document.getElementById('input-nombre-equipo');
+                        const nombreEquipo = inputNombre ? inputNombre.value.trim() : '';
+                        
+                        const ints = document.getElementById('input-integrantes').value;
+                        const zona = document.getElementById('input-zona').value;
+
+                        if (ints.trim() !== '' && zona.trim() !== '') {
+                            // Si dejaron el nombre en blanco, les inventamos uno
+                            const nombreFinal = nombreEquipo !== '' ? nombreEquipo : 'Equipo Explorador';
+
+                            sessionStorage.setItem('estado_actividad', 'activo');
+                            sessionStorage.setItem('contador_sesion', '0');
+                            
+                            // GUARDAMOS EL NOMBRE PARA EL RANKING
+                            sessionStorage.setItem('info_equipo', nombreFinal);
+                            sessionStorage.setItem('zona_actividad', zona);
+                            
+                            modal.style.display = 'none';
+
+                            this.appendMessage('bot', `¡<b>${nombreFinal}</b> registrado exitosamente! 🎒 Son <b>${ints} exploradores</b> en la zona <b>"${zona}"</b>.<br><br>Ya pueden empezar a tomar fotos. ¡El contador de plantas está activado! 📸`);
+                        } else {
+                            alert("⚠️ Por favor llena los campos obligatorios para iniciar la actividad.");
+                        }
+                    };
+                } else if (estadoActividad === 'activo') {
+                    // Si recargan la página y ya estaban en actividad
+                    // Leemos nuestro registro detallado
+                    let registro = JSON.parse(sessionStorage.getItem('registro_plantas') || '{}');
+                    let totalPlantas = 0;
+
+                    // Sumamos todas las cantidades
+                    for (let cantidad of Object.values(registro)) {
+                        totalPlantas += cantidad;
+                    }
+
+                    // Ahora sí, imprimimos el total real
+                    this.appendMessage('bot', `¡Hola de nuevo, equipo! 🎒 Recuerden que llevan <b>${totalPlantas}</b> plantas registradas en total. ¡Sigan tomando fotos!`);
+                }
+                // 👆 --------------------------------------------- 👆
+
             }
 
             async activarCamara() {
@@ -647,6 +793,7 @@
 
                 // 🟢 MODO ONLINE: Proceso normal
                 const formData = new FormData();
+                ultimaImagenSubida = archivo;
                 // ¡EL TRUCO! Le ponemos un nombre genérico para evitar que Multer (Node.js) lance un Error 500
                 formData.append('imagen', archivo, 'imagen-offline.jpg');
 
@@ -717,17 +864,23 @@
                         infoPasto += `</div>`;
                     }
 
+                    // HTML del botón para pedir segunda opinión
+                    const botonIncorrectoHTML = `
+                        <div style="margin-top: 12px; text-align: center; border-top: 1px dashed #ccc; padding-top: 10px;">
+                            <button onclick="pedirSegundaOpinion()" style="background-color: #ff4757; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 0.85em; width: 100%;">
+                                ❌ Creo que es incorrecta (Usar Plant.id)
+                            </button>
+                        </div>
+                    `;
+
                     if (data.encontrado && data.datos) {
-                        // Tomamos el nombre común para mostrarlo bonito en el chat
                         const nombreComun = data.datos.nombrecomun || data.datos.nombreComun;
-                        // Tomamos el nombre científico para que el mapa lo encuentre en la BD
                         const nombreCientifico = data.datos.nombrecientifico || data.datos.nombreCientifico || nombreComun;
 
-                        // Armamos el botón enviando el NOMBRE CIENTÍFICO al mapa
                         let botonMapaHTML = '';
                         if (lat && lon) {
                             botonMapaHTML = `
-                                <a href="index.html?skip_splash=true&especie=${encodeURIComponent(nombreCientifico)}#mapa" style="background-color:#1b5e20; color:white; padding:8px 12px; border-radius:5px; text-decoration:none; font-weight:bold; display:inline-block; margin-top:10px; width:100%; text-align:center;">
+                                <a href="index.html?skip_splash=true&especie=${encodeURIComponent(nombreCientifico)}#mapa" style="background-color:#1b5e20; color:white; padding:8px 12px; border-radius:5px; text-decoration:none; font-weight:bold; display:inline-block; margin-top:10px; width:100%; text-align:center; box-sizing: border-box;">
                                     📍 Ver todos los ejemplares en el mapa
                                 </a>
                             `;
@@ -742,6 +895,7 @@
                                     📖 Ver enciclopedia de la planta
                                 </a>
                                 ${botonMapaHTML}
+                                ${botonIncorrectoHTML}
                             </div>
                         `;
                     } else {
@@ -750,15 +904,103 @@
                                 <p style="margin-bottom: 5px;">Identificada como: <b>${data.nombreSugerido}</b></p>
                                 ${infoPasto} 
                                 <p style="font-size: 0.8em; color: gray;">(Nota: No encontré detalles en la biblioteca local).</p>
+                                ${botonIncorrectoHTML}
                             </div>
                         `;
                     }
+
+                    // 👇 ====== NUEVO CONTADOR DETALLADO ====== 👇
+                    let estadoActividad = sessionStorage.getItem('estado_actividad');
+                    if (estadoActividad === 'activo') {
+                        // 1. Traemos el historial de plantas o creamos uno vacío {}
+                        let registro = JSON.parse(sessionStorage.getItem('registro_plantas') || '{}');
+
+                        // 2. Tomamos el nombre de la planta (usamos el común si lo encontró en tu BD, o el de la IA)
+                        let nombrePlanta = (data.encontrado && data.datos)
+                            ? (data.datos.nombrecomun || data.datos.nombreComun)
+                            : data.nombreSugerido;
+
+                        // 3. Sumamos 1 a esta especie en particular
+                        registro[nombrePlanta] = (registro[nombrePlanta] || 0) + 1;
+
+                        // 4. Guardamos el registro actualizado
+                        sessionStorage.setItem('registro_plantas', JSON.stringify(registro));
+
+                        // 5. Armamos el texto para mostrar (ej: "2 Palma Areca, 1 Jícaro")
+                        let resumen = Object.entries(registro)
+                            .map(([nombre, cantidad]) => `<b>${cantidad}</b> ${nombre}`)
+                            .join(', ');
+
+                        this.appendMessage('bot', `*(¡Buen hallazgo! Llevan: ${resumen} en su zona)* 🌿`);
+                    }
+                    // 👆 ======================================== 👆
+
                 } catch (err) {
                     loadingMessage.innerHTML = "Hubo un error al conectar con el servicio de identificación.";
                     console.error(err);
                 }
                 this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
                 sessionStorage.setItem('historialChat', this.chatMessages.innerHTML);
+
+                window.pedirSegundaOpinion = async function () {
+                    if (!ultimaImagenSubida) {
+                        alert("No se encontró la foto en la memoria temporal. Sube la foto de nuevo.");
+                        return;
+                    }
+
+                    const apiKeyPlantId = localStorage.getItem('miPlantIdKey');
+                    if (!apiKeyPlantId) {
+                        alert("Necesitas ingresar una API Key de Plant.id en la configuración para usar el laboratorio experto.");
+                        return;
+                    }
+
+                    // Buscamos el contenedor del chat dinámicamente (por clase o ID)
+                    const chatContainer = document.querySelector('.chat-messages') || document.getElementById('chat-messages');
+                    if (!chatContainer) {
+                        console.error("No se encontró el contenedor de mensajes del chat.");
+                        return;
+                    }
+
+                    // Mensaje de carga
+                    const loadingHTML = `
+        <div class="message bot">
+            <div class="message-content" style="background: #fff9c4; border: 1px solid #fbc02d; padding: 10px; border-radius: 8px;">
+                <p style="color:#f57f17; font-size:0.9em; margin: 0;">⏳ Enviando muestra al laboratorio botánico (Plant.id). Consumiendo 1 crédito...</p>
+            </div>
+        </div>`;
+                    chatContainer.insertAdjacentHTML('beforeend', loadingHTML);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                    const formData = new FormData();
+                    formData.append('imagen', ultimaImagenSubida, 're-evaluacion.jpg');
+                    formData.append('llavePlantId', apiKeyPlantId);
+
+                    try {
+                        const response = await fetch('/api/re-identificar', {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const data = await response.json();
+
+                        const lastMessage = chatContainer.lastElementChild.querySelector('.message-content');
+
+                        if (data.exito) {
+                            lastMessage.innerHTML = `
+                <p style="margin-bottom: 5px;">🔬 <b>Segunda opinión:</b></p>
+                <p>El laboratorio experto indica que es: <b>${data.nuevoNombre}</b></p>
+                <p style="font-size: 0.8em; color: gray; margin-top: 5px;">(Puedes buscar esta especie manualmente en la Biblioteca Digital).</p>
+            `;
+                        } else {
+                            lastMessage.innerHTML = `<p style="color: red;">Error del laboratorio: ${data.error}</p>`;
+                        }
+                    } catch (error) {
+                        console.error("Error pidiendo segunda opinión:", error);
+                        chatContainer.lastElementChild.querySelector('.message-content').innerHTML = "<p style='color: red;'>Error de conexión con el servidor.</p>";
+                    }
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                };
+
             }
 
             async guardarFotoOffline(archivoBlob, lat, lon) {
@@ -841,6 +1083,79 @@
             async getBotResponse(userMessage) {
                 const input = this.normalizeString(userMessage);
 
+                // Comando para reiniciar la actividad y la sesión con REPORTE ÉPICO
+                if (input.includes("terminar actividad") || input.includes("finalizar actividad") || input.includes("cerrar sesion")) {
+
+                    let estadoActividad = sessionStorage.getItem('estado_actividad');
+                    if (estadoActividad !== 'activo') {
+                        return "No hay ninguna actividad de campo en curso en este momento. 🌱";
+                    }
+
+                    let equipoInfo = sessionStorage.getItem('info_equipo') || "Equipo Explorador";
+                    let registro = JSON.parse(sessionStorage.getItem('registro_plantas') || '{}');
+
+                    let totalPlantas = 0;
+                    let resumenTexto = "";
+                    let especieMasEncontrada = "Ninguna";
+                    let maxCantidad = 0;
+
+                    // Calculamos los totales y buscamos la planta más vista
+                    for (const [planta, cantidad] of Object.entries(registro)) {
+                        totalPlantas += cantidad;
+                        resumenTexto += `• ${cantidad}x ${planta}<br>`;
+                        if (cantidad > maxCantidad) {
+                            maxCantidad = cantidad;
+                            especieMasEncontrada = planta;
+                        }
+                    }
+
+                    if (totalPlantas === 0) {
+                        sessionStorage.clear();
+                        setTimeout(() => { location.reload(); }, 5000);
+                        return `¡Actividad finalizada! 🎒<br><br>Esta vez no registraron plantas, ¡pero la próxima será mejor!<br><br><i>Reiniciando la terminal en 5 segundos...</i>`;
+                    }
+
+                    // Armamos el mensaje épico
+                    let mensajeDespedida = `🎉 <b>¡MISIÓN CUMPLIDA!</b> 🎉<br><br>
+    Excelente trabajo, <b>${equipoInfo}</b>. Aquí está su reporte final:<br><br>
+    🌿 <b>Total de ejemplares registrados:</b> ${totalPlantas}<br>
+    👑 <b>Especie dominante en su zona:</b> ${especieMasEncontrada} (${maxCantidad} veces)<br><br>
+    <b>Inventario detallado:</b><br>${resumenTexto}<br>
+    Sus datos han sido subidos al Radar Táctico de Flor Data. ¡Gracias por contribuir al censo!<br><br>
+    <i>⏳ Cerrando sesión de seguridad y reiniciando en 12 segundos...</i>`;
+
+
+                    // ... (aquí arriba está todo el código donde armas el resumenTexto y calculas totalPlantas) ...
+
+
+                    // 👇====== EL FETCH A LA BASE DE DATOS ======👇
+                    fetch('/api/ranking', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            nombre_equipo: equipoInfo,
+                            puntaje: totalPlantas,
+                            zona: sessionStorage.getItem('zona_actividad') || 'Los Cerritos'
+                        })
+                    }).then(res => res.json())
+                        .then(data => console.log("Ranking guardado:", data))
+                        .catch(err => console.error("Error al guardar ranking:", err));
+                    // 👆===========================================👆
+
+                    // Limpiamos la memoria
+                    sessionStorage.clear();
+
+                    // Les damos 12 segundos para leer su puntaje y tomar screenshot antes de reiniciar
+                    setTimeout(() => { location.reload(); }, 12000);
+
+                    return mensajeDespedida;
+
+                }
+
+
+
+
+
                 // --- 1. INTENCIONES NUEVAS: MOSTRAR IMÁGENES ---
                 if (input.includes("foto") || input.includes("imagen") || input.includes("muestrame") || input.includes("como es")) {
                     const foundPlant = this.plantList.find(planta => {
@@ -865,7 +1180,7 @@
                             <div style="text-align: center; margin-top: 10px;">
                                 <!-- Le pasamos directamente el link de la base de datos -->
                                 <img src="${urlImagenCloudinary || 'mascota-ia.png'}" style="width:100%; height:auto; border-radius:8px; border: 1px solid #ccc;" 
-     onerror="this.src='mascota-ia.png'; this.style.width='80px'; this.insertAdjacentHTML('afterend', '<p style=\\'font-size:12px; color:gray; margin-top:5px;\\'>El enlace a la nube está roto o no existe.</p>');">
+                                 onerror="this.src='mascota-ia.png'; this.style.width='80px'; this.insertAdjacentHTML('afterend', '<p style=\\'font-size:12px; color:gray; margin-top:5px;\\'>El enlace a la nube está roto o no existe.</p>');">
                                 <br>
                                 <a href="index.html?skip_splash=true&especie=${encodeURIComponent(nombreCientifico)}#mapa" style="background-color:#1b5e20; color:white; padding:8px 12px; border-radius:5px; text-decoration:none; font-weight:bold; display:inline-block; margin-top:10px; font-size:13px; width:100%;">
                                     📍 Ver dónde está en el Radar
@@ -1115,34 +1430,75 @@
             alert("¡Llave guardada con éxito! Ya puedes usar el laboratorio experto.");
         }
 
-   // 1. Abre la ventana bonita
-function cambiarApiKey() {
-    const modal = document.getElementById('modalCambiarKey');
-    const input = document.getElementById('nuevaKeyInput');
-    
-    input.value = ''; // Limpiamos el texto por si había algo escrito antes
-    modal.style.display = 'flex'; // Mostramos el modal
-}
+        // 1. Abre la ventana bonita
+        function cambiarApiKey() {
+            const modal = document.getElementById('modalCambiarKey');
+            const input = document.getElementById('nuevaKeyInput');
 
-// 2. Cierra la ventana si el usuario se arrepiente
-function cerrarModalKey() {
-    document.getElementById('modalCambiarKey').style.display = 'none';
-}
+            input.value = ''; // Limpiamos el texto por si había algo escrito antes
+            modal.style.display = 'flex'; // Mostramos el modal
+        }
 
-// 3. Guarda la llave nueva cuando le dan al botón verde
-function guardarNuevaKey() {
-    const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
-    
-    if (nuevaLlave !== "") {
-        localStorage.setItem('miPlantIdKey', nuevaLlave);
-        cerrarModalKey(); // Escondemos el modal
-        
-        // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
-        alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
-    } else {
-        alert("Por favor, ingresa una llave válida.");
-    }
-}
+        // 2. Cierra la ventana si el usuario se arrepiente
+        function cerrarModalKey() {
+            document.getElementById('modalCambiarKey').style.display = 'none';
+        }
+
+        // 3. Guarda la llave nueva cuando le dan al botón verde
+        function guardarNuevaKey() {
+            const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
+
+            if (nuevaLlave !== "") {
+                localStorage.setItem('miPlantIdKey', nuevaLlave);
+                cerrarModalKey(); // Escondemos el modal
+
+                // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
+                alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
+            } else {
+                alert("Por favor, ingresa una llave válida.");
+            }
+        }
+
+        async function abrirModalRanking() {
+            document.getElementById('modalRanking').style.display = 'block';
+            const contenedor = document.getElementById('contenidoRanking');
+            contenedor.innerHTML = '<p style="text-align: center; color: #666;">Cargando posiciones...</p>';
+
+            try {
+                const response = await fetch('/api/ranking');
+                const datos = await response.json();
+
+                if (datos.length === 0) {
+                    contenedor.innerHTML = '<p style="text-align: center; color: #666;">Aún no hay misiones completadas. ¡Sé el primer equipo en registrar puntos!</p>';
+                    return;
+                }
+
+                let tablaHTML = '<table style="width:100%; border-collapse: collapse; text-align: left;">';
+                tablaHTML += '<tr style="background-color: #c8e6c9; border-bottom: 2px solid #81c784;"> <th style="padding: 10px;">Pos</th> <th style="padding: 10px;">Equipo</th> <th style="padding: 10px; text-align: center;">Puntos</th> </tr>';
+
+                datos.forEach((fila, index) => {
+                    let medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1);
+                    let fondoFila = index % 2 === 0 ? '#ffffff' : '#f1f8e9';
+
+                    tablaHTML += `<tr style="background-color: ${fondoFila}; border-bottom: 1px solid #e0e0e0;">
+                <td style="padding: 10px; font-weight: bold; font-size: 1.1em;">${medalla}</td>
+                <td style="padding: 10px; font-weight: bold; color: #333;">${fila.nombre_equipo}</td>
+                <td style="padding: 10px; text-align: center; font-weight: bold; color: #2e7d32; font-size: 1.1em;">${fila.puntaje}</td>
+            </tr>`;
+                });
+
+                tablaHTML += '</table>';
+                contenedor.innerHTML = tablaHTML;
+
+            } catch (error) {
+                console.error(error);
+                contenedor.innerHTML = '<p style="color: #d32f2f; text-align: center;">Error al cargar el ranking. Verifica tu conexión.</p>';
+            }
+        }
+
+        function cerrarModalRanking() {
+            document.getElementById('modalRanking').style.display = 'none';
+        }
     </script>
 </body>
 
