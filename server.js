@@ -1,4 +1,5 @@
 require('dotenv').config({ path: './backend/.env' });
+require('dotenv').config(); // Fallback si ejecutas desde la raíz
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
@@ -549,7 +550,7 @@ app.post('/api/chat', async (req, res) => {
       max_tokens: 10000
     }, {
       headers: {
-        "Authorization": "Bearer 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",
+        "Authorization": `Bearer ${process.env.NVIDIA_API_KEY_2}`,
         "Content-Type": "application/json"
       },
       timeout: 90000
