@@ -143,6 +143,54 @@ app.post('/api/upload', upload.single('imagen'), async (req, res) => {
   }
 });
 
+
+const crypto = require('crypto');
+const axios = require('axios');
+
+// ==========================================
+// RUTA SECRETA PARA POBLAR HASHES VACÍOS
+// ==========================================
+app.get('/admin/generar-hashes', async (req, res) => {
+    try {
+        // 1. Obtener plantas que no tienen hash en la tabla "plantas"
+        const dbResult = await pool.query("SELECT id, imagen_url FROM plantas WHERE hash_foto IS NULL");
+        const plantas = dbResult.rows;
+
+        if (!plantas || plantas.length === 0) {
+            return res.send("✅ Todas las plantas de la biblioteca ya tienen su hash.");
+        }
+
+        // res.write() nos permite ir mostrando texto en la pantalla poco a poco
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.write(`Se encontraron ${plantas.length} plantas sin hash. Procesando...\n\n`);
+
+        for (let planta of plantas) {
+            if (planta.imagen_url) {
+                try {
+                    // 2. Descargar imagen de Cloudinary a la memoria
+                    const respuesta = await axios.get(planta.imagen_url, { responseType: 'arraybuffer' });
+                    const bufferImagen = Buffer.from(respuesta.data, 'binary');
+
+                    // 3. Generar el HASH IGUAL QUE EN TU CÓDIGO
+                    const hashCalculado = crypto.createHash('md5').update(bufferImagen).digest('hex');
+
+                    // 4. Guardar en la base de datos
+                    await pool.query("UPDATE plantas SET hash_foto = $1 WHERE id = $2", [hashCalculado, planta.id]);
+
+                    res.write(`✅ Hash actualizado para ID ${planta.id} -> ${hashCalculado}\n`);
+                } catch (errFoto) {
+                    res.write(`❌ Error procesando ID ${planta.id}: ${errFoto.message}\n`);
+                }
+            }
+        }
+
+        res.end("\n🎉 ¡Proceso terminado! Todas las fotos tienen su hash.");
+    } catch (error) {
+        console.error("Error en admin/generar-hashes:", error);
+        res.end("❌ Hubo un error general: " + error.message);
+    }
+});
+
 // ==========================================
 // RUTA DE INTELIGENCIA ARTIFICIAL Y CENSO
 // ==========================================
@@ -458,47 +506,56 @@ app.post('/api/re-identificar', upload.single('imagen'), async (req, res) => {
   }
 });
 
+
 // ==========================================
 // RUTA GAMIFICACIÓN: GUARDAR PUNTAJE AL TERMINAR
 // ==========================================
 app.post('/api/ranking', async (req, res) => {
-  const { nombre_equipo, puntaje, zona } = req.body;
+  const { nombre_equipo, puntaje, zona, integrantes, integrantes_del_equipo } = req.body;
   
   try {
-    // Si el puntaje es 0, no lo guardamos en el ranking para no llenar la BD de ceros
     if (puntaje === 0) {
       return res.json({ exito: true, mensaje: 'Puntaje 0 omitido.' });
     }
 
-    const sql = 'INSERT INTO ranking_equipos (nombre_equipo, puntaje, zona) VALUES ($1, $2, $3)';
+    // Capturar variables con fallback
+    const equipoFinal = (nombre_equipo && nombre_equipo.trim() !== '') ? nombre_equipo.trim() : 'Equipo Explorador';
+    const zonaFinal = (zona && zona.trim() !== '') ? zona.trim() : 'Los Cerritos';
+    const numIntegrantes = parseInt(integrantes || integrantes_del_equipo || 1);
+
+    const sql = `
+      INSERT INTO ranking_equipos (nombre_equipo, puntaje, zona, integrantes_del_equipo) 
+      VALUES ($1, $2, $3, $4)
+    `;
+    
     await pool.query(sql, [
-      nombre_equipo || 'Equipo Explorador', 
+      equipoFinal, 
       puntaje, 
-      zona || 'Los Cerritos' // O la zona que quieras por defecto
+      zonaFinal,
+      numIntegrantes
     ]);
     
-    console.log(`🏆 Puntaje guardado: ${nombre_equipo} hizo ${puntaje} puntos.`);
+    console.log(`🏆 Puntaje guardado: "${equipoFinal}" (${numIntegrantes} integrantes, Zona: ${zonaFinal}) hizo ${puntaje} pts.`);
     res.json({ exito: true, mensaje: 'Puntaje guardado en la base de datos.' });
     
   } catch (err) {
-    console.error('Error guardando en ranking_equipos:', err.message);
+    console.error('❌ Error guardando en ranking_equipos:', err.message);
     res.status(500).json({ error: 'Error interno al guardar ranking' });
   }
 });
-
 
 // ==========================================
 // RUTA GAMIFICACIÓN: OBTENER EL TOP 10
 // ==========================================
 app.get('/api/ranking', async (req, res) => {
-    try {
-        const query = 'SELECT nombre_equipo, puntaje, zona FROM ranking_equipos ORDER BY puntaje DESC LIMIT 10';
-        const result = await pool.query(query);
-        res.json(result.rows);
-    } catch (error) {
-        console.error('Error al obtener el ranking:', error.message);
-        res.status(500).json({ error: 'Error interno al cargar la tabla' });
-    }
+  try {
+    const query = 'SELECT nombre_equipo, puntaje, zona, integrantes_del_equipo FROM ranking_equipos ORDER BY puntaje DESC LIMIT 10';
+    const result = await pool.query(query);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener el ranking:', error.message);
+    res.status(500).json({ error: 'Error interno al cargar la tabla' });
+  }
 });
 
 

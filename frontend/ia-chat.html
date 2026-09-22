@@ -671,6 +671,7 @@
                     };
 
                     // Guardar datos del equipo
+                    // Guardar datos del equipo
                     btnIniciar.onclick = () => {
                         // Capturamos el nuevo campo del nombre (si no existe, ponemos uno por defecto)
                         const inputNombre = document.getElementById('input-nombre-equipo');
@@ -686,8 +687,12 @@
                             sessionStorage.setItem('estado_actividad', 'activo');
                             sessionStorage.setItem('contador_sesion', '0');
 
-                            // GUARDAMOS EL NOMBRE PARA EL RANKING
-                            sessionStorage.setItem('info_equipo', nombreFinal);
+                            // 🟢 CORRECCIÓN 1: Guardar con la clave 'nombre_equipo' para que coincida con el fetch
+                            sessionStorage.setItem('nombre_equipo', nombreFinal);
+
+                            // 🟢 CORRECCIÓN 2: Guardar los integrantes en sessionStorage
+                            sessionStorage.setItem('integrantes', ints.trim());
+
                             sessionStorage.setItem('zona_actividad', zona);
 
                             modal.style.display = 'none';
@@ -1129,23 +1134,31 @@
 
 
                     // 👇====== EL FETCH A LA BASE DE DATOS ======👇
+                    // 👇 Leemos cada dato guardado individualmente antes de borrar la memoria
+                    const nombreEquipoGuardado = sessionStorage.getItem('nombre_equipo') || (typeof equipoInfo === 'string' && equipoInfo !== '' ? equipoInfo : 'Equipo Explorador');
+                    const integrantesGuardados = parseInt(sessionStorage.getItem('integrantes') || sessionStorage.getItem('numero_integrantes') || 1);
+                    const zonaGuardada = sessionStorage.getItem('zona_actividad') || 'Los Cerritos';
+
+                    // 👇====== EL FETCH A LA BASE DE DATOS ======👇
                     fetch('/api/ranking', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            nombre_equipo: equipoInfo,
-                            puntaje: totalPlantas,
-                            zona: sessionStorage.getItem('zona_actividad') || 'Los Cerritos'
+                            nombre_equipo: nombreEquipoGuardado,
+                            integrantes: integrantesGuardados,
+                            zona: zonaGuardada,
+                            puntaje: totalPlantas
                         })
-                    }).then(res => res.json())
-                        .then(data => console.log("Ranking guardado:", data))
-                        .catch(err => console.error("Error al guardar ranking:", err));
+                    })
+                        .then(res => res.json())
+                        .then(data => console.log("🏆 Ranking guardado con éxito:", data))
+                        .catch(err => console.error("❌ Error al guardar ranking:", err));
                     // 👆===========================================👆
 
-                    // Limpiamos la memoria
+                    // Limpiamos la memoria del navegador una vez enviado
                     sessionStorage.clear();
 
-                    // Les damos 12 segundos para leer su puntaje y tomar screenshot antes de reiniciar
+                    // Les damos 12 segundos para leer su puntaje antes de reiniciar
                     setTimeout(() => { location.reload(); }, 12000);
 
                     return mensajeDespedida;
