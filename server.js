@@ -152,39 +152,43 @@ app.post('/api/upload', upload.single('imagen'), async (req, res) => {
 // ==========================================
 app.get('/admin/generar-hashes', async (req, res) => {
     try {
-        // 1. Obtener plantas que no tienen hash en la tabla "plantas"
-        const dbResult = await pool.query("SELECT id, imagen FROM plantas WHERE hash_foto IS NULL");
+        // 👇 CAMBIA "imagen_url" POR EL NOMBRE REAL DE TU COLUMNA EN SUPABASE
+        const nombreColumnaImagen = 'imagen'; 
+        
+        const dbResult = await pool.query(`SELECT id, ${nombreColumnaImagen} FROM plantas WHERE hash_foto IS NULL`);
         const plantas = dbResult.rows;
 
         if (!plantas || plantas.length === 0) {
             return res.send("✅ Todas las plantas de la biblioteca ya tienen su hash.");
         }
 
-        // res.write() nos permite ir mostrando texto en la pantalla poco a poco
         res.setHeader('Content-Type', 'text/plain; charset=utf-8');
         res.write(`Se encontraron ${plantas.length} plantas sin hash. Procesando...\n\n`);
 
         for (let planta of plantas) {
-            if (planta.imagen_url) {
+            // Evaluamos usando la variable dinámica
+            const linkImagen = planta[nombreColumnaImagen];
+
+            if (linkImagen) {
                 try {
-                    // 2. Descargar imagen de Cloudinary a la memoria
-                    const respuesta = await axios.get(planta.imagen_url, { responseType: 'arraybuffer' });
+                    const respuesta = await axios.get(linkImagen, { responseType: 'arraybuffer' });
                     const bufferImagen = Buffer.from(respuesta.data, 'binary');
 
-                    // 3. Generar el HASH IGUAL QUE EN TU CÓDIGO
                     const hashCalculado = crypto.createHash('md5').update(bufferImagen).digest('hex');
 
-                    // 4. Guardar en la base de datos
                     await pool.query("UPDATE plantas SET hash_foto = $1 WHERE id = $2", [hashCalculado, planta.id]);
 
-                    res.write(`✅ Hash actualizado para ID ${planta.id} -> ${hashCalculado}\n`);
+                    res.write(`✅ ID ${planta.id} -> ${hashCalculado}\n`);
                 } catch (errFoto) {
-                    res.write(`❌ Error procesando ID ${planta.id}: ${errFoto.message}\n`);
+                    res.write(`❌ Error en ID ${planta.id}: ${errFoto.message}\n`);
                 }
+            } else {
+                // Si la columna está vacía o el nombre es incorrecto, te lo dirá aquí:
+                res.write(`⚠️ ID ${planta.id} omitido: No se encontró un enlace en la columna '${nombreColumnaImagen}'\n`);
             }
         }
 
-        res.end("\n🎉 ¡Proceso terminado! Todas las fotos tienen su hash.");
+        res.end("\n🎉 ¡Proceso terminado!");
     } catch (error) {
         console.error("Error en admin/generar-hashes:", error);
         res.end("❌ Hubo un error general: " + error.message);
