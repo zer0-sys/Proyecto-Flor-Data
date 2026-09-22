@@ -519,13 +519,17 @@
     <script>
         let ultimaImagenSubida = null;
 
-        window.onload = () => {
-            const chatGuardado = sessionStorage.getItem('historialChat');
-            if (chatGuardado) {
-                // Si hay historial, lo pegamos de vuelta en la pantalla
-                document.querySelector('.tus-mensajes-contenedor').innerHTML = chatGuardado;
-            }
-        };
+   window.onload = () => {
+    const chatGuardado = sessionStorage.getItem('historialChat');
+    const contenedorMensajes = document.querySelector('.tus-mensajes-contenedor');
+    
+    // Solo intenta pegar el historial SI hay historial Y SI el contenedor existe
+    if (chatGuardado && contenedorMensajes) {
+        contenedorMensajes.innerHTML = chatGuardado;
+    } else if (!contenedorMensajes) {
+        console.warn("No se encontró el elemento '.tus-mensajes-contenedor' en el HTML, pero el código sigue funcionando.");
+    }
+};
 
 
 
@@ -947,7 +951,7 @@
                 this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
                 sessionStorage.setItem('historialChat', this.chatMessages.innerHTML);
 
-                window.pedirSegundaOpinion = async function () {
+               window.pedirSegundaOpinion = async function () {
                     if (!ultimaImagenSubida) {
                         alert("No se encontró la foto en la memoria temporal. Sube la foto de nuevo.");
                         return;
@@ -959,7 +963,7 @@
                         return;
                     }
 
-                    // Buscamos el contenedor del chat dinámicamente (por clase o ID)
+                    // Buscamos el contenedor del chat dinámicamente
                     const chatContainer = document.querySelector('.chat-messages') || document.getElementById('chat-messages');
                     if (!chatContainer) {
                         console.error("No se encontró el contenedor de mensajes del chat.");
@@ -968,11 +972,11 @@
 
                     // Mensaje de carga
                     const loadingHTML = `
-        <div class="message bot">
-            <div class="message-content" style="background: #fff9c4; border: 1px solid #fbc02d; padding: 10px; border-radius: 8px;">
-                <p style="color:#f57f17; font-size:0.9em; margin: 0;">⏳ Enviando muestra al laboratorio botánico (Plant.id). Consumiendo 1 crédito...</p>
-            </div>
-        </div>`;
+                        <div class="message bot">
+                            <div class="message-content" style="background: #fff9c4; border: 1px solid #fbc02d; padding: 10px; border-radius: 8px;">
+                                <p style="color:#f57f17; font-size:0.9em; margin: 0;">⏳ Enviando muestra al laboratorio botánico (Plant.id). Consumiendo 1 crédito...</p>
+                            </div>
+                        </div>`;
                     chatContainer.insertAdjacentHTML('beforeend', loadingHTML);
                     chatContainer.scrollTop = chatContainer.scrollHeight;
 
@@ -987,15 +991,14 @@
                         });
 
                         const data = await response.json();
-
                         const lastMessage = chatContainer.lastElementChild.querySelector('.message-content');
 
                         if (data.exito) {
                             lastMessage.innerHTML = `
-                <p style="margin-bottom: 5px;">🔬 <b>Segunda opinión:</b></p>
-                <p>El laboratorio experto indica que es: <b>${data.nuevoNombre}</b></p>
-                <p style="font-size: 0.8em; color: gray; margin-top: 5px;">(Puedes buscar esta especie manualmente en la Biblioteca Digital).</p>
-            `;
+                                <p style="margin-bottom: 5px;">🔬 <b>Segunda opinión:</b></p>
+                                <p>El laboratorio experto indica que es: <b>${data.nuevoNombre}</b></p>
+                                <p style="font-size: 0.8em; color: gray; margin-top: 5px;">(Puedes buscar esta especie manualmente en la Biblioteca Digital).</p>
+                            `;
                         } else {
                             lastMessage.innerHTML = `<p style="color: red;">Error del laboratorio: ${data.error}</p>`;
                         }
@@ -1003,7 +1006,11 @@
                         console.error("Error pidiendo segunda opinión:", error);
                         chatContainer.lastElementChild.querySelector('.message-content').innerHTML = "<p style='color: red;'>Error de conexión con el servidor.</p>";
                     }
+                    
                     chatContainer.scrollTop = chatContainer.scrollHeight;
+                    
+                    // 👇 ====== LO NUEVO: GUARDAR EL CHAT DESPUÉS DE LA SEGUNDA OPINIÓN ====== 👇
+                    sessionStorage.setItem('historialChat', chatContainer.innerHTML);
                 };
 
             }
