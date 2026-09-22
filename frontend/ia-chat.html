@@ -408,7 +408,7 @@
                     </button>
                 </li>
 
-                <li><a class="download-btn" href="/downloads/Proyecto-Flor-Data.apk" download>APLICACIÓN</a></li>
+                <li><a class="download-btn" href="/downloads/Flor-Data.apk" download>APLICACIÓN</a></li>
             </ul>
         </nav>
 
@@ -670,12 +670,12 @@
                         this.appendMessage('bot', '¡Perfecto! <b>Modo libre activado</b> 🌱. Puedes preguntarme lo que quieras sobre botánica o subir una foto para identificar una planta.');
                     };
 
-                   // Guardar datos del equipo
+                    // Guardar datos del equipo
                     btnIniciar.onclick = () => {
                         // Capturamos el nuevo campo del nombre (si no existe, ponemos uno por defecto)
                         const inputNombre = document.getElementById('input-nombre-equipo');
                         const nombreEquipo = inputNombre ? inputNombre.value.trim() : '';
-                        
+
                         const ints = document.getElementById('input-integrantes').value;
                         const zona = document.getElementById('input-zona').value;
 
@@ -685,11 +685,11 @@
 
                             sessionStorage.setItem('estado_actividad', 'activo');
                             sessionStorage.setItem('contador_sesion', '0');
-                            
+
                             // GUARDAMOS EL NOMBRE PARA EL RANKING
                             sessionStorage.setItem('info_equipo', nombreFinal);
                             sessionStorage.setItem('zona_actividad', zona);
-                            
+
                             modal.style.display = 'none';
 
                             this.appendMessage('bot', `¡<b>${nombreFinal}</b> registrado exitosamente! 🎒 Son <b>${ints} exploradores</b> en la zona <b>"${zona}"</b>.<br><br>Ya pueden empezar a tomar fotos. ¡El contador de plantas está activado! 📸`);

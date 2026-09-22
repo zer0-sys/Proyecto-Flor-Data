@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Detalles de Planta - Flor Data</title>
@@ -11,12 +12,13 @@
             box-sizing: border-box;
         }
 
-        body, html {
+        body,
+        html {
             width: 100%;
             height: 100%;
             font-family: Arial, sans-serif;
             scroll-behavior: smooth;
-            background-color: #a3b899; 
+            background-color: #a3b899;
             color: #333;
         }
 
@@ -31,13 +33,43 @@
             top: 0;
             z-index: 100;
         }
-        .logo-bar { display: flex; align-items: center; gap: 15px; }
-        .logo-bar img { height: 50px; }
-        .logo-bar span { font-size: 20px; font-weight: bold; color: white; }
-        nav ul { list-style: none; display: flex; gap: 30px; }
-        nav ul li a { text-decoration: none; color: white; font-size: 16px; transition: color 0.3s ease; }
-        nav ul li a:hover { color: #6bbf59; }
-        .social img { height: 28px; }
+
+        .logo-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-bar img {
+            height: 50px;
+        }
+
+        .logo-bar span {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #6bbf59;
+        }
+
+        .social img {
+            height: 28px;
+        }
 
         /* Botón de descarga de la app (coincide con biblioteca) */
         .download-btn {
@@ -79,25 +111,86 @@
 
         /* Reglas responsivas para planta.html */
         @media (max-width: 900px) {
-            header { padding: 8px 16px; align-items: center; flex-direction: column; position: relative; gap: 8px; }
-            .logo-bar img { height: 42px; }
-            nav ul { gap: 12px; flex-wrap: wrap; justify-content: center; }
-            nav ul li a { font-size: 14px; }
-            .download-btn { padding: 6px 14px; font-size: 14px; border-radius: 20px; margin: 6px 0; }
-            .container { margin: 12px; padding: 18px; }
-            .plant-detail img { max-width: 100%; margin-bottom: 12px; }
-            .social { position: absolute; right: 12px; top: 10px; }
-            .logo-bar { justify-content: center; gap: 10px; }
+            header {
+                padding: 8px 16px;
+                align-items: center;
+                flex-direction: column;
+                position: relative;
+                gap: 8px;
+            }
+
+            .logo-bar img {
+                height: 42px;
+            }
+
+            nav ul {
+                gap: 12px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            nav ul li a {
+                font-size: 14px;
+            }
+
+            .download-btn {
+                padding: 6px 14px;
+                font-size: 14px;
+                border-radius: 20px;
+                margin: 6px 0;
+            }
+
+            .container {
+                margin: 12px;
+                padding: 18px;
+            }
+
+            .plant-detail img {
+                max-width: 100%;
+                margin-bottom: 12px;
+            }
+
+            .social {
+                position: absolute;
+                right: 12px;
+                top: 10px;
+            }
+
+            .logo-bar {
+                justify-content: center;
+                gap: 10px;
+            }
         }
 
         @media (max-width: 480px) {
-            header { padding: 8px 12px; }
-            .logo-bar img { height: 36px; }
-            .logo-bar span { font-size: 18px; }
-            nav ul { gap: 8px; }
-            nav ul li a { font-size: 13px; }
-            .download-btn { font-size: 13px; padding: 6px 8px; }
-            .plant-detail img { max-width: 180px; }
+            header {
+                padding: 8px 12px;
+            }
+
+            .logo-bar img {
+                height: 36px;
+            }
+
+            .logo-bar span {
+                font-size: 18px;
+            }
+
+            nav ul {
+                gap: 8px;
+            }
+
+            nav ul li a {
+                font-size: 13px;
+            }
+
+            .download-btn {
+                font-size: 13px;
+                padding: 6px 8px;
+            }
+
+            .plant-detail img {
+                max-width: 180px;
+            }
         }
 
         /* --- Contenedor Principal (SIN CAMBIOS) --- */
@@ -105,9 +198,9 @@
             max-width: 800px;
             margin: 20px auto;
             padding: 25px;
-            background: #e0e6d9; 
+            background: #e0e6d9;
             border-radius: 15px;
-            border: 3px solid #9078E8; 
+            border: 3px solid #9078E8;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -115,10 +208,10 @@
         .plant-detail {
             display: flex;
             flex-direction: column;
-            align-items: center; 
-            margin-bottom: 20px; 
+            align-items: center;
+            margin-bottom: 20px;
         }
-        
+
         /* ============================================================
         ¡AQUÍ ESTÁ EL CAMBIO!
         Se quitó la altura fija (height) y el object-fit 
@@ -127,77 +220,86 @@
         ============================================================
         */
         .plant-detail img {
-            max-width: 200px; /* ¡CAMBIO! Más pequeña (antes 500px) */
-            width: 100%; 
+            max-width: 200px;
+            /* ¡CAMBIO! Más pequeña (antes 500px) */
+            width: 100%;
             /* height: 250px; (ELIMINADO) */
             /* object-fit: cover; (ELIMINADO) */
-            border-radius: 15px; 
-            margin: 0 auto 20px auto; 
+            border-radius: 15px;
+            margin: 0 auto 20px auto;
             display: block;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
+
         /* --- Fin de ajustes de imagen --- */
 
         /* --- Estilos para las secciones (SIN CAMBIOS) --- */
         /* (El texto seguirá teniendo 500px de ancho, lo cual se ve bien) */
         .plant-detail h4 {
-            color: #2c522f; 
+            color: #2c522f;
             margin-top: 0;
             margin-bottom: 5px;
             font-size: 1.2em;
             text-align: left;
-            width: 100%; 
-            max-width: 500px; 
+            width: 100%;
+            max-width: 500px;
         }
-        
-        .plant-detail p, .plant-detail h2 {
+
+        .plant-detail p,
+        .plant-detail h2 {
             color: #333;
             line-height: 1.6;
             margin-top: 0;
             margin-bottom: 20px;
             text-align: left;
             font-size: 1em;
-            width: 100%; 
-            max-width: 500px; 
+            width: 100%;
+            max-width: 500px;
         }
+
         .plant-detail h2 {
             font-style: italic;
             font-weight: normal;
             font-size: 1.1em;
         }
+
         .plant-detail hr {
             border: 0;
             height: 1px;
-            background-color: #c4cbbA; 
+            background-color: #c4cbbA;
             margin: 20px 0;
-            width: 100%; 
-            max-width: 500px; 
+            width: 100%;
+            max-width: 500px;
         }
+
         /* Mostrar saltos de línea guardados en la base de datos
            usa white-space: pre-line para respetar \n y colapsar espacios
         */
-        .full-desc, .curiosidades {
+        .full-desc,
+        .curiosidades {
             white-space: pre-line;
         }
+
         /* --- Fin de estilos de sección --- */
 
         /* --- Botón "Volver" (SIN CAMBIOS) --- */
         .back-btn {
             display: inline-block;
-            background-color: #f0f0f0; 
+            background-color: #f0f0f0;
             color: #333;
             font-size: 24px;
             font-weight: bold;
             text-decoration: none;
             width: 50px;
             height: 50px;
-            line-height: 50px; 
+            line-height: 50px;
             text-align: center;
-            border-radius: 50%; 
-            margin-bottom: 10px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border-radius: 50%;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s;
         }
+
         .back-btn:hover {
             background: #ddd;
         }
@@ -209,6 +311,7 @@
             margin-top: 50px;
             max-width: 100%;
         }
+
         .error {
             text-align: center;
             color: red;
@@ -218,122 +321,134 @@
         }
     </style>
 </head>
+
 <body>
 
-<!-- Modal del Ranking -->
-<div id="modalRanking" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
-    <div style="background-color:#f8f9fa; margin: 10% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
-        <span onclick="cerrarModalRanking()" style="position: absolute; right: 15px; top: 10px; font-size: 24px; font-weight: bold; cursor: pointer; color: #555;">&times;</span>
-        <h2 style="text-align: center; color: #1b5e20; margin-top: 0;">🏆 Tabla de Clasificación</h2>
-        
-        <div id="contenidoRanking" style="margin-top: 15px; max-height: 350px; overflow-y: auto;">
-            <p style="text-align: center; color: #666;">Cargando posiciones...</p>
+    <!-- Modal del Ranking -->
+    <div id="modalRanking"
+        style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
+        <div
+            style="background-color:#f8f9fa; margin: 10% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
+            <span onclick="cerrarModalRanking()"
+                style="position: absolute; right: 15px; top: 10px; font-size: 24px; font-weight: bold; cursor: pointer; color: #555;">&times;</span>
+            <h2 style="text-align: center; color: #1b5e20; margin-top: 0;">🏆 Tabla de Clasificación</h2>
+
+            <div id="contenidoRanking" style="margin-top: 15px; max-height: 350px; overflow-y: auto;">
+                <p style="text-align: center; color: #666;">Cargando posiciones...</p>
+            </div>
         </div>
     </div>
-</div>
 
     <header>
         <div class="logo-bar">
-            <img src="logo-unach.png" alt="UNACH"> 
+            <img src="logo-unach.png" alt="UNACH">
             <span>Flor Data</span>
         </div>
         <nav>
             <ul>
                 <li><a href="index.html#inicio">INICIO</a></li>
                 <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
-                <a href="#" onclick="abrirModalRanking()" style="text-decoration: none; color: white; font-weight: bold; margin-left: 20px;">RANKING 🏆</a>
+                <a href="#" onclick="abrirModalRanking()"
+                    style="text-decoration: none; color: white; font-weight: bold; margin-left: 20px;">RANKING 🏆</a>
                 <li><a href="ia-chat.html#inicio">IA</a></li>
-                <button onclick="cambiarApiKey()" style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
-    🔄 Renovar API Key
-</button>
-                <li><a class="download-btn" href="/downloads/Proyecto-Flor-Data.apk" download>APLICACIÓN</a></li>
+                <button onclick="cambiarApiKey()"
+                    style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                    🔄 Renovar API Key
+                </button>
+                <li><a class="download-btn" href="/downloads/Flor-Data.apk" download>APLICACIÓN</a></li>
             </ul>
         </nav>
         <div class="social">
-            <a href="#"><img src="facebook.png" alt="Facebook"></a> 
+            <a href="#"><img src="facebook.png" alt="Facebook"></a>
         </div>
-        
+
     </header>
 
     <div class="container">
-        
+
         <a href="biblioteca.html" class="back-btn">&#x21A9;</a>
-        
+
         <div id="plant-detail" class="plant-detail">
             <div class="loading">Cargando...</div>
         </div>
 
     </div>
 
-<!-- ====== MODAL BONITO PARA CAMBIAR API KEY ====== -->
-<div id="modalCambiarKey" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-        
-        <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
-        
-        <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
-            Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir escaneando.
-        </p>
-        
-        <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..." style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
-        
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="cerrarModalKey()" style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
-            
-            <button onclick="guardarNuevaKey()" style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+    <!-- ====== MODAL BONITO PARA CAMBIAR API KEY ====== -->
+    <div id="modalCambiarKey"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+        <div
+            style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+
+            <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
+
+            <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
+                Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir
+                escaneando.
+            </p>
+
+            <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..."
+                style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="cerrarModalKey()"
+                    style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
+
+                <button onclick="guardarNuevaKey()"
+                    style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    
-  // Obtener ID de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const plantId = urlParams.get('id');
+    <script>
 
-    if (!plantId) {
-        document.getElementById('plant-detail').innerHTML = '<div class="error">ID de planta no especificado</div>';
-    } else {
-        // Cargar detalles de la planta
-        // Asumiendo que tu API está en la misma URL base
-        fetch(`/api/plantas/${plantId}`) 
-            .then(res => {
-                if (!res.ok) {
-                    // Si la respuesta no es OK (ej. 404 Not Found), lanzamos un error
-                    throw new Error(`Error HTTP: ${res.status} - Planta no encontrada`);
-                }
-                return res.json();
-            })
-            .then(planta => {
-                // función para escapar HTML y evitar inyección
-                const esc = (s) => {
-                    if (!s && s !== '') return s;
-                    return String(s)
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/\"/g, '&quot;')
-                        .replace(/'/g, '&#39;');
-                };
+        // Obtener ID de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const plantId = urlParams.get('id');
 
-                // Normalizar saltos de línea
-                const normalizeNewlines = (s) => {
-                    if (!s && s !== '') return s;
-                    let t = String(s);
-                    t = t.replace(/\\r\\n/g, '\n');
-                    t = t.replace(/\\n/g, '\n');
-                    t = t.replace(/\r\n/g, '\n');
-                    t = t.replace(/\r/g, '\n');
-                    return t;
-                };
+        if (!plantId) {
+            document.getElementById('plant-detail').innerHTML = '<div class="error">ID de planta no especificado</div>';
+        } else {
+            // Cargar detalles de la planta
+            // Asumiendo que tu API está en la misma URL base
+            fetch(`/api/plantas/${plantId}`)
+                .then(res => {
+                    if (!res.ok) {
+                        // Si la respuesta no es OK (ej. 404 Not Found), lanzamos un error
+                        throw new Error(`Error HTTP: ${res.status} - Planta no encontrada`);
+                    }
+                    return res.json();
+                })
+                .then(planta => {
+                    // función para escapar HTML y evitar inyección
+                    const esc = (s) => {
+                        if (!s && s !== '') return s;
+                        return String(s)
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/\"/g, '&quot;')
+                            .replace(/'/g, '&#39;');
+                    };
 
-                // Aseguramos que la estructura de la información se adapte al diseño
-                const contenedorDetalle = document.getElementById('plant-detail');
-                
-                // Hacemos el contenedor relativo para que el contador absoluto se posicione respecto a este div
-                contenedorDetalle.style.position = 'relative';
+                    // Normalizar saltos de línea
+                    const normalizeNewlines = (s) => {
+                        if (!s && s !== '') return s;
+                        let t = String(s);
+                        t = t.replace(/\\r\\n/g, '\n');
+                        t = t.replace(/\\n/g, '\n');
+                        t = t.replace(/\r\n/g, '\n');
+                        t = t.replace(/\r/g, '\n');
+                        return t;
+                    };
 
-                contenedorDetalle.innerHTML = `
+                    // Aseguramos que la estructura de la información se adapte al diseño
+                    const contenedorDetalle = document.getElementById('plant-detail');
+
+                    // Hacemos el contenedor relativo para que el contador absoluto se posicione respecto a este div
+                    contenedorDetalle.style.position = 'relative';
+
+                    contenedorDetalle.innerHTML = `
                     <img src="${esc(planta.imagen) || 'placeholder.jpg'}" alt="${esc(planta.nombreComun || planta.nombrecomun)}">
                     
                     <h4>Nombre Común:</h4>
@@ -355,102 +470,103 @@
                     <p class="curiosidades">${esc(normalizeNewlines(planta.curiosidades)) || 'No hay curiosidades disponibles.'}</p>
                 `;
 
-                // --- NUEVO CÓDIGO: CONSULTAR Y MOSTRAR EL CONTADOR ---
-                const nombreParaCenso = planta.nombreCientifico || planta.nombrecientifico;
+                    // --- NUEVO CÓDIGO: CONSULTAR Y MOSTRAR EL CONTADOR ---
+                    const nombreParaCenso = planta.nombreCientifico || planta.nombrecientifico;
 
-                fetch(`/api/censo/count?nombre=${encodeURIComponent(nombreParaCenso)}`)
-                    .then(r => r.json())
-                    .then(datosCenso => {
-                        // Si el contador es mayor a 0, mostramos la etiqueta
-                        if (datosCenso.count > 0) {
-                            const contadorDiv = document.createElement('div');
-                            contadorDiv.innerHTML = `📍 Ejemplares en Los Cerritos: <b>${datosCenso.count}</b>`;
-                            
-                            // Estilos CSS inyectados para ponerlo arriba a la derecha
-                            contadorDiv.style.cssText = "position: absolute; top: 15px; right: 15px; background: #28a745; color: white; padding: 8px 15px; border-radius: 20px; font-weight: normal; font-size: 0.9em; box-shadow: 0 4px 6px rgba(0,0,0,0.2); z-index: 10;";
-                            
-                            contenedorDetalle.appendChild(contadorDiv);
-                        }
-                    })
-                    .catch(err => console.error('Error al cargar el contador:', err));
+                    fetch(`/api/censo/count?nombre=${encodeURIComponent(nombreParaCenso)}`)
+                        .then(r => r.json())
+                        .then(datosCenso => {
+                            // Si el contador es mayor a 0, mostramos la etiqueta
+                            if (datosCenso.count > 0) {
+                                const contadorDiv = document.createElement('div');
+                                contadorDiv.innerHTML = `📍 Ejemplares en Los Cerritos: <b>${datosCenso.count}</b>`;
 
-            })
-            .catch(err => {
-                console.error('Error cargando planta:', err);
-                document.getElementById('plant-detail').innerHTML = `<div class="error">Error al cargar la información de la planta: ${err.message}</div>`;
-            });
-    }
+                                // Estilos CSS inyectados para ponerlo arriba a la derecha
+                                contadorDiv.style.cssText = "position: absolute; top: 15px; right: 15px; background: #28a745; color: white; padding: 8px 15px; border-radius: 20px; font-weight: normal; font-size: 0.9em; box-shadow: 0 4px 6px rgba(0,0,0,0.2); z-index: 10;";
 
-    // 1. Abre la ventana bonita
-function cambiarApiKey() {
-    const modal = document.getElementById('modalCambiarKey');
-    const input = document.getElementById('nuevaKeyInput');
-    
-    input.value = ''; // Limpiamos el texto por si había algo escrito antes
-    modal.style.display = 'flex'; // Mostramos el modal
-}
+                                contenedorDetalle.appendChild(contadorDiv);
+                            }
+                        })
+                        .catch(err => console.error('Error al cargar el contador:', err));
 
-// 2. Cierra la ventana si el usuario se arrepiente
-function cerrarModalKey() {
-    document.getElementById('modalCambiarKey').style.display = 'none';
-}
-
-// 3. Guarda la llave nueva cuando le dan al botón verde
-function guardarNuevaKey() {
-    const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
-    
-    if (nuevaLlave !== "") {
-        localStorage.setItem('miPlantIdKey', nuevaLlave);
-        cerrarModalKey(); // Escondemos el modal
-        
-        // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
-        alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
-    } else {
-        alert("Por favor, ingresa una llave válida.");
-    }
-}
-
-
-async function abrirModalRanking() {
-    document.getElementById('modalRanking').style.display = 'block';
-    const contenedor = document.getElementById('contenidoRanking');
-    contenedor.innerHTML = '<p style="text-align: center; color: #666;">Cargando posiciones...</p>';
-    
-    try {
-        const response = await fetch('/api/ranking');
-        const datos = await response.json();
-        
-        if (datos.length === 0) {
-            contenedor.innerHTML = '<p style="text-align: center; color: #666;">Aún no hay misiones completadas. ¡Sé el primer equipo en registrar puntos!</p>';
-            return;
+                })
+                .catch(err => {
+                    console.error('Error cargando planta:', err);
+                    document.getElementById('plant-detail').innerHTML = `<div class="error">Error al cargar la información de la planta: ${err.message}</div>`;
+                });
         }
-        
-        let tablaHTML = '<table style="width:100%; border-collapse: collapse; text-align: left;">';
-        tablaHTML += '<tr style="background-color: #c8e6c9; border-bottom: 2px solid #81c784;"> <th style="padding: 10px;">Pos</th> <th style="padding: 10px;">Equipo</th> <th style="padding: 10px; text-align: center;">Puntos</th> </tr>';
-        
-        datos.forEach((fila, index) => {
-            let medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1);
-            let fondoFila = index % 2 === 0 ? '#ffffff' : '#f1f8e9';
-            
-            tablaHTML += `<tr style="background-color: ${fondoFila}; border-bottom: 1px solid #e0e0e0;">
+
+        // 1. Abre la ventana bonita
+        function cambiarApiKey() {
+            const modal = document.getElementById('modalCambiarKey');
+            const input = document.getElementById('nuevaKeyInput');
+
+            input.value = ''; // Limpiamos el texto por si había algo escrito antes
+            modal.style.display = 'flex'; // Mostramos el modal
+        }
+
+        // 2. Cierra la ventana si el usuario se arrepiente
+        function cerrarModalKey() {
+            document.getElementById('modalCambiarKey').style.display = 'none';
+        }
+
+        // 3. Guarda la llave nueva cuando le dan al botón verde
+        function guardarNuevaKey() {
+            const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
+
+            if (nuevaLlave !== "") {
+                localStorage.setItem('miPlantIdKey', nuevaLlave);
+                cerrarModalKey(); // Escondemos el modal
+
+                // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
+                alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
+            } else {
+                alert("Por favor, ingresa una llave válida.");
+            }
+        }
+
+
+        async function abrirModalRanking() {
+            document.getElementById('modalRanking').style.display = 'block';
+            const contenedor = document.getElementById('contenidoRanking');
+            contenedor.innerHTML = '<p style="text-align: center; color: #666;">Cargando posiciones...</p>';
+
+            try {
+                const response = await fetch('/api/ranking');
+                const datos = await response.json();
+
+                if (datos.length === 0) {
+                    contenedor.innerHTML = '<p style="text-align: center; color: #666;">Aún no hay misiones completadas. ¡Sé el primer equipo en registrar puntos!</p>';
+                    return;
+                }
+
+                let tablaHTML = '<table style="width:100%; border-collapse: collapse; text-align: left;">';
+                tablaHTML += '<tr style="background-color: #c8e6c9; border-bottom: 2px solid #81c784;"> <th style="padding: 10px;">Pos</th> <th style="padding: 10px;">Equipo</th> <th style="padding: 10px; text-align: center;">Puntos</th> </tr>';
+
+                datos.forEach((fila, index) => {
+                    let medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1);
+                    let fondoFila = index % 2 === 0 ? '#ffffff' : '#f1f8e9';
+
+                    tablaHTML += `<tr style="background-color: ${fondoFila}; border-bottom: 1px solid #e0e0e0;">
                 <td style="padding: 10px; font-weight: bold; font-size: 1.1em;">${medalla}</td>
                 <td style="padding: 10px; font-weight: bold; color: #333;">${fila.nombre_equipo}</td>
                 <td style="padding: 10px; text-align: center; font-weight: bold; color: #2e7d32; font-size: 1.1em;">${fila.puntaje}</td>
             </tr>`;
-        });
-        
-        tablaHTML += '</table>';
-        contenedor.innerHTML = tablaHTML;
-        
-    } catch (error) {
-        console.error(error);
-        contenedor.innerHTML = '<p style="color: #d32f2f; text-align: center;">Error al cargar el ranking. Verifica tu conexión.</p>';
-    }
-}
+                });
 
-function cerrarModalRanking() {
-    document.getElementById('modalRanking').style.display = 'none';
-}
-</script>
+                tablaHTML += '</table>';
+                contenedor.innerHTML = tablaHTML;
+
+            } catch (error) {
+                console.error(error);
+                contenedor.innerHTML = '<p style="color: #d32f2f; text-align: center;">Error al cargar el ranking. Verifica tu conexión.</p>';
+            }
+        }
+
+        function cerrarModalRanking() {
+            document.getElementById('modalRanking').style.display = 'none';
+        }
+    </script>
 </body>
+
 </html>

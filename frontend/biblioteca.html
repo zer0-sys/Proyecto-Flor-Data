@@ -13,6 +13,7 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body,
         html {
             width: 100%;
@@ -91,6 +92,7 @@
             /* ✅ CRÍTICO: Limita el icono de Facebook */
             width: 45px;
         }
+
         /* Evitar efecto "presionado" o resaltado en móviles/pendientes
            - -webkit-tap-highlight-color quita el resaltado al tocar
            - anular transform/opacity en :active/:focus evita que parezca apachurrado
@@ -208,6 +210,7 @@
             font-size: 1em;
             color: #333;
         }
+
         /* =========================
            Reglas responsivas para móviles
            ========================= */
@@ -312,34 +315,54 @@
                 padding: 8px 12px;
             }
 
-            .logo-bar img { height: 36px; }
-            .logo-bar span { font-size: 18px; }
+            .logo-bar img {
+                height: 36px;
+            }
 
-            nav ul { gap: 8px; }
-            nav ul li a { font-size: 13px; }
+            .logo-bar span {
+                font-size: 18px;
+            }
 
-            .search-container { padding: 8px 12px; }
+            nav ul {
+                gap: 8px;
+            }
 
-            .card-image { height: 160px; }
+            nav ul li a {
+                font-size: 13px;
+            }
 
-            .download-btn { font-size: 13px; padding: 6px 8px; }
+            .search-container {
+                padding: 8px 12px;
+            }
+
+            .card-image {
+                height: 160px;
+            }
+
+            .download-btn {
+                font-size: 13px;
+                padding: 6px 8px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<!-- Modal del Ranking -->
-<div id="modalRanking" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
-    <div style="background-color:#f8f9fa; margin: 10% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
-        <span onclick="cerrarModalRanking()" style="position: absolute; right: 15px; top: 10px; font-size: 24px; font-weight: bold; cursor: pointer; color: #555;">&times;</span>
-        <h2 style="text-align: center; color: #1b5e20; margin-top: 0;">🏆 Tabla de Clasificación</h2>
-        
-        <div id="contenidoRanking" style="margin-top: 15px; max-height: 350px; overflow-y: auto;">
-            <p style="text-align: center; color: #666;">Cargando posiciones...</p>
+    <!-- Modal del Ranking -->
+    <div id="modalRanking"
+        style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
+        <div
+            style="background-color:#f8f9fa; margin: 10% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
+            <span onclick="cerrarModalRanking()"
+                style="position: absolute; right: 15px; top: 10px; font-size: 24px; font-weight: bold; cursor: pointer; color: #555;">&times;</span>
+            <h2 style="text-align: center; color: #1b5e20; margin-top: 0;">🏆 Tabla de Clasificación</h2>
+
+            <div id="contenidoRanking" style="margin-top: 15px; max-height: 350px; overflow-y: auto;">
+                <p style="text-align: center; color: #666;">Cargando posiciones...</p>
+            </div>
         </div>
     </div>
-</div>
 
     <header>
         <div class="logo-bar">
@@ -351,12 +374,14 @@
                 <li><a href="index.html?skip_splash=true#inicio">INICIO</a></li>
 
                 <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
-                <a href="#" onclick="abrirModalRanking()" style="text-decoration: none; color: white; font-weight: bold; margin-left: 20px;">RANKING 🏆</a>
+                <a href="#" onclick="abrirModalRanking()"
+                    style="text-decoration: none; color: white; font-weight: bold; margin-left: 20px;">RANKING 🏆</a>
                 <li><a href="ia-chat.html#inicio">IA</a></li>
-                <button onclick="cambiarApiKey()" style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
-    🔄 Renovar API Key
-</button>
-                <li><a class="download-btn" href="/downloads/Proyecto-Flor-Data.apk" download>APLICACIÓN</a></li>
+                <button onclick="cambiarApiKey()"
+                    style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                    🔄 Renovar API Key
+                </button>
+                <li><a class="download-btn" href="/downloads/Flor-Data.apk" download>APLICACIÓN</a></li>
             </ul>
         </nav>
         <div class="social">
@@ -364,7 +389,7 @@
                 <img src="facebook.png" alt="Facebook">
             </a>
         </div>
-        
+
     </header>
 
     <div class="content-library">
@@ -378,37 +403,43 @@
         </div>
     </div>
     <!-- ====== MODAL BONITO PARA CAMBIAR API KEY ====== -->
-<div id="modalCambiarKey" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-        
-        <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
-        
-        <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
-            Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir escaneando.
-        </p>
-        
-        <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..." style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
-        
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="cerrarModalKey()" style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
-            
-            <button onclick="guardarNuevaKey()" style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+    <div id="modalCambiarKey"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+        <div
+            style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+
+            <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
+
+            <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
+                Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir
+                escaneando.
+            </p>
+
+            <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..."
+                style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="cerrarModalKey()"
+                    style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
+
+                <button onclick="guardarNuevaKey()"
+                    style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+            </div>
         </div>
     </div>
-</div>
 
     <script>
 
-    const plantList = document.getElementById('plant-list');
-    const searchInput = document.querySelector('.search-container input');
+        const plantList = document.getElementById('plant-list');
+        const searchInput = document.querySelector('.search-container input');
 
-    // Función para renderizar plantas
-    function renderPlantas(plantas) {
-        plantList.innerHTML = '';
-        plantas.forEach(planta => {
-            const card = document.createElement('div');
-            card.className = 'plant-card';
-            card.innerHTML = `
+        // Función para renderizar plantas
+        function renderPlantas(plantas) {
+            plantList.innerHTML = '';
+            plantas.forEach(planta => {
+                const card = document.createElement('div');
+                card.className = 'plant-card';
+                card.innerHTML = `
                 <div class="card-image">
                     <img src="${planta.imagen || 'placeholder.jpg'}" alt="${planta.nombreComun}">
                 </div>
@@ -418,96 +449,96 @@
                     <p>${planta.descripcion}</p>
                 </div>
             `;
-            // Al dar clic, manda a planta.html con el ID correspondiente
-            card.onclick = () => window.location.href = `planta.html?id=${planta.id}`;
-            plantList.appendChild(card);
-        });
-    }
-
-    // Cargar todas las plantas al inicio
-    fetch('/api/plantas')
-        .then(res => res.json())
-        .then(renderPlantas)
-        .catch(err => console.error('Error cargando plantas:', err));
-
-    // Búsqueda en tiempo real
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim();
-        const url = query ? `/api/plantas/search?q=${encodeURIComponent(query)}` : '/api/plantas';
-        fetch(url)
-            .then(res => res.json())
-            .then(renderPlantas);
-    });
-    // 1. Abre la ventana bonita
-function cambiarApiKey() {
-    const modal = document.getElementById('modalCambiarKey');
-    const input = document.getElementById('nuevaKeyInput');
-    
-    input.value = ''; // Limpiamos el texto por si había algo escrito antes
-    modal.style.display = 'flex'; // Mostramos el modal
-}
-
-// 2. Cierra la ventana si el usuario se arrepiente
-function cerrarModalKey() {
-    document.getElementById('modalCambiarKey').style.display = 'none';
-}
-
-// 3. Guarda la llave nueva cuando le dan al botón verde
-function guardarNuevaKey() {
-    const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
-    
-    if (nuevaLlave !== "") {
-        localStorage.setItem('miPlantIdKey', nuevaLlave);
-        cerrarModalKey(); // Escondemos el modal
-        
-        // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
-        alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
-    } else {
-        alert("Por favor, ingresa una llave válida.");
-    }
-}
-
-async function abrirModalRanking() {
-    document.getElementById('modalRanking').style.display = 'block';
-    const contenedor = document.getElementById('contenidoRanking');
-    contenedor.innerHTML = '<p style="text-align: center; color: #666;">Cargando posiciones...</p>';
-    
-    try {
-        const response = await fetch('/api/ranking');
-        const datos = await response.json();
-        
-        if (datos.length === 0) {
-            contenedor.innerHTML = '<p style="text-align: center; color: #666;">Aún no hay misiones completadas. ¡Sé el primer equipo en registrar puntos!</p>';
-            return;
+                // Al dar clic, manda a planta.html con el ID correspondiente
+                card.onclick = () => window.location.href = `planta.html?id=${planta.id}`;
+                plantList.appendChild(card);
+            });
         }
-        
-        let tablaHTML = '<table style="width:100%; border-collapse: collapse; text-align: left;">';
-        tablaHTML += '<tr style="background-color: #c8e6c9; border-bottom: 2px solid #81c784;"> <th style="padding: 10px;">Pos</th> <th style="padding: 10px;">Equipo</th> <th style="padding: 10px; text-align: center;">Puntos</th> </tr>';
-        
-        datos.forEach((fila, index) => {
-            let medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1);
-            let fondoFila = index % 2 === 0 ? '#ffffff' : '#f1f8e9';
-            
-            tablaHTML += `<tr style="background-color: ${fondoFila}; border-bottom: 1px solid #e0e0e0;">
+
+        // Cargar todas las plantas al inicio
+        fetch('/api/plantas')
+            .then(res => res.json())
+            .then(renderPlantas)
+            .catch(err => console.error('Error cargando plantas:', err));
+
+        // Búsqueda en tiempo real
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            const url = query ? `/api/plantas/search?q=${encodeURIComponent(query)}` : '/api/plantas';
+            fetch(url)
+                .then(res => res.json())
+                .then(renderPlantas);
+        });
+        // 1. Abre la ventana bonita
+        function cambiarApiKey() {
+            const modal = document.getElementById('modalCambiarKey');
+            const input = document.getElementById('nuevaKeyInput');
+
+            input.value = ''; // Limpiamos el texto por si había algo escrito antes
+            modal.style.display = 'flex'; // Mostramos el modal
+        }
+
+        // 2. Cierra la ventana si el usuario se arrepiente
+        function cerrarModalKey() {
+            document.getElementById('modalCambiarKey').style.display = 'none';
+        }
+
+        // 3. Guarda la llave nueva cuando le dan al botón verde
+        function guardarNuevaKey() {
+            const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
+
+            if (nuevaLlave !== "") {
+                localStorage.setItem('miPlantIdKey', nuevaLlave);
+                cerrarModalKey(); // Escondemos el modal
+
+                // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
+                alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
+            } else {
+                alert("Por favor, ingresa una llave válida.");
+            }
+        }
+
+        async function abrirModalRanking() {
+            document.getElementById('modalRanking').style.display = 'block';
+            const contenedor = document.getElementById('contenidoRanking');
+            contenedor.innerHTML = '<p style="text-align: center; color: #666;">Cargando posiciones...</p>';
+
+            try {
+                const response = await fetch('/api/ranking');
+                const datos = await response.json();
+
+                if (datos.length === 0) {
+                    contenedor.innerHTML = '<p style="text-align: center; color: #666;">Aún no hay misiones completadas. ¡Sé el primer equipo en registrar puntos!</p>';
+                    return;
+                }
+
+                let tablaHTML = '<table style="width:100%; border-collapse: collapse; text-align: left;">';
+                tablaHTML += '<tr style="background-color: #c8e6c9; border-bottom: 2px solid #81c784;"> <th style="padding: 10px;">Pos</th> <th style="padding: 10px;">Equipo</th> <th style="padding: 10px; text-align: center;">Puntos</th> </tr>';
+
+                datos.forEach((fila, index) => {
+                    let medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1);
+                    let fondoFila = index % 2 === 0 ? '#ffffff' : '#f1f8e9';
+
+                    tablaHTML += `<tr style="background-color: ${fondoFila}; border-bottom: 1px solid #e0e0e0;">
                 <td style="padding: 10px; font-weight: bold; font-size: 1.1em;">${medalla}</td>
                 <td style="padding: 10px; font-weight: bold; color: #333;">${fila.nombre_equipo}</td>
                 <td style="padding: 10px; text-align: center; font-weight: bold; color: #2e7d32; font-size: 1.1em;">${fila.puntaje}</td>
             </tr>`;
-        });
-        
-        tablaHTML += '</table>';
-        contenedor.innerHTML = tablaHTML;
-        
-    } catch (error) {
-        console.error(error);
-        contenedor.innerHTML = '<p style="color: #d32f2f; text-align: center;">Error al cargar el ranking. Verifica tu conexión.</p>';
-    }
-}
+                });
 
-function cerrarModalRanking() {
-    document.getElementById('modalRanking').style.display = 'none';
-}
-</script>
+                tablaHTML += '</table>';
+                contenedor.innerHTML = tablaHTML;
+
+            } catch (error) {
+                console.error(error);
+                contenedor.innerHTML = '<p style="color: #d32f2f; text-align: center;">Error al cargar el ranking. Verifica tu conexión.</p>';
+            }
+        }
+
+        function cerrarModalRanking() {
+            document.getElementById('modalRanking').style.display = 'none';
+        }
+    </script>
 </body>
 
 </html>

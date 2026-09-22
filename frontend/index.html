@@ -459,16 +459,19 @@
 <body>
 
     <!-- Modal del Ranking -->
-<div id="modalRanking" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
-    <div style="background-color:#f8f9fa; margin: 10% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
-        <span onclick="cerrarModalRanking()" style="position: absolute; right: 15px; top: 10px; font-size: 24px; font-weight: bold; cursor: pointer; color: #555;">&times;</span>
-        <h2 style="text-align: center; color: #1b5e20; margin-top: 0;">🏆 Tabla de Clasificación</h2>
-        
-        <div id="contenidoRanking" style="margin-top: 15px; max-height: 350px; overflow-y: auto;">
-            <p style="text-align: center; color: #666;">Cargando posiciones...</p>
+    <div id="modalRanking"
+        style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7);">
+        <div
+            style="background-color:#f8f9fa; margin: 10% auto; padding: 20px; border-radius: 12px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative;">
+            <span onclick="cerrarModalRanking()"
+                style="position: absolute; right: 15px; top: 10px; font-size: 24px; font-weight: bold; cursor: pointer; color: #555;">&times;</span>
+            <h2 style="text-align: center; color: #1b5e20; margin-top: 0;">🏆 Tabla de Clasificación</h2>
+
+            <div id="contenidoRanking" style="margin-top: 15px; max-height: 350px; overflow-y: auto;">
+                <p style="text-align: center; color: #666;">Cargando posiciones...</p>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- Modal para la API Key de Plant.id -->
     <div id="modalApiKey"
@@ -506,11 +509,14 @@
                 <ul>
                     <li><a href="index.html#inicio">INICIO</a></li>
                     <li><a href="biblioteca.html#inicio">BIBLIOTECA DIGITAL</a></li>
-                    <a href="#" onclick="abrirModalRanking()" style="text-decoration: none; color: white; font-weight: bold; margin-left: 20px;">RANKING 🏆</a>
+                    <a href="#" onclick="abrirModalRanking()"
+                        style="text-decoration: none; color: white; font-weight: bold; margin-left: 20px;">RANKING
+                        🏆</a>
                     <li><a href="ia-chat.html#inicio">IA</a></li>
-                    <button onclick="cambiarApiKey()" style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
-    🔄 Renovar API Key
-</button>
+                    <button onclick="cambiarApiKey()"
+                        style="background: #ff9800; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                        🔄 Renovar API Key
+                    </button>
                     <li><a class="download-btn" href="/downloads/Flor-Data.apk" download>APLICACIÓN</a></li>
                 </ul>
             </nav>
@@ -604,27 +610,33 @@
     </div>
 
     <!-- ====== MODAL BONITO PARA CAMBIAR API KEY ====== -->
-<div id="modalCambiarKey" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-        
-        <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
-        
-        <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
-            Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir escaneando.
-        </p>
-        
-        <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..." style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
-        
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="cerrarModalKey()" style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
-            
-            <button onclick="guardarNuevaKey()" style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+    <div id="modalCambiarKey"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+        <div
+            style="background: white; padding: 30px 25px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+
+            <h2 style="color: #2e7d32; margin-top: 0; margin-bottom: 10px; font-size: 24px;">¡Renovar Llave! 🌿</h2>
+
+            <p style="color: #555; font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
+                Tus créditos se agotaron. Genera una nueva <b>API Key</b> en Plant.id y pégala aquí abajo para seguir
+                escaneando.
+            </p>
+
+            <input type="text" id="nuevaKeyInput" placeholder="Pega tu nueva API Key aquí..."
+                style="width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 15px; outline: none;">
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="cerrarModalKey()"
+                    style="background: #e0e0e0; color: #333; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Cancelar</button>
+
+                <button onclick="guardarNuevaKey()"
+                    style="background: #31786d; color: white; border: none; padding: 12px 15px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 15px;">Guardar</button>
+            </div>
         </div>
     </div>
-</div>
 
     <script>
-        
+
         // Función para abrir el chat de la IA
         function openIAChat() {
             window.location.href = 'ia-chat.html';
@@ -639,158 +651,158 @@
         const skipSplash = urlParams.get('skip_splash');
 
 
-// ==========================================
-       // LÓGICA DEL MAPA (LEAFLET + CLUSTERS + FILTRO POR ESPECIE)
-       // ==========================================
-       let mapaIniciado = false;
+        // ==========================================
+        // LÓGICA DEL MAPA (LEAFLET + CLUSTERS + FILTRO POR ESPECIE)
+        // ==========================================
+        let mapaIniciado = false;
 
-// Función matemática para generar los puntos curvos del círculo
-function crearArco(centro, radioMetros, anguloInicio, anguloFin, pasos = 10) {
-    const puntos = [];
-    const lat = centro[0];
-    const lng = centro[1];
-    
-    // Conversión de metros a grados aproximados
-    const latRadius = radioMetros / 111320;
-    const lngRadius = radioMetros / (111320 * Math.cos(lat * Math.PI / 180));
+        // Función matemática para generar los puntos curvos del círculo
+        function crearArco(centro, radioMetros, anguloInicio, anguloFin, pasos = 10) {
+            const puntos = [];
+            const lat = centro[0];
+            const lng = centro[1];
 
-    for (let i = 0; i <= pasos; i++) {
-        const anguloDeg = anguloInicio + (anguloFin - anguloInicio) * (i / pasos);
-        const anguloRad = anguloDeg * Math.PI / 180;
-        
-        const pLat = lat + latRadius * Math.sin(anguloRad);
-        const pLng = lng + lngRadius * Math.cos(anguloRad);
-        puntos.push([pLat, pLng]);
-    }
-    return puntos;
-}
+            // Conversión de metros a grados aproximados
+            const latRadius = radioMetros / 111320;
+            const lngRadius = radioMetros / (111320 * Math.cos(lat * Math.PI / 180));
 
-async function iniciarRadarTactico() {
-    if (mapaIniciado) return;
+            for (let i = 0; i <= pasos; i++) {
+                const anguloDeg = anguloInicio + (anguloFin - anguloInicio) * (i / pasos);
+                const anguloRad = anguloDeg * Math.PI / 180;
 
-    // Vista inicial centrada en la región
-    const mapa = L.map('radar-censo').setView([14.6823, -92.1447], 14);
-
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap'
-    }).addTo(mapa);
-
-       // ==========================================
-       // DIBUJAR ZONAS DE ACTIVIDAD (RECORTE CURVO EN EL CENTRO)
-       // ==========================================
-       
-       // 1. Tus 4 esquinas maestras
-       const esqNoreste  = [14.886803365985443, -92.29142741327261];
-       const esqSureste  = [14.884794372572557, -92.29115694304282];
-       const esqNoroeste = [14.886086403942285, -92.29592494680803];
-       const esqSuroeste = [14.883860819075766, -92.29573175378677];
-
-       // 2. Puntos medios
-       const arribaMedio = [(esqNoroeste[0] + esqNoreste[0])/2, (esqNoroeste[1] + esqNoreste[1])/2];
-       const abajoMedio  = [(esqSuroeste[0] + esqSureste[0])/2, (esqSuroeste[1] + esqSureste[1])/2];
-       const izqMedio    = [(esqNoroeste[0] + esqSuroeste[0])/2, (esqNoroeste[1] + esqSuroeste[1])/2];
-       const derMedio    = [(esqNoreste[0] + esqSureste[0])/2, (esqNoreste[1] + esqSureste[1])/2];
-
-       const centro = [(arribaMedio[0] + abajoMedio[0])/2, (izqMedio[1] + derMedio[1])/2];
-       const radioCentro = 40; // Radio del círculo en metros
-
-       // Generar los arcos de curva para cada cuadrante
-       const arcoNW = crearArco(centro, radioCentro, 90, 180);
-       const arcoNE = crearArco(centro, radioCentro, 0, 90);
-       const arcoSE = crearArco(centro, radioCentro, 270, 360);
-       const arcoSW = crearArco(centro, radioCentro, 180, 270);
-
-       // Zona Centro (Círculo rojo despejado)
-       L.circle(centro, { color: '#ff0000', fillColor: '#ff0000', fillOpacity: 0.25, radius: radioCentro })
-         .bindPopup("<b>Zona 1: Centro</b><br>Zona exclusiva de control")
-         .addTo(mapa);
-
-       // Zona Noroeste (Azul) - Bordea el arco superior izquierdo
-       L.polygon([izqMedio, esqNoroeste, arribaMedio, ...arcoNW], {color: "#00aaff", weight: 2, fillOpacity: 0.1})
-         .bindPopup("<b>Zona 2: Noroeste</b>").addTo(mapa);
-
-       // Zona Noreste (Verde) - Bordea el arco superior derecho
-       L.polygon([arribaMedio, esqNoreste, derMedio, ...arcoNE], {color: "#00ffaa", weight: 2, fillOpacity: 0.1})
-         .bindPopup("<b>Zona 3: Noreste</b>").addTo(mapa);
-
-       // Zona Sureste (Amarillo) - Bordea el arco inferior derecho
-       L.polygon([derMedio, esqSureste, abajoMedio, ...arcoSE], {color: "#ffaa00", weight: 2, fillOpacity: 0.1})
-         .bindPopup("<b>Zona 5: Sureste</b>").addTo(mapa);
-
-       // Zona Suroeste (Morado) - Bordea el arco inferior izquierdo
-       L.polygon([abajoMedio, esqSuroeste, izqMedio, ...arcoSW], {color: "#aa00ff", weight: 2, fillOpacity: 0.1})
-         .bindPopup("<b>Zona 4: Suroeste</b>").addTo(mapa);
-
-    try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const especieFiltro = urlParams.get('especie');
-
-        const response = await fetch('/api/censo/ubicaciones');
-        const ubicaciones = await response.json();
-
-        if (ubicaciones.length > 0) {
-            console.log("📍 Ejemplo de datos en Supabase:", ubicaciones[0]);
+                const pLat = lat + latRadius * Math.sin(anguloRad);
+                const pLng = lng + lngRadius * Math.cos(anguloRad);
+                puntos.push([pLat, pLng]);
+            }
+            return puntos;
         }
 
-        const grupoMarcadores = typeof L.markerClusterGroup === 'function' 
-            ? L.markerClusterGroup() 
-            : L.layerGroup();
+        async function iniciarRadarTactico() {
+            if (mapaIniciado) return;
 
-        const ubicacionesAMostrar = especieFiltro
-            ? ubicaciones.filter(p => {
-                const nombre = (p.nombre_identificado || p.nombre || '').toLowerCase();
-                return nombre.includes(especieFiltro.toLowerCase().trim());
-            })
-            : ubicaciones;
+            // Vista inicial centrada en la región
+            const mapa = L.map('radar-censo').setView([14.6823, -92.1447], 14);
 
-       let puntosAgregados = 0;
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(mapa);
 
-        ubicacionesAMostrar.forEach(planta => {
-            let rawLat = String(planta.latitud || '').replace(/['" ]/g, '').replace(',', '.');
-            let rawLng = String(planta.longitud || '').replace(/['" ]/g, '').replace(',', '.');
-            
-            const lat = parseFloat(rawLat);
-            const lng = parseFloat(rawLng);
-            const nombrePlanta = planta.nombre_identificado || planta.nombre || 'Planta';
+            // ==========================================
+            // DIBUJAR ZONAS DE ACTIVIDAD (RECORTE CURVO EN EL CENTRO)
+            // ==========================================
 
-            if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-                
-                if (lng > 0) {
-                    console.warn(`⚠️ OJO: ${nombrePlanta} tiene longitud positiva (${lng}). Seguramente le falta el signo "-" en Supabase.`);
+            // 1. Tus 4 esquinas maestras
+            const esqNoreste = [14.886803365985443, -92.29142741327261];
+            const esqSureste = [14.884794372572557, -92.29115694304282];
+            const esqNoroeste = [14.886086403942285, -92.29592494680803];
+            const esqSuroeste = [14.883860819075766, -92.29573175378677];
+
+            // 2. Puntos medios
+            const arribaMedio = [(esqNoroeste[0] + esqNoreste[0]) / 2, (esqNoroeste[1] + esqNoreste[1]) / 2];
+            const abajoMedio = [(esqSuroeste[0] + esqSureste[0]) / 2, (esqSuroeste[1] + esqSureste[1]) / 2];
+            const izqMedio = [(esqNoroeste[0] + esqSuroeste[0]) / 2, (esqNoroeste[1] + esqSuroeste[1]) / 2];
+            const derMedio = [(esqNoreste[0] + esqSureste[0]) / 2, (esqNoreste[1] + esqSureste[1]) / 2];
+
+            const centro = [(arribaMedio[0] + abajoMedio[0]) / 2, (izqMedio[1] + derMedio[1]) / 2];
+            const radioCentro = 40; // Radio del círculo en metros
+
+            // Generar los arcos de curva para cada cuadrante
+            const arcoNW = crearArco(centro, radioCentro, 90, 180);
+            const arcoNE = crearArco(centro, radioCentro, 0, 90);
+            const arcoSE = crearArco(centro, radioCentro, 270, 360);
+            const arcoSW = crearArco(centro, radioCentro, 180, 270);
+
+            // Zona Centro (Círculo rojo despejado)
+            L.circle(centro, { color: '#ff0000', fillColor: '#ff0000', fillOpacity: 0.25, radius: radioCentro })
+                .bindPopup("<b>Zona 1: Centro</b><br>Zona exclusiva de control")
+                .addTo(mapa);
+
+            // Zona Noroeste (Azul) - Bordea el arco superior izquierdo
+            L.polygon([izqMedio, esqNoroeste, arribaMedio, ...arcoNW], { color: "#00aaff", weight: 2, fillOpacity: 0.1 })
+                .bindPopup("<b>Zona 2: Noroeste</b>").addTo(mapa);
+
+            // Zona Noreste (Verde) - Bordea el arco superior derecho
+            L.polygon([arribaMedio, esqNoreste, derMedio, ...arcoNE], { color: "#00ffaa", weight: 2, fillOpacity: 0.1 })
+                .bindPopup("<b>Zona 3: Noreste</b>").addTo(mapa);
+
+            // Zona Sureste (Amarillo) - Bordea el arco inferior derecho
+            L.polygon([derMedio, esqSureste, abajoMedio, ...arcoSE], { color: "#ffaa00", weight: 2, fillOpacity: 0.1 })
+                .bindPopup("<b>Zona 5: Sureste</b>").addTo(mapa);
+
+            // Zona Suroeste (Morado) - Bordea el arco inferior izquierdo
+            L.polygon([abajoMedio, esqSuroeste, izqMedio, ...arcoSW], { color: "#aa00ff", weight: 2, fillOpacity: 0.1 })
+                .bindPopup("<b>Zona 4: Suroeste</b>").addTo(mapa);
+
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const especieFiltro = urlParams.get('especie');
+
+                const response = await fetch('/api/censo/ubicaciones');
+                const ubicaciones = await response.json();
+
+                if (ubicaciones.length > 0) {
+                    console.log("📍 Ejemplo de datos en Supabase:", ubicaciones[0]);
                 }
 
-                const punto = L.circleMarker([lat, lng], {
-                    color: especieFiltro ? '#ff9800' : '#00ff00',
-                    fillColor: especieFiltro ? '#ff9800' : '#00ff00',
-                    fillOpacity: 0.9,
-                    radius: 8
+                const grupoMarcadores = typeof L.markerClusterGroup === 'function'
+                    ? L.markerClusterGroup()
+                    : L.layerGroup();
+
+                const ubicacionesAMostrar = especieFiltro
+                    ? ubicaciones.filter(p => {
+                        const nombre = (p.nombre_identificado || p.nombre || '').toLowerCase();
+                        return nombre.includes(especieFiltro.toLowerCase().trim());
+                    })
+                    : ubicaciones;
+
+                let puntosAgregados = 0;
+
+                ubicacionesAMostrar.forEach(planta => {
+                    let rawLat = String(planta.latitud || '').replace(/['" ]/g, '').replace(',', '.');
+                    let rawLng = String(planta.longitud || '').replace(/['" ]/g, '').replace(',', '.');
+
+                    const lat = parseFloat(rawLat);
+                    const lng = parseFloat(rawLng);
+                    const nombrePlanta = planta.nombre_identificado || planta.nombre || 'Planta';
+
+                    if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+
+                        if (lng > 0) {
+                            console.warn(`⚠️ OJO: ${nombrePlanta} tiene longitud positiva (${lng}). Seguramente le falta el signo "-" en Supabase.`);
+                        }
+
+                        const punto = L.circleMarker([lat, lng], {
+                            color: especieFiltro ? '#ff9800' : '#00ff00',
+                            fillColor: especieFiltro ? '#ff9800' : '#00ff00',
+                            fillOpacity: 0.9,
+                            radius: 8
+                        });
+
+                        punto.bindPopup(`<b>${nombrePlanta}</b><br>Coordenadas: ${lat}, ${lng}`);
+                        grupoMarcadores.addLayer(punto);
+                        puntosAgregados++;
+                    }
                 });
 
-                punto.bindPopup(`<b>${nombrePlanta}</b><br>Coordenadas: ${lat}, ${lng}`);
-                grupoMarcadores.addLayer(punto);
-                puntosAgregados++;
-            }
-        });
+                mapa.addLayer(grupoMarcadores);
 
-        mapa.addLayer(grupoMarcadores);
+                if (puntosAgregados > 0) {
+                    const bounds = grupoMarcadores.getBounds();
+                    if (bounds.isValid()) {
+                        mapa.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+                    }
+                } else {
+                    console.warn("⚠️ Ningún registro contiene latitud/longitud válidas.");
+                }
 
-        if (puntosAgregados > 0) {
-            const bounds = grupoMarcadores.getBounds();
-            if (bounds.isValid()) {
-                mapa.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+            } catch (error) {
+                console.error("Error en radar:", error);
             }
-        } else {
-            console.warn("⚠️ Ningún registro contiene latitud/longitud válidas.");
+
+            setTimeout(() => { mapa.invalidateSize(); }, 300);
+            mapaIniciado = true;
         }
-
-    } catch (error) {
-        console.error("Error en radar:", error);
-    }
-
-    setTimeout(() => { mapa.invalidateSize(); }, 300);
-    mapaIniciado = true;
-}
 
         window.onload = function () {
             // 1. Si el parámetro skip_splash es 'true', saltamos la animación.
@@ -832,102 +844,102 @@ async function iniciarRadarTactico() {
 
         document.addEventListener("DOMContentLoaded", () => {
             const llaveGuardada = localStorage.getItem('miPlantIdKey');
-            
+
             // Si NO hay llave guardada, forzamos a que aparezca la ventana
             if (!llaveGuardada) {
-                document.getElementById('modalApiKey').style.display = 'flex'; 
+                document.getElementById('modalApiKey').style.display = 'flex';
             }
         });
 
         // Función que se activa al darle clic al botón
-        window.guardarLlave = function() {
+        window.guardarLlave = function () {
             const llaveInput = document.getElementById('inputApiKey').value.trim();
-            
+
             if (llaveInput === "") {
                 alert("Por favor, ingresa una llave válida.");
                 return;
             }
-            
+
             // 1. Guardar la llave en la memoria del navegador
-            localStorage.setItem('miPlantIdKey', llaveInput); 
-            
+            localStorage.setItem('miPlantIdKey', llaveInput);
+
             // 2. Ocultar la ventanita
-            document.getElementById('modalApiKey').style.display = 'none'; 
-            
+            document.getElementById('modalApiKey').style.display = 'none';
+
             // 3. Avisarle al usuario
             alert("¡Llave guardada con éxito! Ya puedes usar el laboratorio experto.");
         }
 
         // 1. Abre la ventana bonita
-function cambiarApiKey() {
-    const modal = document.getElementById('modalCambiarKey');
-    const input = document.getElementById('nuevaKeyInput');
-    
-    input.value = ''; // Limpiamos el texto por si había algo escrito antes
-    modal.style.display = 'flex'; // Mostramos el modal
-}
+        function cambiarApiKey() {
+            const modal = document.getElementById('modalCambiarKey');
+            const input = document.getElementById('nuevaKeyInput');
 
-// 2. Cierra la ventana si el usuario se arrepiente
-function cerrarModalKey() {
-    document.getElementById('modalCambiarKey').style.display = 'none';
-}
-
-// 3. Guarda la llave nueva cuando le dan al botón verde
-function guardarNuevaKey() {
-    const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
-    
-    if (nuevaLlave !== "") {
-        localStorage.setItem('miPlantIdKey', nuevaLlave);
-        cerrarModalKey(); // Escondemos el modal
-        
-        // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
-        alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
-    } else {
-        alert("Por favor, ingresa una llave válida.");
-    }
-}
-
-
-async function abrirModalRanking() {
-    document.getElementById('modalRanking').style.display = 'block';
-    const contenedor = document.getElementById('contenidoRanking');
-    contenedor.innerHTML = '<p style="text-align: center; color: #666;">Cargando posiciones...</p>';
-    
-    try {
-        const response = await fetch('/api/ranking');
-        const datos = await response.json();
-        
-        if (datos.length === 0) {
-            contenedor.innerHTML = '<p style="text-align: center; color: #666;">Aún no hay misiones completadas. ¡Sé el primer equipo en registrar puntos!</p>';
-            return;
+            input.value = ''; // Limpiamos el texto por si había algo escrito antes
+            modal.style.display = 'flex'; // Mostramos el modal
         }
-        
-        let tablaHTML = '<table style="width:100%; border-collapse: collapse; text-align: left;">';
-        tablaHTML += '<tr style="background-color: #c8e6c9; border-bottom: 2px solid #81c784;"> <th style="padding: 10px;">Pos</th> <th style="padding: 10px;">Equipo</th> <th style="padding: 10px; text-align: center;">Puntos</th> </tr>';
-        
-        datos.forEach((fila, index) => {
-            let medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1);
-            let fondoFila = index % 2 === 0 ? '#ffffff' : '#f1f8e9';
-            
-            tablaHTML += `<tr style="background-color: ${fondoFila}; border-bottom: 1px solid #e0e0e0;">
+
+        // 2. Cierra la ventana si el usuario se arrepiente
+        function cerrarModalKey() {
+            document.getElementById('modalCambiarKey').style.display = 'none';
+        }
+
+        // 3. Guarda la llave nueva cuando le dan al botón verde
+        function guardarNuevaKey() {
+            const nuevaLlave = document.getElementById('nuevaKeyInput').value.trim();
+
+            if (nuevaLlave !== "") {
+                localStorage.setItem('miPlantIdKey', nuevaLlave);
+                cerrarModalKey(); // Escondemos el modal
+
+                // Un pequeño aviso discreto (opcional, puedes borrar esta línea si no lo quieres)
+                alert("¡Listo! Tu nueva llave ha sido guardada. Intenta escanear tu planta de nuevo.");
+            } else {
+                alert("Por favor, ingresa una llave válida.");
+            }
+        }
+
+
+        async function abrirModalRanking() {
+            document.getElementById('modalRanking').style.display = 'block';
+            const contenedor = document.getElementById('contenidoRanking');
+            contenedor.innerHTML = '<p style="text-align: center; color: #666;">Cargando posiciones...</p>';
+
+            try {
+                const response = await fetch('/api/ranking');
+                const datos = await response.json();
+
+                if (datos.length === 0) {
+                    contenedor.innerHTML = '<p style="text-align: center; color: #666;">Aún no hay misiones completadas. ¡Sé el primer equipo en registrar puntos!</p>';
+                    return;
+                }
+
+                let tablaHTML = '<table style="width:100%; border-collapse: collapse; text-align: left;">';
+                tablaHTML += '<tr style="background-color: #c8e6c9; border-bottom: 2px solid #81c784;"> <th style="padding: 10px;">Pos</th> <th style="padding: 10px;">Equipo</th> <th style="padding: 10px; text-align: center;">Puntos</th> </tr>';
+
+                datos.forEach((fila, index) => {
+                    let medalla = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : (index + 1);
+                    let fondoFila = index % 2 === 0 ? '#ffffff' : '#f1f8e9';
+
+                    tablaHTML += `<tr style="background-color: ${fondoFila}; border-bottom: 1px solid #e0e0e0;">
                 <td style="padding: 10px; font-weight: bold; font-size: 1.1em;">${medalla}</td>
                 <td style="padding: 10px; font-weight: bold; color: #333;">${fila.nombre_equipo}</td>
                 <td style="padding: 10px; text-align: center; font-weight: bold; color: #2e7d32; font-size: 1.1em;">${fila.puntaje}</td>
             </tr>`;
-        });
-        
-        tablaHTML += '</table>';
-        contenedor.innerHTML = tablaHTML;
-        
-    } catch (error) {
-        console.error(error);
-        contenedor.innerHTML = '<p style="color: #d32f2f; text-align: center;">Error al cargar el ranking. Verifica tu conexión.</p>';
-    }
-}
+                });
 
-function cerrarModalRanking() {
-    document.getElementById('modalRanking').style.display = 'none';
-}
+                tablaHTML += '</table>';
+                contenedor.innerHTML = tablaHTML;
+
+            } catch (error) {
+                console.error(error);
+                contenedor.innerHTML = '<p style="color: #d32f2f; text-align: center;">Error al cargar el ranking. Verifica tu conexión.</p>';
+            }
+        }
+
+        function cerrarModalRanking() {
+            document.getElementById('modalRanking').style.display = 'none';
+        }
 
     </script>
 
