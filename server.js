@@ -144,8 +144,8 @@ app.post('/api/upload', upload.single('imagen'), async (req, res) => {
 });
 
 
-const crypto = require('crypto');
-const axios = require('axios');
+
+
 
 // ==========================================
 // RUTA SECRETA PARA POBLAR HASHES VACÍOS
