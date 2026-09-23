@@ -616,7 +616,7 @@ app.post('/api/chat', async (req, res) => {
         "Authorization": `Bearer ${process.env.NVIDIA_API_KEY_2}`,
         "Content-Type": "application/json"
       },
-      timeout: 30000 // 30 segundos es suficiente, 90s es muy alto para una web
+      timeout: 90000 // 30 segundos es suficiente, 90s es muy alto para una web
     });
 
     const respuestaFinal = respuestaNvidia.data.choices[0].message.content;
