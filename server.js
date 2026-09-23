@@ -582,7 +582,7 @@ process.on('SIGINT', () => {
 });
 
 // ==========================================
-// CEREBRO DE BOTANI (NVIDIA - NEMOTRON 3.5 - VERSIÓN FINAL)
+// CEREBRO DE BOTANI (SISTEMA DE RESPALDO: MISTRAL -> LLAMA -> NEMOTRON)
 // ==========================================
 app.post('/api/chat', async (req, res) => {
   const { mensaje } = req.body;
@@ -591,7 +591,6 @@ app.post('/api/chat', async (req, res) => {
     return res.status(400).json({ error: "El mensaje está vacío" });
   }
 
-  // Se añaden reglas estrictas para evitar el volcado de datos y obedecer el formato
   const promptSistema = `Eres Botani, un asistente virtual amigable y experto en botánica, especializado en la flora de Chiapas, México, y el Parque Los Cerritos. Perteneces al proyecto 'Flor Data' de la UNACH. Tus respuestas deben ser cálidas, entusiastas, claras y concisas (máximo 2 o 3 párrafos cortos). Usa emojis relacionados con plantas. No inventes datos que no sepas. 
     
     REGLAS DE ORO ESTRICTAS: 
@@ -599,33 +598,66 @@ app.post('/api/chat', async (req, res) => {
     2. FILTRADO: Si te preguntan por características específicas (ej. plantas con espinas, frutos), NO listes todas las plantas que conoces. Filtra y menciona SOLO las que cumplen la condición.
     3. FORMATO: Obedece estrictamente si el usuario te pide un resumen de un solo párrafo, sin usar viñetas.`;
 
-  try {
-    console.log("Pensando la respuesta con NVIDIA (Nemotron 3.5)...");
+  // Base de la petición que comparten todos los modelos
+  const datosBase = {
+    messages: [
+      { role: "system", content: promptSistema },
+      { role: "user", content: mensaje }
+    ],
+    temperature: 0.6,
+    max_tokens: 1024
+  };
 
-    const respuestaNvidia = await axios.post('https://integrate.api.nvidia.com/v1/chat/completions', {
-      model: "nvidia/nemotron-3.5-lightning-30b-a3b",
-      messages: [
-        { role: "system", content: promptSistema },
-        { role: "user", content: mensaje }
-      ],
-      temperature: 0.6,
-      // ⚠️ ARREGLO: Bajamos a 1024. 10000 excede los límites de la API y causaba el error de "raíces enredadas".
-      max_tokens: 1024
-    }, {
-      headers: {
-        "Authorization": `Bearer ${process.env.NVIDIA_API_KEY_2}`,
-        "Content-Type": "application/json"
-      },
-      timeout: 90000 // 30 segundos es suficiente, 90s es muy alto para una web
-    });
+  // Lista de IAs en orden de prioridad. 
+  // Ajusté las variables de entorno según tu indicación (apiKey 3 y apiKey 2)
+  const modelosAProbar = [
+    { 
+      nombre: "Mistral", 
+      modeloId: "mistralai/mistral-nemotron-2408", 
+      apiKey: process.env.NVIDIA_API_KEY_3 
+    },
+    { 
+      nombre: "Llama 3.2 (11B)", 
+      modeloId: "meta/llama-3.2-11b-vision-instruct", 
+      apiKey: process.env.NVIDIA_API_KEY_2 
+    },
+    { 
+      nombre: "Nemotron 3.5", 
+      modeloId: "nvidia/nemotron-3.5-lightning-30b-a3b", 
+      apiKey: process.env.NVIDIA_API_KEY_1 // Asumiendo que esta es tu primera clave original
+    }
+  ];
 
-    const respuestaFinal = respuestaNvidia.data.choices[0].message.content;
-    console.log("✅ ¡Botani respondió con éxito usando Nemotron!");
+  let respuestaFinal = null;
 
+  for (const ia of modelosAProbar) {
+    try {
+      console.log(`🧠 Intentando pensar con: ${ia.nombre}...`);
+
+      const respuesta = await axios.post('https://integrate.api.nvidia.com/v1/chat/completions', {
+        model: ia.modeloId,
+        ...datosBase
+      }, {
+        headers: {
+          "Authorization": `Bearer ${ia.apiKey}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 90000 // 15 segundos máximo por IA para evitar que la web se quede colgada
+      });
+
+      respuestaFinal = respuesta.data.choices[0].message.content;
+      console.log(`✅ ¡${ia.nombre} respondió con éxito!`);
+      break; 
+
+    } catch (error) {
+      console.error(`⚠️ ${ia.nombre} falló:`, error.response ? error.response.data : error.message);
+    }
+  }
+
+  if (respuestaFinal) {
     res.json({ respuesta: respuestaFinal });
-
-  } catch (error) {
-    console.error("❌ Error en NVIDIA:", error.response ? error.response.data : error.message);
+  } else {
+    console.error("❌ Todas las IAs fallaron.");
     res.status(500).json({ respuesta: "Uy, mis raíces digitales se enredaron un momento 🌿. Dame un minuto y vuelve a intentarlo." });
   }
 });
