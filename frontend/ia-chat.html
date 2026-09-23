@@ -519,17 +519,17 @@
     <script>
         let ultimaImagenSubida = null;
 
-   window.onload = () => {
-    const chatGuardado = sessionStorage.getItem('historialChat');
-    const contenedorMensajes = document.querySelector('.tus-mensajes-contenedor');
-    
-    // Solo intenta pegar el historial SI hay historial Y SI el contenedor existe
-    if (chatGuardado && contenedorMensajes) {
-        contenedorMensajes.innerHTML = chatGuardado;
-    } else if (!contenedorMensajes) {
-        console.warn("No se encontró el elemento '.tus-mensajes-contenedor' en el HTML, pero el código sigue funcionando.");
-    }
-};
+        window.onload = () => {
+            const chatGuardado = sessionStorage.getItem('historialChat');
+            const contenedorMensajes = document.querySelector('.tus-mensajes-contenedor');
+
+            // Solo intenta pegar el historial SI hay historial Y SI el contenedor existe
+            if (chatGuardado && contenedorMensajes) {
+                contenedorMensajes.innerHTML = chatGuardado;
+            } else if (!contenedorMensajes) {
+                console.warn("No se encontró el elemento '.tus-mensajes-contenedor' en el HTML, pero el código sigue funcionando.");
+            }
+        };
 
 
 
@@ -678,7 +678,7 @@
                     // Guardar datos del equipo
                     btnIniciar.onclick = () => {
                         // Capturamos el nuevo campo del nombre (si no existe, ponemos uno por defecto)
-                        const inputNombre = document.getElementById('input-nombre-equipo');
+                        const inputNombre = document.getElementById('inputNombreEquipo');
                         const nombreEquipo = inputNombre ? inputNombre.value.trim() : '';
 
                         const ints = document.getElementById('input-integrantes').value;
@@ -951,7 +951,7 @@
                 this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
                 sessionStorage.setItem('historialChat', this.chatMessages.innerHTML);
 
-               window.pedirSegundaOpinion = async function () {
+                window.pedirSegundaOpinion = async function () {
                     if (!ultimaImagenSubida) {
                         alert("No se encontró la foto en la memoria temporal. Sube la foto de nuevo.");
                         return;
@@ -1006,9 +1006,9 @@
                         console.error("Error pidiendo segunda opinión:", error);
                         chatContainer.lastElementChild.querySelector('.message-content').innerHTML = "<p style='color: red;'>Error de conexión con el servidor.</p>";
                     }
-                    
+
                     chatContainer.scrollTop = chatContainer.scrollHeight;
-                    
+
                     // 👇 ====== LO NUEVO: GUARDAR EL CHAT DESPUÉS DE LA SEGUNDA OPINIÓN ====== 👇
                     sessionStorage.setItem('historialChat', chatContainer.innerHTML);
                 };

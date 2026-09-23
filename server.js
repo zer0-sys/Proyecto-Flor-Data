@@ -504,17 +504,26 @@ app.post('/api/re-identificar', upload.single('imagen'), async (req, res) => {
 // RUTA GAMIFICACIÓN: GUARDAR PUNTAJE AL TERMINAR
 // ==========================================
 app.post('/api/ranking', async (req, res) => {
-  const { nombre_equipo, puntaje, zona, integrantes, integrantes_del_equipo } = req.body;
+  // Imprimimos qué está llegando realmente desde el frontend
+  console.log("📡 Datos recibidos en /api/ranking:", req.body);
+
+  const { nombre_equipo, equipo, nombre, puntaje, zona, integrantes, integrantes_del_equipo } = req.body;
   
   try {
     if (puntaje === 0) {
       return res.json({ exito: true, mensaje: 'Puntaje 0 omitido.' });
     }
 
-    // Capturar variables con fallback
-    const equipoFinal = (nombre_equipo && nombre_equipo.trim() !== '') ? nombre_equipo.trim() : 'Equipo Explorador';
+    // Buscamos el nombre del equipo en varias posibles variables que tu frontend pueda estar mandando
+    let equipoCapturado = nombre_equipo || equipo || nombre || "";
+    
+    const equipoFinal = (equipoCapturado.trim() !== '') ? equipoCapturado.trim() : 'Equipo Explorador';
     const zonaFinal = (zona && zona.trim() !== '') ? zona.trim() : 'Los Cerritos';
     const numIntegrantes = parseInt(integrantes || integrantes_del_equipo || 1);
+
+    if (equipoFinal === 'Equipo Explorador') {
+        console.warn("⚠️ ATENCIÓN: El frontend envió el nombre vacío o nulo. Se usó el valor por defecto 'Equipo Explorador'.");
+    }
 
     const sql = `
       INSERT INTO ranking_equipos (nombre_equipo, puntaje, zona, integrantes_del_equipo) 
@@ -582,9 +591,13 @@ app.post('/api/chat', async (req, res) => {
     return res.status(400).json({ error: "El mensaje está vacío" });
   }
 
+  // Se añaden reglas estrictas para evitar el volcado de datos y obedecer el formato
   const promptSistema = `Eres Botani, un asistente virtual amigable y experto en botánica, especializado en la flora de Chiapas, México, y el Parque Los Cerritos. Perteneces al proyecto 'Flor Data' de la UNACH. Tus respuestas deben ser cálidas, entusiastas, claras y concisas (máximo 2 o 3 párrafos cortos). Usa emojis relacionados con plantas. No inventes datos que no sepas. 
     
-    REGLA DE ORO ESTRICTA: NO incluyas tu proceso de pensamiento ("thinking process"). NO expliques cómo llegaste a la respuesta. Escribe DIRECTAMENTE y ÚNICAMENTE la respuesta final conversacional en español que leerá el usuario.`;
+    REGLAS DE ORO ESTRICTAS: 
+    1. NO incluyas tu proceso de pensamiento ("thinking process"). NO expliques cómo llegaste a la respuesta. Escribe DIRECTAMENTE la respuesta final.
+    2. FILTRADO: Si te preguntan por características específicas (ej. plantas con espinas, frutos), NO listes todas las plantas que conoces. Filtra y menciona SOLO las que cumplen la condición.
+    3. FORMATO: Obedece estrictamente si el usuario te pide un resumen de un solo párrafo, sin usar viñetas.`;
 
   try {
     console.log("Pensando la respuesta con NVIDIA (Nemotron 3.5)...");
@@ -596,14 +609,14 @@ app.post('/api/chat', async (req, res) => {
         { role: "user", content: mensaje }
       ],
       temperature: 0.6,
-      // ✨ ÚNICO CAMBIO: Subimos a 1000 para que termine de pensar y te dé tu respuesta final
-      max_tokens: 10000
+      // ⚠️ ARREGLO: Bajamos a 1024. 10000 excede los límites de la API y causaba el error de "raíces enredadas".
+      max_tokens: 1024
     }, {
       headers: {
         "Authorization": `Bearer ${process.env.NVIDIA_API_KEY_2}`,
         "Content-Type": "application/json"
       },
-      timeout: 90000
+      timeout: 30000 // 30 segundos es suficiente, 90s es muy alto para una web
     });
 
     const respuestaFinal = respuestaNvidia.data.choices[0].message.content;
