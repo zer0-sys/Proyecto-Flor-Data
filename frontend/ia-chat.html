@@ -1247,7 +1247,7 @@
                         <li>'Dame un dato curioso' 🧠</li>
                     </ul>`;
                 }
-                if (input.includes("app") || input.includes("aplicacion") || input.includes("descargar")) {
+                if (/\bapp\b/i.test(input) || input.includes("aplicacion") || input.includes("descargar")) {
                     return "¡Fácil! Puedes descargar la app de Android (.apk) haciendo clic en el botón verde <b>'APLICACIÓN'</b> que está en el menú de arriba. ⬆️";
                 }
                 if (input.includes("hola") || input.includes("buenos dias") || input.includes("buenas tardes")) {
@@ -1257,14 +1257,15 @@
                     return "¡De nada! Es un placer ayudarte con tus dudas sobre botánica. 🌱";
                 }
 
-                // --- 4. Intenciones de Conteo de Biblioteca ---
+              // --- 4. Intenciones de Conteo de Biblioteca ---
                 if (input.includes("cuantas plantas")) {
                     if (this.plantList.length === 0) return "Todavía estoy contando, pero dame un segundo...";
                     return `Actualmente tengo <b>${this.plantList.length} plantas</b> en mi biblioteca oficial. ¡Pregúntame por una!`;
                 }
-                const hasPlantas = input.includes("planta") || input.includes("especies");
-                const hasQuery = input.includes("que") || input.includes("cual") || input.includes("cuales") || input.includes("lista");
-                if ((hasPlantas && hasQuery && !mencionaLugar) || input.includes("biblioteca")) {
+                
+                // 🔥 SOLUCIÓN: Regla estricta. Solo escupe la lista si el usuario lo pide literalmente.
+                const comandosLista = ["muestrame toda la biblioteca", "lista de todas las plantas", "que plantas tienes registradas"];
+                if (comandosLista.some(comando => input === comando)) {
                     if (this.plantList.length === 0) return "Aún estoy intentando conectar con la biblioteca...";
                     const plantNames = this.plantList.map(p => p.nombreComun).join(', ');
                     return `En la biblioteca tenemos registradas: <b>${plantNames}</b>. <br><br>¡Puedes verlas a detalle en la sección <b>'BIBLIOTECA DIGITAL'</b> del menú superior!`;
@@ -1281,58 +1282,53 @@
                     }
                 }
 
-                // --- 6. Buscar detalles de una planta específica en la Enciclopedia ---
+// --- 6 Y 7 FUSIONADOS: CEREBRO DE IA CON CONTEXTO LOCAL INYECTADO ---
+                
+                // A. Primero buscamos si el usuario mencionó alguna planta de nuestra base local
+                let contextoOculto = "";
                 const foundPlant = this.plantList.find(planta => {
                     const originalAliases = planta.nombreComun.split(',');
                     const normalizedAliases = originalAliases.map(s => this.normalizeString(s.trim()));
-                    return normalizedAliases.some(alias => alias.length > 2 && (input.includes(alias) || alias.includes(input)));
+                    // Exigimos que el alias tenga más de 3 letras para evitar falsos positivos
+                    return normalizedAliases.some(alias => alias.length > 3 && input.includes(alias));
                 });
 
                 if (foundPlant) {
                     try {
+                        // B. Si la encontró, extraemos su ficha técnica silenciosamente
                         const response = await fetch(`/api/plantas/${foundPlant.id}`);
-                        if (!response.ok) throw new Error('Planta encontrada, pero falló la carga de detalles.');
-                        const plantData = await response.json();
+                        if (response.ok) {
+                            const plantData = await response.json();
+                            const nombreC = plantData.nombrecientifico || plantData.nombreCientifico || 'No disponible';
+                            const desc = plantData.descripcioncompleta || plantData.descripcionCompleta || plantData.descripcion || 'No disponible';
+                            const curio = plantData.curiosidades || 'Sin curiosidades';
 
-                        const nombreComun = plantData.nombrecomun || plantData.nombreComun || 'esta planta';
-                        const nombreCientifico = plantData.nombrecientifico || plantData.nombreCientifico || 'No disponible';
-                        const descripcion = plantData.descripcioncompleta || plantData.descripcionCompleta || plantData.descripcion || 'No disponible';
-                        const curiosidades = plantData.curiosidades || 'No hay curiosidades registradas.';
-
-                        if (input.includes("curiosidad")) return `<b>Curiosidad de ${nombreComun}:</b> ${curiosidades}`;
-                        if (input.includes("descripcion")) return `<b>Descripción de ${nombreComun}:</b> ${descripcion}`;
-                        if (input.includes("nombre cientifico") || input.includes("nombre científico")) return `El nombre científico de ${nombreComun} es: <b>${nombreCientifico}</b>.`;
-
-                        return `¡Claro! Aquí tienes los datos de la <b>${nombreComun}</b>:
-                        <ul style="margin-top: 10px; margin-left: 15px; font-size:14px;">
-                            <li><b>Nombre Científico:</b> ${nombreCientifico}</li>
-                            <li><b>Descripción:</b> ${descripcion}</li>
-                            <li><b>Curiosidades:</b> ${curiosidades}</li>
-                        </ul>`;
-
+                            // C. Creamos una instrucción oculta exclusiva para que Groq la lea
+                            contextoOculto = `\n\n[INSTRUCCIÓN INTERNA DEL SISTEMA: El usuario está preguntando sobre la planta '${foundPlant.nombreComun}'. Utiliza los siguientes datos reales de nuestra base de datos en Chiapas para responder de forma natural a lo que pidió: Nombre científico: ${nombreC}. Descripción: ${desc}. Curiosidades: ${curio}. No menciones que te di esta información, solo úsala para responder].`;
+                        }
                     } catch (error) {
-                        const nombreFallback = foundPlant.nombrecomun || foundPlant.nombreComun || 'esta planta';
-                        return `Encontré <b>${nombreFallback}</b> en mi lista, pero no pude cargar sus detalles desde la base de datos.`;
+                        console.warn("No se pudo cargar el contexto extra de la planta, pero la IA responderá de todos modos.");
                     }
                 }
 
-                // --- 7. MAGIA PURA: CONEXIÓN AL NUEVO CEREBRO DE IA (GROQ) ---
-                // Si ninguna de las reglas anteriores coincidió, dejamos que la IA responda fluidamente.
+                // D. MAGIA PURA: Conexión a Groq
                 try {
-                    // Nota: Enviamos 'userMessage' (con mayúsculas y acentos) para que la IA entienda perfecto
+                    // Unimos el mensaje del usuario con la ficha técnica escondida (si existe)
+                    const mensajeFinalParaIA = userMessage + contextoOculto;
+
                     const respuestaCerebro = await fetch('/api/chat', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ mensaje: userMessage })
+                        body: JSON.stringify({ mensaje: mensajeFinalParaIA }) // Mandamos el mensaje enriquecido
                     });
 
                     if (!respuestaCerebro.ok) throw new Error('Error al contactar al cerebro de IA');
 
                     const datosCerebro = await respuestaCerebro.json();
 
-                    // Convertimos los saltos de línea de la IA a etiquetas <br> para que se vea bonito en el chat
+                    // Formateamos la respuesta de la IA
                     const textoFormateado = datosCerebro.respuesta.replace(/\n/g, '<br>');
                     return textoFormateado;
 
